@@ -2,6 +2,7 @@
 
 import { useLanguage } from "@/components/LanguageProvider";
 import { ResourceFinder } from "@/components/ResourceFinder";
+import { ResourceMap } from "@/components/ResourceMap";
 import { PageHero, Section } from "@/components/PageShell";
 
 const copy = {
@@ -35,6 +36,9 @@ export default function ResourceFinderPage() {
         <p>{text.body}</p>
       </PageHero>
       <Section intro={text.intro}>
+        <ResourceMap />
+      </Section>
+      <Section>
         <ResourceFinder />
       </Section>
     </>

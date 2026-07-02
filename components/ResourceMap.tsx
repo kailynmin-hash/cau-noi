@@ -1,12 +1,23 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Crosshair, Filter, MapPinned, Radar, RotateCcw, ShieldCheck } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import maplibregl, { type Map as MapLibreMap, type Marker, type StyleSpecification } from "maplibre-gl";
+import {
+  Crosshair,
+  Filter,
+  LocateFixed,
+  Minus,
+  Navigation,
+  Plus,
+  RotateCcw,
+  ShieldCheck,
+} from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import {
   type AgeGroupFilter,
   type CostFilter,
   type LanguageFilter,
+  type Resource,
   type ServiceTypeFilter,
   ageGroupOptions,
   costOptions,
@@ -14,6 +25,9 @@ import {
   resources,
   serviceTypeOptions,
 } from "@/lib/resources";
+
+const center = { lat: 33.7743, lng: -117.9406 };
+const initialZoom = 10.8;
 
 const copy = {
   en: {
@@ -23,11 +37,22 @@ const copy = {
     insurance: "Insurance / cost",
     age: "Age group",
     service: "Service type",
-    live: "CA-45 resource grid",
-    note: "Pins are approximate sample locations for demo planning. Verify details directly with providers.",
+    explore: "Explore",
+    satellite: "Satellite",
+    mapTitle: "CA-45 live resource map",
+    fallback:
+      "Open map fallback is active. Add NEXT_PUBLIC_MAPBOX_TOKEN in Vercel for Mapbox vector Explore and Satellite styles.",
+    note: "Pins are approximate resource locations for demo planning. Verify details directly with providers.",
     selected: "Selected resource",
     noMatch: "No map resources match those filters.",
     access: "Accessibility",
+    zoomIn: "Zoom in",
+    zoomOut: "Zoom out",
+    resetView: "Reset view",
+    useArea: "Use my area",
+    distance: "Distance",
+    cta: "Open details",
+    urgent: "Urgent help",
   },
   vi: {
     filters: "Bộ lọc bản đồ",
@@ -36,22 +61,42 @@ const copy = {
     insurance: "Bảo hiểm / chi phí",
     age: "Nhóm tuổi",
     service: "Loại dịch vụ",
-    live: "Lưới nguồn hỗ trợ CA-45",
-    note: "Các điểm ghim là vị trí mẫu gần đúng cho bản demo. Hãy xác minh trực tiếp với nhà cung cấp.",
+    explore: "Khám phá",
+    satellite: "Vệ tinh",
+    mapTitle: "Bản đồ nguồn hỗ trợ CA-45",
+    fallback:
+      "Đang dùng bản đồ mở dự phòng. Thêm NEXT_PUBLIC_MAPBOX_TOKEN trong Vercel để dùng kiểu Mapbox vector Explore và Satellite.",
+    note: "Các điểm ghim là vị trí nguồn hỗ trợ gần đúng cho bản demo. Hãy xác minh trực tiếp với nhà cung cấp.",
     selected: "Nguồn hỗ trợ đã chọn",
     noMatch: "Không có nguồn hỗ trợ phù hợp với bộ lọc.",
     access: "Tiếp cận",
+    zoomIn: "Phóng to",
+    zoomOut: "Thu nhỏ",
+    resetView: "Đặt lại bản đồ",
+    useArea: "Dùng vị trí của tôi",
+    distance: "Khoảng cách",
+    cta: "Xem chi tiết",
+    urgent: "Hỗ trợ khẩn cấp",
   },
 } as const;
+
+type MapMode = "explore" | "satellite";
 
 export function ResourceMap() {
   const { language } = useLanguage();
   const text = copy[language];
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<MapLibreMap | null>(null);
+  const markerRef = useRef<Marker[]>([]);
+  const userMarkerRef = useRef<Marker | null>(null);
+  const [mode, setMode] = useState<MapMode>("explore");
   const [languageFilter, setLanguageFilter] = useState<LanguageFilter>("All languages");
   const [costFilter, setCostFilter] = useState<CostFilter>("All costs");
   const [ageFilter, setAgeFilter] = useState<AgeGroupFilter>("All age groups");
   const [serviceFilter, setServiceFilter] = useState<ServiceTypeFilter>("All service types");
   const [selectedName, setSelectedName] = useState(resources[0].name);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
   const filtered = useMemo(
     () =>
@@ -67,11 +112,101 @@ export function ResourceMap() {
 
   const selected = filtered.find((resource) => resource.name === selectedName) ?? filtered[0] ?? null;
 
-  const reset = () => {
+  useEffect(() => {
+    if (!mapContainerRef.current || mapRef.current) return;
+
+    const map = new maplibregl.Map({
+      container: mapContainerRef.current,
+      style: getMapStyle("explore", mapboxToken),
+      center: [center.lng, center.lat],
+      zoom: initialZoom,
+      pitch: 42,
+      bearing: -18,
+      attributionControl: false,
+    });
+
+    map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
+    mapRef.current = map;
+
+    return () => {
+      markerRef.current.forEach((marker) => marker.remove());
+      userMarkerRef.current?.remove();
+      map.remove();
+      mapRef.current = null;
+    };
+  }, [mapboxToken]);
+
+  useEffect(() => {
+    if (!mapRef.current) return;
+    mapRef.current.setStyle(getMapStyle(mode, mapboxToken));
+  }, [mapboxToken, mode]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    markerRef.current.forEach((marker) => marker.remove());
+    markerRef.current = filtered.map((resource) => {
+      const markerEl = document.createElement("button");
+      markerEl.type = "button";
+      markerEl.className = `group grid size-9 place-items-center rounded-full border-2 text-white shadow-lg shadow-black/25 transition hover:scale-110 ${
+        isUrgent(resource) ? "border-rose-100 bg-rose-500" : "border-teal-100 bg-teal-500"
+      }`;
+      markerEl.setAttribute("aria-label", resource.name);
+      markerEl.innerHTML = `<span class="size-3 rounded-full bg-white shadow-sm"></span>`;
+      markerEl.addEventListener("click", () => {
+        setSelectedName(resource.name);
+        map.flyTo({
+          center: [resource.coordinates.lng, resource.coordinates.lat],
+          zoom: Math.max(map.getZoom(), 12.4),
+          duration: 850,
+        });
+      });
+
+      const popup = new maplibregl.Popup({ offset: 18, closeButton: false }).setHTML(
+        `<div style="font-family: system-ui; min-width: 180px;"><strong>${resource.name}</strong><br/><span>${resource.city}</span></div>`,
+      );
+
+      return new maplibregl.Marker({ element: markerEl, anchor: "center" })
+        .setLngLat([resource.coordinates.lng, resource.coordinates.lat])
+        .setPopup(popup)
+        .addTo(map);
+    });
+  }, [filtered]);
+
+  useEffect(() => {
+    if (!selected || !mapRef.current) return;
+    mapRef.current.flyTo({
+      center: [selected.coordinates.lng, selected.coordinates.lat],
+      zoom: Math.max(mapRef.current.getZoom(), 11.5),
+      duration: 700,
+    });
+  }, [selected]);
+
+  const resetFilters = () => {
     setLanguageFilter("All languages");
     setCostFilter("All costs");
     setAgeFilter("All age groups");
     setServiceFilter("All service types");
+  };
+
+  const resetView = () => {
+    mapRef.current?.flyTo({ center: [center.lng, center.lat], zoom: initialZoom, pitch: 42, bearing: -18, duration: 900 });
+  };
+
+  const useMyArea = () => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition((position) => {
+      const next = { lat: position.coords.latitude, lng: position.coords.longitude };
+      setUserLocation(next);
+      mapRef.current?.flyTo({ center: [next.lng, next.lat], zoom: 12.5, duration: 900 });
+
+      userMarkerRef.current?.remove();
+      const el = document.createElement("div");
+      el.className = "grid size-8 place-items-center rounded-full border-2 border-white bg-sky-500 shadow-lg";
+      el.innerHTML = `<span class="size-2 rounded-full bg-white"></span>`;
+      userMarkerRef.current = new maplibregl.Marker({ element: el }).setLngLat([next.lng, next.lat]).addTo(mapRef.current!);
+    });
   };
 
   return (
@@ -82,7 +217,7 @@ export function ResourceMap() {
             <Filter size={18} className="text-teal-700" aria-hidden="true" />
             {text.filters}
           </p>
-          <button type="button" onClick={reset} className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-slate-200 px-2.5 text-xs font-semibold text-slate-700 hover:bg-teal-50">
+          <button type="button" onClick={resetFilters} className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-slate-200 px-2.5 text-xs font-semibold text-slate-700 hover:bg-teal-50">
             <RotateCcw size={14} aria-hidden="true" />
             {text.reset}
           </button>
@@ -93,59 +228,61 @@ export function ResourceMap() {
           <Select label={text.age} value={ageFilter} options={ageGroupOptions} onChange={setAgeFilter} />
           <Select label={text.service} value={serviceFilter} options={serviceTypeOptions} onChange={setServiceFilter} />
         </div>
-        <p className="mt-5 rounded-md bg-amber-50 p-3 text-sm leading-6 text-amber-950">{text.note}</p>
+        {!mapboxToken && <p className="mt-5 rounded-md bg-sky-50 p-3 text-sm leading-6 text-sky-950">{text.fallback}</p>}
+        <p className="mt-3 rounded-md bg-amber-50 p-3 text-sm leading-6 text-amber-950">{text.note}</p>
       </aside>
 
-      <section className="grid gap-4 lg:grid-cols-[1fr_340px]">
-        <div className="relative min-h-[520px] overflow-hidden rounded-lg border border-slate-200 bg-[#071f1d] p-4 text-white shadow-sm">
-          <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(rgba(45,212,191,.18)_1px,transparent_1px),linear-gradient(90deg,rgba(45,212,191,.18)_1px,transparent_1px)] [background-size:34px_34px]" />
-          <div className="relative z-10 mb-4 flex items-center justify-between gap-3">
-            <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.2em] text-teal-100">
-              <Radar size={18} aria-hidden="true" />
-              {text.live}
-            </p>
-            <span className="rounded-md bg-white/10 px-3 py-1 text-sm font-semibold">{filtered.length} pins</span>
+      <section className="grid gap-4 lg:grid-cols-[1fr_360px]">
+        <div className="relative min-h-[620px] overflow-hidden rounded-lg border border-teal-900/30 bg-[#061d1b] p-3 text-white shadow-sm">
+          <div className="absolute left-4 top-4 z-20 rounded-lg border border-white/15 bg-black/35 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-teal-50 backdrop-blur">
+            {text.mapTitle}
           </div>
-          <div className="relative z-10 h-[440px] rounded-lg border border-white/10 bg-teal-950/40">
-            <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full" role="img" aria-label="Interactive CA-45 resource map">
-              <path
-                d="M22 16 C42 8 68 12 79 31 C88 47 75 65 61 78 C47 91 25 86 18 68 C10 48 10 24 22 16Z"
-                fill="rgba(20,184,166,0.18)"
-                stroke="rgba(153,246,228,0.75)"
-                strokeWidth="0.8"
-              />
-              <path d="M27 60 C42 48 57 47 73 35" stroke="rgba(255,255,255,0.22)" strokeWidth="0.6" fill="none" />
-              <path d="M35 20 C41 38 44 59 39 83" stroke="rgba(255,255,255,0.18)" strokeWidth="0.5" fill="none" />
-            </svg>
-            {filtered.map((resource) => (
+
+          <div className="absolute right-4 top-4 z-20 flex rounded-lg border border-white/15 bg-black/35 p-1 backdrop-blur">
+            {(["explore", "satellite"] as const).map((option) => (
               <button
-                key={resource.name}
+                key={option}
                 type="button"
-                onClick={() => setSelectedName(resource.name)}
-                className={`absolute grid size-8 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border text-white shadow-lg transition hover:scale-110 ${
-                  selected?.name === resource.name ? "border-white bg-rose-500" : "border-teal-100 bg-teal-500"
+                onClick={() => setMode(option)}
+                className={`min-h-9 rounded-md px-3 text-sm font-semibold transition ${
+                  mode === option ? "bg-white text-teal-950" : "text-white hover:bg-white/10"
                 }`}
-                style={{ left: `${resource.coordinates.x}%`, top: `${resource.coordinates.y}%` }}
-                aria-label={resource.name}
               >
-                <MapPinned size={16} aria-hidden="true" />
+                {option === "explore" ? text.explore : text.satellite}
               </button>
             ))}
-            <div className="absolute bottom-4 left-4 rounded-lg border border-white/10 bg-black/30 p-3 text-xs text-teal-50 backdrop-blur">
-              <p className="flex items-center gap-2 font-semibold">
-                <Crosshair size={14} aria-hidden="true" />
-                Little Saigon / Garden Grove / Westminster / Orange County
-              </p>
-            </div>
+          </div>
+
+          <div ref={mapContainerRef} className="h-[590px] min-h-[70vh] rounded-lg" />
+
+          <div className="absolute bottom-4 left-4 z-20 flex flex-wrap gap-2">
+            <MapButton label={text.zoomIn} onClick={() => mapRef.current?.zoomIn()} icon={Plus} />
+            <MapButton label={text.zoomOut} onClick={() => mapRef.current?.zoomOut()} icon={Minus} />
+            <MapButton label={text.resetView} onClick={resetView} icon={Crosshair} />
+            <button
+              type="button"
+              onClick={useMyArea}
+              className="inline-flex min-h-10 items-center gap-2 rounded-md border border-white/15 bg-black/35 px-3 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/15"
+            >
+              <LocateFixed size={16} aria-hidden="true" />
+              {text.useArea}
+            </button>
           </div>
         </div>
 
         <aside className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
           {selected ? (
             <>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-teal-700">{text.selected}</p>
+              <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${isUrgent(selected) ? "text-rose-700" : "text-teal-700"}`}>
+                {isUrgent(selected) ? text.urgent : text.selected}
+              </p>
               <h2 className="mt-2 text-2xl font-semibold text-slate-950">{selected.name}</h2>
               <p className="mt-2 text-sm font-medium text-slate-600">{selected.city}</p>
+              {userLocation && (
+                <p className="mt-2 text-sm font-semibold text-teal-800">
+                  {text.distance}: {distanceMiles(userLocation, selected.coordinates).toFixed(1)} mi
+                </p>
+              )}
               <p className="mt-4 leading-7 text-slate-700">{selected.description}</p>
               <div className="mt-5 flex flex-wrap gap-2">
                 {[...selected.languages, ...selected.costTypes, ...selected.ageGroups].map((tag) => (
@@ -165,6 +302,15 @@ export function ResourceMap() {
                   ))}
                 </ul>
               </div>
+              <a
+                href={selected.website.startsWith("http") ? selected.website : "#"}
+                className={`mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md px-4 text-sm font-semibold text-white transition ${
+                  isUrgent(selected) ? "bg-rose-600 hover:bg-rose-700" : "bg-teal-700 hover:bg-teal-800"
+                }`}
+              >
+                <Navigation size={16} aria-hidden="true" />
+                {text.cta}
+              </a>
             </>
           ) : (
             <p className="leading-7 text-slate-600">{text.noMatch}</p>
@@ -172,6 +318,59 @@ export function ResourceMap() {
         </aside>
       </section>
     </div>
+  );
+}
+
+function getMapStyle(mode: MapMode, mapboxToken?: string): string | StyleSpecification {
+  if (mapboxToken) {
+    const style = mode === "explore" ? "streets-v12" : "satellite-streets-v12";
+    return `https://api.mapbox.com/styles/v1/mapbox/${style}?access_token=${mapboxToken}`;
+  }
+
+  if (mode === "satellite") {
+    return {
+      version: 8,
+      sources: {
+        satellite: {
+          type: "raster",
+          tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],
+          tileSize: 256,
+          attribution: "Tiles © Esri",
+        },
+      },
+      layers: [{ id: "satellite", type: "raster", source: "satellite" }],
+    };
+  }
+
+  return {
+    version: 8,
+    sources: {
+      carto: {
+        type: "raster",
+        tiles: [
+          "https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+          "https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+          "https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+        ],
+        tileSize: 256,
+        attribution: "© OpenStreetMap contributors © CARTO",
+      },
+    },
+    layers: [{ id: "carto", type: "raster", source: "carto" }],
+  };
+}
+
+function MapButton({ label, onClick, icon: Icon }: { label: string; onClick: () => void; icon: typeof Plus }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="grid size-10 place-items-center rounded-md border border-white/15 bg-black/35 text-white backdrop-blur transition hover:bg-white/15"
+      title={label}
+    >
+      <Icon size={17} aria-hidden="true" />
+      <span className="sr-only">{label}</span>
+    </button>
   );
 }
 
@@ -202,4 +401,22 @@ function Select<T extends string>({
       </select>
     </label>
   );
+}
+
+function distanceMiles(a: { lat: number; lng: number }, b: { lat: number; lng: number }) {
+  const radius = 3958.8;
+  const dLat = toRad(b.lat - a.lat);
+  const dLng = toRad(b.lng - a.lng);
+  const lat1 = toRad(a.lat);
+  const lat2 = toRad(b.lat);
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  return 2 * radius * Math.asin(Math.sqrt(h));
+}
+
+function toRad(value: number) {
+  return (value * Math.PI) / 180;
+}
+
+function isUrgent(resource: Resource) {
+  return resource.resourceType === "988 Suicide & Crisis Lifeline";
 }

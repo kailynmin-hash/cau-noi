@@ -31,7 +31,7 @@ export type Resource = {
   ageGroups: AgeGroup[];
   mode: DeliveryMode;
   serviceType: ServiceType;
-  coordinates: { x: number; y: number };
+  coordinates: { lat: number; lng: number };
   accessibility: string[];
   tags: string[];
 };
@@ -74,7 +74,7 @@ export const resources: Resource[] = [
     ageGroups: ["All ages"],
     mode: "Virtual",
     serviceType: "Crisis lines",
-    coordinates: { x: 78, y: 20 },
+    coordinates: { lat: 33.7743, lng: -117.9406 },
     accessibility: ["24/7 call, text, and chat", "Interpreter access may be requested"],
     tags: ["Crisis", "Immediate support", "Confidential"],
   },
@@ -91,7 +91,7 @@ export const resources: Resource[] = [
     ageGroups: ["Youth", "Family", "All ages"],
     mode: "Virtual",
     serviceType: "Crisis lines",
-    coordinates: { x: 56, y: 45 },
+    coordinates: { lat: 33.7502, lng: -117.8703 },
     accessibility: ["County navigation line", "Can connect callers to local programs"],
     tags: ["Orange County", "Referrals", "Behavioral health"],
   },
@@ -108,7 +108,7 @@ export const resources: Resource[] = [
     ageGroups: ["Youth"],
     mode: "In-Person",
     serviceType: "School resources",
-    coordinates: { x: 46, y: 42 },
+    coordinates: { lat: 33.7899, lng: -117.9977 },
     accessibility: ["School-based setting", "Youth-friendly environment"],
     tags: ["CHOC", "Wellness", "School-based"],
   },
@@ -125,7 +125,7 @@ export const resources: Resource[] = [
     ageGroups: ["Youth"],
     mode: "In-Person",
     serviceType: "School resources",
-    coordinates: { x: 36, y: 55 },
+    coordinates: { lat: 33.7739, lng: -117.9414 },
     accessibility: ["On campus", "Ask for interpretation or translation support"],
     tags: ["School counselor", "Wellness center", "Trusted adult"],
   },
@@ -142,7 +142,7 @@ export const resources: Resource[] = [
     ageGroups: ["Youth"],
     mode: "In-Person and Virtual",
     serviceType: "Counseling centers",
-    coordinates: { x: 61, y: 55 },
+    coordinates: { lat: 33.7878, lng: -117.8531 },
     accessibility: ["Teen-focused", "Adult-facilitated safety structure"],
     tags: ["Peer support", "Stress", "Belonging"],
   },
@@ -159,7 +159,7 @@ export const resources: Resource[] = [
     ageGroups: ["Youth", "Family", "All ages"],
     mode: "In-Person and Virtual",
     serviceType: "Community clinics",
-    coordinates: { x: 42, y: 65 },
+    coordinates: { lat: 33.7455, lng: -117.9601 },
     accessibility: ["Sliding-fee options may be available", "Ask about interpretation"],
     tags: ["Clinic", "Counseling referral", "Primary care"],
   },
@@ -176,7 +176,7 @@ export const resources: Resource[] = [
     ageGroups: ["Family"],
     mode: "In-Person and Virtual",
     serviceType: "Counseling centers",
-    coordinates: { x: 52, y: 58 },
+    coordinates: { lat: 33.6951, lng: -117.9243 },
     accessibility: ["Caregiver-friendly", "Evening or virtual options may be available"],
     tags: ["Caregivers", "Family education", "Communication"],
   },
@@ -193,7 +193,7 @@ export const resources: Resource[] = [
     ageGroups: ["Youth", "Family", "All ages"],
     mode: "In-Person and Virtual",
     serviceType: "Bilingual services",
-    coordinates: { x: 34, y: 60 },
+    coordinates: { lat: 33.7592, lng: -117.9897 },
     accessibility: ["Vietnamese language support", "Culturally familiar navigation"],
     tags: ["Vietnamese", "Little Saigon", "Family support"],
   },
