@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { siteOrigin } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -16,9 +17,31 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Cầu Nối | CA-45 Youth Mental-Health Navigator",
+  metadataBase: siteOrigin,
+  title: {
+    default: "Cầu Nối | CA-45 Youth Mental-Health Navigator",
+    template: "%s | Cầu Nối",
+  },
   description:
     "A bilingual English and Vietnamese youth mental-health navigator for CA-45.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Cầu Nối | CA-45 Youth Mental-Health Navigator",
+    description:
+      "A bilingual English and Vietnamese youth mental-health navigator for CA-45.",
+    url: "/",
+    siteName: "Cầu Nối",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Cầu Nối | CA-45 Youth Mental-Health Navigator",
+    description:
+      "A bilingual English and Vietnamese youth mental-health navigator for CA-45.",
+  },
 };
 
 export default function RootLayout({

@@ -19,6 +19,7 @@ export const navItems = [
   { href: "/conversation", key: "conversation" },
   { href: "/quiz", key: "quiz" },
   { href: "/dashboard", key: "dashboard" },
+  { href: "/map", key: "map" },
   { href: "/about", key: "about" },
 ] as const;
 

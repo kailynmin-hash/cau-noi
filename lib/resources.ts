@@ -1,5 +1,6 @@
 export type Language = "English" | "Vietnamese" | "Spanish" | "Other";
 export type CostType = "Free" | "Sliding Scale" | "Insurance Accepted";
+export type AgeGroup = "Youth" | "Family" | "All ages";
 export type ResourceType =
   | "988 Suicide & Crisis Lifeline"
   | "Orange County Health Care Agency Behavioral Health Services"
@@ -10,9 +11,12 @@ export type ResourceType =
   | "Family support resources"
   | "Vietnamese-language mental-health resources";
 export type DeliveryMode = "In-Person" | "Virtual" | "In-Person and Virtual";
+export type ServiceType = "Counseling centers" | "School resources" | "Crisis lines" | "Community clinics" | "Bilingual services";
 export type LanguageFilter = "All languages" | Language;
 export type CostFilter = "All costs" | CostType;
+export type AgeGroupFilter = "All age groups" | AgeGroup;
 export type ResourceTypeFilter = "All resource types" | ResourceType;
+export type ServiceTypeFilter = "All service types" | ServiceType;
 export type ModeFilter = "Any format" | DeliveryMode;
 
 export type Resource = {
@@ -24,13 +28,17 @@ export type Resource = {
   phone: string;
   languages: Language[];
   costTypes: CostType[];
+  ageGroups: AgeGroup[];
   mode: DeliveryMode;
+  serviceType: ServiceType;
+  coordinates: { x: number; y: number };
   accessibility: string[];
   tags: string[];
 };
 
 export const languageOptions: LanguageFilter[] = ["All languages", "English", "Vietnamese", "Spanish", "Other"];
 export const costOptions: CostFilter[] = ["All costs", "Free", "Sliding Scale", "Insurance Accepted"];
+export const ageGroupOptions: AgeGroupFilter[] = ["All age groups", "Youth", "Family", "All ages"];
 export const resourceTypeOptions: ResourceTypeFilter[] = [
   "All resource types",
   "988 Suicide & Crisis Lifeline",
@@ -43,6 +51,14 @@ export const resourceTypeOptions: ResourceTypeFilter[] = [
   "Vietnamese-language mental-health resources",
 ];
 export const modeOptions: ModeFilter[] = ["Any format", "In-Person", "Virtual", "In-Person and Virtual"];
+export const serviceTypeOptions: ServiceTypeFilter[] = [
+  "All service types",
+  "Counseling centers",
+  "School resources",
+  "Crisis lines",
+  "Community clinics",
+  "Bilingual services",
+];
 
 export const resources: Resource[] = [
   {
@@ -55,7 +71,10 @@ export const resources: Resource[] = [
     phone: "988",
     languages: ["English", "Spanish", "Other"],
     costTypes: ["Free"],
+    ageGroups: ["All ages"],
     mode: "Virtual",
+    serviceType: "Crisis lines",
+    coordinates: { x: 78, y: 20 },
     accessibility: ["24/7 call, text, and chat", "Interpreter access may be requested"],
     tags: ["Crisis", "Immediate support", "Confidential"],
   },
@@ -69,7 +88,10 @@ export const resources: Resource[] = [
     phone: "Contact placeholder",
     languages: ["English", "Spanish", "Other"],
     costTypes: ["Free", "Insurance Accepted"],
+    ageGroups: ["Youth", "Family", "All ages"],
     mode: "Virtual",
+    serviceType: "Crisis lines",
+    coordinates: { x: 56, y: 45 },
     accessibility: ["County navigation line", "Can connect callers to local programs"],
     tags: ["Orange County", "Referrals", "Behavioral health"],
   },
@@ -83,7 +105,10 @@ export const resources: Resource[] = [
     phone: "Contact placeholder",
     languages: ["English", "Spanish", "Other"],
     costTypes: ["Free"],
+    ageGroups: ["Youth"],
     mode: "In-Person",
+    serviceType: "School resources",
+    coordinates: { x: 46, y: 42 },
     accessibility: ["School-based setting", "Youth-friendly environment"],
     tags: ["CHOC", "Wellness", "School-based"],
   },
@@ -97,7 +122,10 @@ export const resources: Resource[] = [
     phone: "Ask school front office",
     languages: ["English", "Vietnamese", "Spanish", "Other"],
     costTypes: ["Free"],
+    ageGroups: ["Youth"],
     mode: "In-Person",
+    serviceType: "School resources",
+    coordinates: { x: 36, y: 55 },
     accessibility: ["On campus", "Ask for interpretation or translation support"],
     tags: ["School counselor", "Wellness center", "Trusted adult"],
   },
@@ -111,7 +139,10 @@ export const resources: Resource[] = [
     phone: "Contact placeholder",
     languages: ["English", "Spanish", "Other"],
     costTypes: ["Free", "Sliding Scale"],
+    ageGroups: ["Youth"],
     mode: "In-Person and Virtual",
+    serviceType: "Counseling centers",
+    coordinates: { x: 61, y: 55 },
     accessibility: ["Teen-focused", "Adult-facilitated safety structure"],
     tags: ["Peer support", "Stress", "Belonging"],
   },
@@ -125,7 +156,10 @@ export const resources: Resource[] = [
     phone: "Appointment line placeholder",
     languages: ["English", "Vietnamese", "Spanish", "Other"],
     costTypes: ["Sliding Scale", "Insurance Accepted"],
+    ageGroups: ["Youth", "Family", "All ages"],
     mode: "In-Person and Virtual",
+    serviceType: "Community clinics",
+    coordinates: { x: 42, y: 65 },
     accessibility: ["Sliding-fee options may be available", "Ask about interpretation"],
     tags: ["Clinic", "Counseling referral", "Primary care"],
   },
@@ -139,7 +173,10 @@ export const resources: Resource[] = [
     phone: "Contact placeholder",
     languages: ["English", "Spanish", "Other"],
     costTypes: ["Free", "Sliding Scale"],
+    ageGroups: ["Family"],
     mode: "In-Person and Virtual",
+    serviceType: "Counseling centers",
+    coordinates: { x: 52, y: 58 },
     accessibility: ["Caregiver-friendly", "Evening or virtual options may be available"],
     tags: ["Caregivers", "Family education", "Communication"],
   },
@@ -153,7 +190,10 @@ export const resources: Resource[] = [
     phone: "Vietnamese contact placeholder",
     languages: ["Vietnamese", "English"],
     costTypes: ["Free", "Sliding Scale", "Insurance Accepted"],
+    ageGroups: ["Youth", "Family", "All ages"],
     mode: "In-Person and Virtual",
+    serviceType: "Bilingual services",
+    coordinates: { x: 34, y: 60 },
     accessibility: ["Vietnamese language support", "Culturally familiar navigation"],
     tags: ["Vietnamese", "Little Saigon", "Family support"],
   },

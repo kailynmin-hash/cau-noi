@@ -47,6 +47,7 @@ export const navTranslations = {
     conversation: "Conversation",
     quiz: "Quiz",
     dashboard: "Dashboard",
+    map: "Map",
     about: "About",
   },
   vi: {
@@ -55,6 +56,7 @@ export const navTranslations = {
     conversation: "Trò chuyện gia đình",
     quiz: "Khảo sát định kiến",
     dashboard: "Cộng đồng",
+    map: "Bản đồ",
     about: "Giới thiệu",
   },
 } as const;

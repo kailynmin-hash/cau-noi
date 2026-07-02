@@ -14,6 +14,7 @@ import {
   Tags,
 } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
+import { incrementImpact } from "@/lib/impact";
 import {
   type CostFilter,
   type LanguageFilter,
@@ -221,6 +222,7 @@ export function ResourceFinder() {
                     target="_blank"
                     rel="noreferrer"
                     aria-disabled={!resource.website.startsWith("http")}
+                    onClick={() => incrementImpact("resourcesViewed")}
                     className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-teal-700 px-4 text-sm font-semibold text-white transition hover:bg-teal-800"
                   >
                     {copy.website}
@@ -229,6 +231,7 @@ export function ResourceFinder() {
                   {!resource.phone.toLowerCase().includes("placeholder") && !resource.phone.toLowerCase().includes("ask school") && (
                     <a
                       href={`tel:${resource.phone.replace(/[^\d]/g, "") || resource.phone}`}
+                      onClick={() => incrementImpact("resourcesViewed")}
                       className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-teal-700 px-4 text-sm font-semibold text-teal-800 transition hover:bg-teal-50"
                     >
                       {copy.call}

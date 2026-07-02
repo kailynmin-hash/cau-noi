@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { ArrowRight, BookOpen, Brain, HandHeart, HeartHandshake, HomeIcon, LockKeyhole, MessageCircleHeart, Sparkles, Users } from "lucide-react";
+import { HomeShowcase } from "@/components/HomeShowcase";
+import { ImpactMetrics } from "@/components/ImpactMetrics";
 import { useLanguage } from "@/components/LanguageProvider";
 import { PageHero, Section } from "@/components/PageShell";
 
@@ -159,6 +161,10 @@ export default function Home() {
         </div>
       </Section>
 
+      <Section tone="mist">
+        <HomeShowcase />
+      </Section>
+
       <Section title={copy.trustTitle} tone="mist">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {copy.features.map(([title, text], index) => {
@@ -193,6 +199,10 @@ export default function Home() {
             </article>
           ))}
         </div>
+      </Section>
+
+      <Section>
+        <ImpactMetrics />
       </Section>
 
       <Section title={copy.focusTitle}>

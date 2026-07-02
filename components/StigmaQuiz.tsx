@@ -1,8 +1,10 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
-import { AlertCircle, CheckCircle2, HelpCircle, LockKeyhole, RotateCcw, Save } from "lucide-react";
+import Link from "next/link";
+import { AlertCircle, BookOpen, CheckCircle2, HelpCircle, Languages, LockKeyhole, MessageCircleHeart, RotateCcw, Save } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
+import { incrementImpact } from "@/lib/impact";
 import { type SurveyResponse, supabase } from "@/lib/supabase";
 
 const quizCopy = {
@@ -28,6 +30,12 @@ const quizCopy = {
     mythFactIntro: "Use these explanations as conversation starters. They are not a diagnosis or medical advice.",
     myth: "Myth",
     fact: "Fact",
+    recTitle: "Personalized next steps",
+    recIntro: "Based on your anonymous answers, Cầu Nối suggests a few practical places to start.",
+    recEducation: ["Learn about stigma", "Your stigma score was elevated. Start with myth-vs-fact education and stories that frame help-seeking as strength."],
+    recLanguage: ["Prioritize bilingual resources", "Language barriers showed up strongly. Look for Vietnamese or interpreter-supported options first."],
+    recFamily: ["Practice a family conversation", "Family communication felt difficult. Use the conversation helper to prepare a respectful first sentence."],
+    recGeneral: ["Keep building your support map", "Your answers show several strengths. Save one resource and one trusted adult before stress gets bigger."],
     likert: ["Strongly disagree", "Disagree", "Not sure", "Agree", "Strongly agree"],
     ages: ["Under 13", "13-15", "16-18", "19-24", "Parent / caregiver", "Prefer not to say"],
     languages: ["English", "Vietnamese", "English and Vietnamese", "Another language", "Prefer not to say"],
@@ -54,6 +62,12 @@ const quizCopy = {
     mythFactIntro: "Bạn có thể dùng phần giải thích này để bắt đầu trò chuyện. Đây không phải chẩn đoán hoặc lời khuyên y tế.",
     myth: "Hiểu lầm",
     fact: "Sự thật",
+    recTitle: "Bước tiếp theo dành cho bạn",
+    recIntro: "Dựa trên câu trả lời ẩn danh của bạn, Cầu Nối gợi ý một vài nơi thực tế để bắt đầu.",
+    recEducation: ["Tìm hiểu về định kiến", "Điểm định kiến của bạn khá cao. Hãy bắt đầu với phần hiểu lầm và sự thật để nhìn việc tìm hỗ trợ như một sự mạnh mẽ."],
+    recLanguage: ["Ưu tiên nguồn hỗ trợ song ngữ", "Rào cản ngôn ngữ xuất hiện rõ. Hãy tìm lựa chọn có tiếng Việt hoặc hỗ trợ thông dịch trước."],
+    recFamily: ["Tập trò chuyện với gia đình", "Việc giao tiếp trong gia đình có vẻ khó. Hãy dùng công cụ trò chuyện để chuẩn bị một câu mở đầu tôn trọng."],
+    recGeneral: ["Tiếp tục xây dựng bản đồ hỗ trợ", "Câu trả lời của bạn cho thấy nhiều điểm mạnh. Hãy lưu một nguồn hỗ trợ và một người lớn đáng tin cậy trước khi căng thẳng lớn hơn."],
     likert: ["Rất không đồng ý", "Không đồng ý", "Chưa chắc", "Đồng ý", "Rất đồng ý"],
     ages: ["Dưới 13", "13-15", "16-18", "19-24", "Cha mẹ / người chăm sóc", "Không muốn trả lời"],
     languages: ["Tiếng Anh", "Tiếng Việt", "Tiếng Anh và tiếng Việt", "Ngôn ngữ khác", "Không muốn trả lời"],
@@ -187,6 +201,7 @@ export function StigmaQuiz() {
     }
 
     setStatus("success");
+    incrementImpact("quizzesCompleted");
   };
 
   const resetQuiz = () => {
@@ -280,6 +295,31 @@ export function StigmaQuiz() {
         </section>
       )}
 
+      {status === "success" && (
+        <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 className="text-2xl font-semibold text-slate-950">{copy.recTitle}</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-600">{copy.recIntro}</p>
+          <div className="mt-5 grid gap-4 md:grid-cols-3">
+            {getRecommendations({
+              stigmaScore,
+              languageBarrier: directAnswers.language_barrier ?? 0,
+              comfortTalkingHome: directAnswers.comfort_talking_home ?? 0,
+              copy,
+            }).map((recommendation) => (
+              <Link
+                key={recommendation.title}
+                href={recommendation.href}
+                className="rounded-lg border border-slate-200 bg-[#f6faf7] p-4 transition hover:border-teal-300 hover:bg-teal-50"
+              >
+                <recommendation.icon size={20} className="text-teal-700" aria-hidden="true" />
+                <h3 className="mt-3 font-semibold text-slate-950">{recommendation.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-600">{recommendation.body}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
       {status === "error" && (
         <section className="rounded-lg border border-rose-200 bg-rose-50 p-5 text-rose-950">
           <p className="flex items-center gap-2 font-semibold">
@@ -310,6 +350,35 @@ export function StigmaQuiz() {
       )}
     </form>
   );
+}
+
+function getRecommendations({
+  stigmaScore,
+  languageBarrier,
+  comfortTalkingHome,
+  copy,
+}: {
+  stigmaScore: number | null;
+  languageBarrier: number;
+  comfortTalkingHome: number;
+  copy: typeof quizCopy.en | typeof quizCopy.vi;
+}) {
+  const recommendations: { title: string; body: string; href: string; icon: typeof BookOpen }[] = [];
+
+  if ((stigmaScore ?? 0) >= 3.25) {
+    recommendations.push({ title: copy.recEducation[0], body: copy.recEducation[1], href: "/quiz", icon: BookOpen });
+  }
+  if (languageBarrier >= 4) {
+    recommendations.push({ title: copy.recLanguage[0], body: copy.recLanguage[1], href: "/resources", icon: Languages });
+  }
+  if (comfortTalkingHome <= 2) {
+    recommendations.push({ title: copy.recFamily[0], body: copy.recFamily[1], href: "/conversation", icon: MessageCircleHeart });
+  }
+  if (recommendations.length === 0) {
+    recommendations.push({ title: copy.recGeneral[0], body: copy.recGeneral[1], href: "/map", icon: CheckCircle2 });
+  }
+
+  return recommendations;
 }
 
 function SelectField({
