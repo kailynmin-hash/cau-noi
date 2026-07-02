@@ -55,6 +55,7 @@ const copy = {
     useArea: "Use my area",
     distance: "Distance",
     cta: "Open details",
+    websiteComingSoon: "Website coming soon",
     urgent: "Urgent help",
   },
   vi: {
@@ -80,6 +81,7 @@ const copy = {
     useArea: "Dùng vị trí của tôi",
     distance: "Khoảng cách",
     cta: "Xem chi tiết",
+    websiteComingSoon: "Sắp có trang web",
     urgent: "Hỗ trợ khẩn cấp",
   },
 } as const;
@@ -305,7 +307,7 @@ export function ResourceMap() {
             <button
               type="button"
               onClick={useMyArea}
-              className="inline-flex min-h-10 items-center gap-2 rounded-md border border-white/15 bg-black/35 px-3 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/15"
+              className="inline-flex min-h-10 items-center gap-2 rounded-md border border-white/15 bg-black/35 px-3 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/15 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
             >
               <LocateFixed size={16} aria-hidden="true" />
               {text.useArea}
@@ -345,15 +347,29 @@ export function ResourceMap() {
                   ))}
                 </ul>
               </div>
-              <a
-                href={selected.website.startsWith("http") ? selected.website : "#"}
-                className={`mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md px-4 text-sm font-semibold text-white transition ${
-                  isUrgent(selected) ? "bg-rose-600 hover:bg-rose-700" : "bg-teal-700 hover:bg-teal-800"
-                }`}
-              >
-                <Navigation size={16} aria-hidden="true" />
-                {text.cta}
-              </a>
+              {selected.url ? (
+                <a
+                  href={selected.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md px-4 text-sm font-semibold text-white transition focus-visible:outline-none focus-visible:ring-4 ${
+                    isUrgent(selected)
+                      ? "bg-rose-600 hover:bg-rose-700 focus-visible:ring-rose-200"
+                      : "bg-teal-700 hover:bg-teal-800 focus-visible:ring-teal-200"
+                  }`}
+                >
+                  <Navigation size={16} aria-hidden="true" />
+                  {text.cta}
+                </a>
+              ) : (
+                <button
+                  type="button"
+                  disabled
+                  className="mt-5 inline-flex min-h-11 w-full cursor-not-allowed items-center justify-center gap-2 rounded-md bg-slate-200 px-4 text-sm font-semibold text-slate-500"
+                >
+                  {text.websiteComingSoon}
+                </button>
+              )}
             </>
           ) : (
             <p className="leading-7 text-slate-600">{text.noMatch}</p>
@@ -375,7 +391,7 @@ function MapButton({ label, onClick, icon: Icon }: { label: string; onClick: () 
     <button
       type="button"
       onClick={onClick}
-      className="grid size-10 place-items-center rounded-md border border-white/15 bg-black/35 text-white backdrop-blur transition hover:bg-white/15"
+      className="grid size-10 place-items-center rounded-md border border-white/15 bg-black/35 text-white backdrop-blur transition hover:bg-white/15 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
       title={label}
     >
       <Icon size={17} aria-hidden="true" />

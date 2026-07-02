@@ -47,6 +47,7 @@ const finderCopy = {
     format: "Format",
     access: "Access",
     website: "Website / info",
+    websiteComingSoon: "Website coming soon",
     call: "Call",
     emptyTitle: "No resources match those filters.",
     emptyBody: "Try resetting filters or selecting a broader resource type.",
@@ -70,6 +71,7 @@ const finderCopy = {
     format: "Hình thức",
     access: "Tiếp cận",
     website: "Trang web / thông tin",
+    websiteComingSoon: "Sắp có trang web",
     call: "Gọi",
     emptyTitle: "Không có nguồn hỗ trợ phù hợp với bộ lọc.",
     emptyBody: "Hãy đặt lại bộ lọc hoặc chọn loại nguồn hỗ trợ rộng hơn.",
@@ -217,22 +219,31 @@ export function ResourceFinder() {
                 </div>
 
                 <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-                  <a
-                    href={resource.website.startsWith("http") ? resource.website : "#"}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-disabled={!resource.website.startsWith("http")}
-                    onClick={() => incrementImpact("resourcesViewed")}
-                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-teal-700 px-4 text-sm font-semibold text-white transition hover:bg-teal-800"
-                  >
-                    {copy.website}
-                    <ExternalLink size={16} aria-hidden="true" />
-                  </a>
+                  {resource.url ? (
+                    <a
+                      href={resource.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => incrementImpact("resourcesViewed")}
+                      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-teal-700 px-4 text-sm font-semibold text-white transition hover:bg-teal-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-200"
+                    >
+                      {copy.website}
+                      <ExternalLink size={16} aria-hidden="true" />
+                    </a>
+                  ) : (
+                    <button
+                      type="button"
+                      disabled
+                      className="inline-flex min-h-11 cursor-not-allowed items-center justify-center gap-2 rounded-md bg-slate-200 px-4 text-sm font-semibold text-slate-500"
+                    >
+                      {copy.websiteComingSoon}
+                    </button>
+                  )}
                   {!resource.phone.toLowerCase().includes("placeholder") && !resource.phone.toLowerCase().includes("ask school") && (
                     <a
                       href={`tel:${resource.phone.replace(/[^\d]/g, "") || resource.phone}`}
                       onClick={() => incrementImpact("resourcesViewed")}
-                      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-teal-700 px-4 text-sm font-semibold text-teal-800 transition hover:bg-teal-50"
+                      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-teal-700 px-4 text-sm font-semibold text-teal-800 transition hover:bg-teal-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-100"
                     >
                       {copy.call}
                       <Phone size={16} aria-hidden="true" />

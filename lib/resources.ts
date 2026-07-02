@@ -24,7 +24,7 @@ export type Resource = {
   resourceType: ResourceType;
   city: string;
   description: string;
-  website: string;
+  url: string;
   phone: string;
   languages: Language[];
   costTypes: CostType[];
@@ -67,7 +67,7 @@ export const resources: Resource[] = [
     city: "Nationwide / CA-45",
     description:
       "Immediate crisis support for anyone experiencing suicidal thoughts, emotional distress, or concern for someone else.",
-    website: "https://988lifeline.org/",
+    url: "https://988lifeline.org/",
     phone: "988",
     languages: ["English", "Spanish", "Other"],
     costTypes: ["Free"],
@@ -84,8 +84,8 @@ export const resources: Resource[] = [
     city: "Orange County",
     description:
       "County behavioral-health navigation for mental-health and substance-use referrals, including youth and family support.",
-    website: "Provider website placeholder",
-    phone: "Contact placeholder",
+    url: "https://www.ochealthinfo.com/services-programs/mental-health-crisis-recovery/navigation-help-resources/oc-links",
+    phone: "855-625-4657",
     languages: ["English", "Spanish", "Other"],
     costTypes: ["Free", "Insurance Accepted"],
     ageGroups: ["Youth", "Family", "All ages"],
@@ -101,7 +101,7 @@ export const resources: Resource[] = [
     city: "Orange County schools",
     description:
       "Youth-centered wellness spaces and school-linked supports designed to reduce stress and connect students with trusted adults.",
-    website: "Provider website placeholder",
+    url: "https://choc.org/population-health/wellspaces/",
     phone: "Contact placeholder",
     languages: ["English", "Spanish", "Other"],
     costTypes: ["Free"],
@@ -118,7 +118,7 @@ export const resources: Resource[] = [
     city: "Garden Grove, Westminster, Fountain Valley, Cypress, and nearby CA-45 schools",
     description:
       "A starting point for students who want confidential guidance, academic stress support, referrals, or help talking with family.",
-    website: "School district website placeholder",
+    url: "https://ggusd.us/resources/wellness-resources/mental-health-resources",
     phone: "Ask school front office",
     languages: ["English", "Vietnamese", "Spanish", "Other"],
     costTypes: ["Free"],
@@ -130,13 +130,13 @@ export const resources: Resource[] = [
     tags: ["School counselor", "Wellness center", "Trusted adult"],
   },
   {
-    name: "Teen Peer Support Circle",
+    name: "NAMI Orange County Teens & Young Adults",
     resourceType: "Teen peer support programs",
     city: "Orange County",
     description:
-      "Sample peer-led or peer-supported group for teens to talk about stress, belonging, and coping skills in a supervised setting.",
-    website: "Program website placeholder",
-    phone: "Contact placeholder",
+      "Teen and young-adult mental-health resources, peer stories, and no-cost support pathways from NAMI Orange County.",
+    url: "https://www.namioc.org/teens-young-adults",
+    phone: "714-991-6412",
     languages: ["English", "Spanish", "Other"],
     costTypes: ["Free", "Sliding Scale"],
     ageGroups: ["Youth"],
@@ -147,13 +147,13 @@ export const resources: Resource[] = [
     tags: ["Peer support", "Stress", "Belonging"],
   },
   {
-    name: "Orange County Community Clinic Behavioral Health Referral",
+    name: "Families Together OC Garden Grove Health Center",
     resourceType: "Community clinics",
     city: "Santa Ana / Garden Grove / Westminster",
     description:
-      "Sample community clinic entry for low-cost counseling referrals, primary-care screening, and culturally responsive care navigation.",
-    website: "Clinic website placeholder",
-    phone: "Appointment line placeholder",
+      "Community clinic in Garden Grove offering medical care and mental-health services such as individual counseling.",
+    url: "https://familiestogetheroc.org/locations/garden-grove",
+    phone: "800-597-7977",
     languages: ["English", "Vietnamese", "Spanish", "Other"],
     costTypes: ["Sliding Scale", "Insurance Accepted"],
     ageGroups: ["Youth", "Family", "All ages"],
@@ -164,13 +164,13 @@ export const resources: Resource[] = [
     tags: ["Clinic", "Counseling referral", "Primary care"],
   },
   {
-    name: "Family Mental-Health Education and Support",
+    name: "NAMI Orange County Family Support Groups",
     resourceType: "Family support resources",
     city: "Orange County",
     description:
-      "Sample family education resource for caregivers who want to understand youth mental health, communication, and support options.",
-    website: "Family support website placeholder",
-    phone: "Contact placeholder",
+      "Peer-led family support groups and education for caregivers and loved ones supporting someone with a mental-health condition.",
+    url: "https://www.namioc.org/support-groups",
+    phone: "714-544-8488",
     languages: ["English", "Spanish", "Other"],
     costTypes: ["Free", "Sliding Scale"],
     ageGroups: ["Family"],
@@ -181,13 +181,13 @@ export const resources: Resource[] = [
     tags: ["Caregivers", "Family education", "Communication"],
   },
   {
-    name: "Vietnamese-Language Mental-Health Navigation",
+    name: "OCAPICA Behavioral Health",
     resourceType: "Vietnamese-language mental-health resources",
     city: "Little Saigon / Westminster / Garden Grove",
     description:
-      "Sample Vietnamese-language navigation card for families seeking culturally familiar referrals, interpretation, and mental-health education.",
-    website: "Vietnamese-language resource placeholder",
-    phone: "Vietnamese contact placeholder",
+      "Culturally responsive behavioral-health outreach, prevention workshops, screenings, counseling, peer support, referrals, and case management.",
+    url: "https://www.ocapica.org/behavioralhealth.html",
+    phone: "714-636-6286",
     languages: ["Vietnamese", "English"],
     costTypes: ["Free", "Sliding Scale", "Insurance Accepted"],
     ageGroups: ["Youth", "Family", "All ages"],
