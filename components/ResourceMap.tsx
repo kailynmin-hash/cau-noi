@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import maplibregl, { type Map as MapLibreMap, type Marker, type StyleSpecification } from "maplibre-gl";
+import mapboxgl, { type Map as MapboxMap, type Marker } from "mapbox-gl";
 import {
   Crosshair,
   Filter,
@@ -27,7 +27,9 @@ import {
 } from "@/lib/resources";
 
 const center = { lat: 33.7743, lng: -117.9406 };
-const initialZoom = 10.8;
+const initialZoom = 12;
+const minZoom = 10;
+const maxZoom = 17;
 
 const copy = {
   en: {
@@ -41,7 +43,8 @@ const copy = {
     satellite: "Satellite",
     mapTitle: "CA-45 live resource map",
     fallback:
-      "Open map fallback is active. Add NEXT_PUBLIC_MAPBOX_TOKEN in Vercel for Mapbox vector Explore and Satellite styles.",
+      "Mapbox token is missing. Add NEXT_PUBLIC_MAPBOX_TOKEN in Vercel to load Explore and Satellite map styles.",
+    satelliteUnavailable: "Satellite view is temporarily unavailable.",
     note: "Pins are approximate resource locations for demo planning. Verify details directly with providers.",
     selected: "Selected resource",
     noMatch: "No map resources match those filters.",
@@ -65,7 +68,8 @@ const copy = {
     satellite: "Vệ tinh",
     mapTitle: "Bản đồ nguồn hỗ trợ CA-45",
     fallback:
-      "Đang dùng bản đồ mở dự phòng. Thêm NEXT_PUBLIC_MAPBOX_TOKEN trong Vercel để dùng kiểu Mapbox vector Explore và Satellite.",
+      "Thiếu Mapbox token. Hãy thêm NEXT_PUBLIC_MAPBOX_TOKEN trong Vercel để tải bản đồ Explore và Satellite.",
+    satelliteUnavailable: "Chế độ vệ tinh tạm thời không khả dụng.",
     note: "Các điểm ghim là vị trí nguồn hỗ trợ gần đúng cho bản demo. Hãy xác minh trực tiếp với nhà cung cấp.",
     selected: "Nguồn hỗ trợ đã chọn",
     noMatch: "Không có nguồn hỗ trợ phù hợp với bộ lọc.",
@@ -86,10 +90,13 @@ export function ResourceMap() {
   const { language } = useLanguage();
   const text = copy[language];
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const mapRef = useRef<MapLibreMap | null>(null);
+  const mapRef = useRef<MapboxMap | null>(null);
   const markerRef = useRef<Marker[]>([]);
   const userMarkerRef = useRef<Marker | null>(null);
+  const styleFallbackRef = useRef(false);
+  const requestedModeRef = useRef<MapMode>("explore");
   const [mode, setMode] = useState<MapMode>("explore");
+  const [mapMessage, setMapMessage] = useState("");
   const [languageFilter, setLanguageFilter] = useState<LanguageFilter>("All languages");
   const [costFilter, setCostFilter] = useState<CostFilter>("All costs");
   const [ageFilter, setAgeFilter] = useState<AgeGroupFilter>("All age groups");
@@ -112,36 +119,7 @@ export function ResourceMap() {
 
   const selected = filtered.find((resource) => resource.name === selectedName) ?? filtered[0] ?? null;
 
-  useEffect(() => {
-    if (!mapContainerRef.current || mapRef.current) return;
-
-    const map = new maplibregl.Map({
-      container: mapContainerRef.current,
-      style: getMapStyle("explore", mapboxToken),
-      center: [center.lng, center.lat],
-      zoom: initialZoom,
-      pitch: 42,
-      bearing: -18,
-      attributionControl: false,
-    });
-
-    map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
-    mapRef.current = map;
-
-    return () => {
-      markerRef.current.forEach((marker) => marker.remove());
-      userMarkerRef.current?.remove();
-      map.remove();
-      mapRef.current = null;
-    };
-  }, [mapboxToken]);
-
-  useEffect(() => {
-    if (!mapRef.current) return;
-    mapRef.current.setStyle(getMapStyle(mode, mapboxToken));
-  }, [mapboxToken, mode]);
-
-  useEffect(() => {
+  const syncMarkers = () => {
     const map = mapRef.current;
     if (!map) return;
 
@@ -163,15 +141,70 @@ export function ResourceMap() {
         });
       });
 
-      const popup = new maplibregl.Popup({ offset: 18, closeButton: false }).setHTML(
+      const popup = new mapboxgl.Popup({ offset: 18, closeButton: false }).setHTML(
         `<div style="font-family: system-ui; min-width: 180px;"><strong>${resource.name}</strong><br/><span>${resource.city}</span></div>`,
       );
 
-      return new maplibregl.Marker({ element: markerEl, anchor: "center" })
+      return new mapboxgl.Marker({ element: markerEl, anchor: "center" })
         .setLngLat([resource.coordinates.lng, resource.coordinates.lat])
         .setPopup(popup)
         .addTo(map);
     });
+  };
+
+  useEffect(() => {
+    if (!mapContainerRef.current || mapRef.current || !mapboxToken) return;
+
+    mapboxgl.accessToken = mapboxToken;
+
+    const map = new mapboxgl.Map({
+      container: mapContainerRef.current,
+      style: getMapStyle("explore"),
+      center: [center.lng, center.lat],
+      zoom: initialZoom,
+      minZoom,
+      maxZoom,
+      pitch: 42,
+      bearing: -18,
+      attributionControl: false,
+    });
+
+    map.addControl(new mapboxgl.AttributionControl({ compact: true }), "bottom-right");
+    map.on("style.load", () => {
+      styleFallbackRef.current = false;
+      setMapMessage("");
+      syncMarkers();
+    });
+    map.on("error", () => {
+      if (requestedModeRef.current === "satellite" && !styleFallbackRef.current) {
+        styleFallbackRef.current = true;
+        setMapMessage("satellite-unavailable");
+        setMode("explore");
+        map.setStyle(getMapStyle("explore"));
+      }
+    });
+    mapRef.current = map;
+
+    return () => {
+      markerRef.current.forEach((marker) => marker.remove());
+      userMarkerRef.current?.remove();
+      map.remove();
+      mapRef.current = null;
+    };
+    // Initialize Mapbox once. Mode changes are handled by setStyle in a separate effect.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mapboxToken]);
+
+  useEffect(() => {
+    if (!mapRef.current || !mapboxToken) return;
+    requestedModeRef.current = mode;
+    mapRef.current.setStyle(getMapStyle(mode));
+  }, [mapboxToken, mode]);
+
+  useEffect(() => {
+    syncMarkers();
+    // Markers live in HTML overlay state and are intentionally re-synced after filters/style changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtered]);
 
   useEffect(() => {
@@ -205,7 +238,7 @@ export function ResourceMap() {
       const el = document.createElement("div");
       el.className = "grid size-8 place-items-center rounded-full border-2 border-white bg-sky-500 shadow-lg";
       el.innerHTML = `<span class="size-2 rounded-full bg-white"></span>`;
-      userMarkerRef.current = new maplibregl.Marker({ element: el }).setLngLat([next.lng, next.lat]).addTo(mapRef.current!);
+      userMarkerRef.current = new mapboxgl.Marker({ element: el }).setLngLat([next.lng, next.lat]).addTo(mapRef.current!);
     });
   };
 
@@ -229,6 +262,7 @@ export function ResourceMap() {
           <Select label={text.service} value={serviceFilter} options={serviceTypeOptions} onChange={setServiceFilter} />
         </div>
         {!mapboxToken && <p className="mt-5 rounded-md bg-sky-50 p-3 text-sm leading-6 text-sky-950">{text.fallback}</p>}
+        {mapMessage && <p className="mt-5 rounded-md bg-rose-50 p-3 text-sm leading-6 text-rose-950">{text.satelliteUnavailable}</p>}
         <p className="mt-3 rounded-md bg-amber-50 p-3 text-sm leading-6 text-amber-950">{text.note}</p>
       </aside>
 
@@ -253,7 +287,16 @@ export function ResourceMap() {
             ))}
           </div>
 
-          <div ref={mapContainerRef} className="h-[590px] min-h-[70vh] rounded-lg" />
+          {mapboxToken ? (
+            <div ref={mapContainerRef} className="h-[590px] min-h-[70vh] rounded-lg" />
+          ) : (
+            <div className="grid h-[590px] min-h-[70vh] place-items-center rounded-lg border border-white/10 bg-teal-950/70 p-8 text-center">
+              <div className="max-w-md">
+                <p className="text-lg font-semibold text-white">{text.fallback}</p>
+                <p className="mt-3 text-sm leading-6 text-teal-50">NEXT_PUBLIC_MAPBOX_TOKEN</p>
+              </div>
+            </div>
+          )}
 
           <div className="absolute bottom-4 left-4 z-20 flex flex-wrap gap-2">
             <MapButton label={text.zoomIn} onClick={() => mapRef.current?.zoomIn()} icon={Plus} />
@@ -321,43 +364,10 @@ export function ResourceMap() {
   );
 }
 
-function getMapStyle(mode: MapMode, mapboxToken?: string): string | StyleSpecification {
-  if (mapboxToken) {
-    const style = mode === "explore" ? "streets-v12" : "satellite-streets-v12";
-    return `https://api.mapbox.com/styles/v1/mapbox/${style}?access_token=${mapboxToken}`;
-  }
-
-  if (mode === "satellite") {
-    return {
-      version: 8,
-      sources: {
-        satellite: {
-          type: "raster",
-          tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],
-          tileSize: 256,
-          attribution: "Tiles © Esri",
-        },
-      },
-      layers: [{ id: "satellite", type: "raster", source: "satellite" }],
-    };
-  }
-
-  return {
-    version: 8,
-    sources: {
-      carto: {
-        type: "raster",
-        tiles: [
-          "https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
-          "https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
-          "https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
-        ],
-        tileSize: 256,
-        attribution: "© OpenStreetMap contributors © CARTO",
-      },
-    },
-    layers: [{ id: "carto", type: "raster", source: "carto" }],
-  };
+function getMapStyle(mode: MapMode) {
+  return mode === "satellite"
+    ? "mapbox://styles/mapbox/satellite-streets-v12"
+    : "mapbox://styles/mapbox/streets-v12";
 }
 
 function MapButton({ label, onClick, icon: Icon }: { label: string; onClick: () => void; icon: typeof Plus }) {
