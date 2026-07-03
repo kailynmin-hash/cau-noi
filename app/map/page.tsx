@@ -23,7 +23,7 @@ const copy = {
 
 export default function MapPage() {
   const { language } = useLanguage();
-  const text = copy[language];
+  const text = copy[language as keyof typeof copy] ?? copy.en;
 
   return (
     <>

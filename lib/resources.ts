@@ -1,4 +1,4 @@
-export type Language = "English" | "Vietnamese" | "Spanish" | "Other";
+export type Language = "English" | "Vietnamese" | "Spanish" | "Korean" | "Chinese" | "Japanese" | "Other";
 export type CostType = "Free" | "Sliding Scale" | "Insurance Accepted";
 export type AgeGroup = "Youth" | "Family" | "All ages";
 export type ResourceType =
@@ -40,7 +40,7 @@ export type Resource = {
   tags: string[];
 };
 
-export const languageOptions: LanguageFilter[] = ["All languages", "English", "Vietnamese", "Spanish", "Other"];
+export const languageOptions: LanguageFilter[] = ["All languages", "English", "Vietnamese", "Spanish", "Korean", "Chinese", "Japanese", "Other"];
 export const costOptions: CostFilter[] = ["All costs", "Free", "Sliding Scale", "Insurance Accepted"];
 export const ageGroupOptions: AgeGroupFilter[] = ["All age groups", "Youth", "Family", "All ages"];
 export const resourceTypeOptions: ResourceTypeFilter[] = [
@@ -81,7 +81,7 @@ export const resources: Resource[] = [
     description: "Immediate 24/7 crisis support for anyone experiencing suicidal thoughts, emotional distress, or concern for someone else.",
     websiteUrl: "https://988lifeline.org/",
     phone: "988",
-    languages: ["English", "Spanish", "Other"],
+    languages: ["English", "Vietnamese", "Spanish", "Korean", "Chinese", "Japanese", "Other"],
     costTypes: ["Free"],
     ageGroups: ["All ages"],
     mode: "Hotline",
@@ -97,7 +97,7 @@ export const resources: Resource[] = [
     description: "Free county behavioral-health navigation that connects residents to mental-health and substance-use referrals, crisis support, and programs.",
     websiteUrl: "https://www.ochealthinfo.com/OCLINKS",
     phone: "855-625-4657",
-    languages: ["English", "Spanish", "Other"],
+    languages: ["English", "Vietnamese", "Spanish", "Korean", "Chinese", "Japanese", "Other"],
     costTypes: ["Free"],
     ageGroups: ["Youth", "Family", "All ages"],
     mode: "Hotline",
@@ -113,7 +113,7 @@ export const resources: Resource[] = [
     description: "County children and youth behavioral-health services, including prevention, crisis recovery, outpatient support, and specialty programs.",
     websiteUrl: "https://www.ochealthinfo.com/services-programs/mental-health-crisis-recovery/children-youth-services",
     phone: "855-625-4657",
-    languages: ["English", "Spanish", "Other"],
+    languages: ["English", "Vietnamese", "Spanish", "Korean", "Chinese", "Japanese", "Other"],
     costTypes: ["Free", "Insurance Accepted"],
     ageGroups: ["Youth", "Family"],
     mode: "Hybrid",
@@ -129,7 +129,7 @@ export const resources: Resource[] = [
     description: "Orange County mental-health and substance-use support campus with system navigation for residents seeking help.",
     websiteUrl: "https://bewelloc.org/be-well-orange-campus/",
     phone: "949-749-2500",
-    languages: ["English", "Spanish", "Other"],
+    languages: ["English", "Vietnamese", "Spanish", "Korean", "Chinese", "Japanese", "Other"],
     costTypes: ["Free", "Insurance Accepted"],
     ageGroups: ["All ages"],
     mode: "Hybrid",
@@ -145,7 +145,7 @@ export const resources: Resource[] = [
     description: "Free confidential emotional support and resource connection for Orange County residents by phone, text, or chat.",
     websiteUrl: "https://www.namioc.org/oc-warmline",
     phone: "714-991-6412",
-    languages: ["English", "Spanish", "Other"],
+    languages: ["English", "Spanish", "Korean", "Chinese", "Other"],
     costTypes: ["Free"],
     ageGroups: ["Youth", "Family", "All ages"],
     mode: "Hotline",
@@ -273,7 +273,7 @@ export const resources: Resource[] = [
     description: "Culturally responsive behavioral-health services including therapy, case management, wellness workshops, referrals, and peer support.",
     websiteUrl: "https://www.ocapica.org/bhs.html",
     phone: "714-461-3687",
-    languages: ["Vietnamese", "English", "Spanish", "Other"],
+    languages: ["Vietnamese", "English", "Spanish", "Korean", "Chinese", "Other"],
     costTypes: ["Free", "Sliding Scale"],
     ageGroups: ["Youth", "Family", "All ages"],
     mode: "Hybrid",
@@ -289,7 +289,7 @@ export const resources: Resource[] = [
     description: "Culturally responsive behavioral-health care for Vietnamese Americans and other Orange County communities, including therapy and medication support.",
     websiteUrl: "https://www.southlandintegrated.org/bh.asp",
     phone: "714-620-7000",
-    languages: ["Vietnamese", "English", "Spanish", "Other"],
+    languages: ["Vietnamese", "English", "Spanish", "Chinese", "Other"],
     costTypes: ["Sliding Scale", "Insurance Accepted"],
     ageGroups: ["Youth", "Family", "All ages"],
     mode: "Hybrid",
@@ -305,7 +305,7 @@ export const resources: Resource[] = [
     description: "Community clinic in Garden Grove offering medical care and mental-health services such as individual counseling.",
     websiteUrl: "https://familiestogetheroc.org/locations/garden-grove",
     phone: "800-597-7977",
-    languages: ["English", "Vietnamese", "Spanish", "Other"],
+    languages: ["English", "Vietnamese", "Spanish", "Korean", "Chinese", "Japanese", "Other"],
     costTypes: ["Sliding Scale", "Insurance Accepted"],
     ageGroups: ["Youth", "Family", "All ages"],
     mode: "Hybrid",
@@ -321,7 +321,7 @@ export const resources: Resource[] = [
     description: "Affordable behavioral-health care and counseling services from an integrated community health center in Santa Ana.",
     websiteUrl: "https://www.servethepeople.org/behavioral-health",
     phone: "714-352-2911",
-    languages: ["English", "Spanish", "Other"],
+    languages: ["English", "Vietnamese", "Spanish", "Korean", "Chinese", "Japanese", "Other"],
     costTypes: ["Sliding Scale", "Insurance Accepted"],
     ageGroups: ["Youth", "Family", "All ages"],
     mode: "Hybrid",
@@ -337,7 +337,7 @@ export const resources: Resource[] = [
     description: "Short-term therapy and behavioral-health linkage through AltaMed for patients and families needing mental-health support.",
     websiteUrl: "https://www.altamed.org/behavioral-health-services",
     phone: "855-425-1777",
-    languages: ["English", "Spanish", "Other"],
+    languages: ["English", "Vietnamese", "Spanish", "Korean", "Chinese", "Japanese", "Other"],
     costTypes: ["Insurance Accepted", "Sliding Scale"],
     ageGroups: ["Youth", "Family", "All ages"],
     mode: "Hybrid",
@@ -353,7 +353,7 @@ export const resources: Resource[] = [
     description: "Community-based health education, services, and advocacy with culturally and linguistically appropriate programs for Orange County families.",
     websiteUrl: "https://latinohealthaccess.org/programs/",
     phone: "714-542-7792",
-    languages: ["English", "Spanish"],
+    languages: ["English", "Spanish", "Korean", "Chinese", "Japanese"],
     costTypes: ["Free", "Sliding Scale"],
     ageGroups: ["Youth", "Family", "All ages"],
     mode: "Hybrid",

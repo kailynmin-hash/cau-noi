@@ -94,7 +94,7 @@ type MapMode = "explore" | "satellite";
 
 export function ResourceMap() {
   const { language } = useLanguage();
-  const text = copy[language];
+  const text = copy[language as keyof typeof copy] ?? copy.en;
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapboxMap | null>(null);
   const markerRef = useRef<Marker[]>([]);

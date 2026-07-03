@@ -123,7 +123,7 @@ const featureIcons = [HeartHandshake, MessageCircleHeart, BookOpen, Sparkles, Ha
 
 export default function Home() {
   const { language } = useLanguage();
-  const copy = homeCopy[language];
+  const copy = homeCopy[language as keyof typeof homeCopy] ?? homeCopy.en;
 
   return (
     <>

@@ -27,7 +27,7 @@ const copy = {
 
 export function ImpactMetrics() {
   const { language } = useLanguage();
-  const text = copy[language];
+  const text = copy[language as keyof typeof copy] ?? copy.en;
   const [local, setLocal] = useState<LocalImpactMetrics>({ resourcesViewed: 0, conversationsPracticed: 0, quizzesCompleted: 0 });
   const [submissions, setSubmissions] = useState(0);
 

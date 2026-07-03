@@ -20,7 +20,18 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family:
+    var(--font-geist-sans),
+    "Noto Sans",
+    "Noto Sans CJK SC",
+    "Noto Sans CJK JP",
+    "Noto Sans KR",
+    "Apple SD Gothic Neo",
+    "Hiragino Sans",
+    "Microsoft YaHei",
+    Arial,
+    Helvetica,
+    sans-serif;
   text-rendering: optimizeLegibility;
   font-feature-settings:
     "kern" 1,

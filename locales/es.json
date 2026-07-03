@@ -1,0 +1,215 @@
+{
+  "common": {
+    "brand": "Cầu Nối",
+    "navSubtitle": "Navegador juvenil de CA-45",
+    "openNavigation": "Abrir navegación",
+    "languageLabel": "Idioma",
+    "call988": "Llamar al 988",
+    "website": "Sitio web / información",
+    "websiteComingSoon": "Sitio web próximamente",
+    "call": "Llamar",
+    "reset": "Restablecer",
+    "loading": "Loading"
+  },
+  "languageNames": {
+    "en": "🇺🇸 English",
+    "vi": "🇻🇳 Tiếng Việt",
+    "es": "🇪🇸 Español",
+    "ko": "🇰🇷 한국어",
+    "zh": "🇨🇳 简体中文",
+    "ja": "🇯🇵 日本語"
+  },
+  "nav": {
+    "home": "Inicio",
+    "resources": "Recursos",
+    "conversation": "Conversación",
+    "quiz": "Cuestionario",
+    "dashboard": "Panel",
+    "map": "Mapa",
+    "about": "Acerca de"
+  },
+  "crisis": {
+    "title": "¿Peligro inmediato o pensamientos suicidas?",
+    "body": "Llama o envía un mensaje al 988 ahora. Hay interpretación disponible si la solicitas. Si hay peligro físico inmediato, llama al 911.",
+    "bodyCompact": "Llama o envía un mensaje al 988 ahora. Hay interpretación disponible si la solicitas."
+  },
+  "footer": {
+    "privacyTitle": "Privacy promise",
+    "privacyBody": "Cầu Nối does not ask for names, emails, school IDs, addresses, immigration status, or medical record numbers. Tools are designed for anonymous guidance.",
+    "about": "About",
+    "resources": "Resources",
+    "quiz": "Quiz"
+  },
+  "home": {
+    "eyebrow": "Cầu Nối means bridge",
+    "title": "A multilingual mental-health navigator for CA-45 youth.",
+    "subtitle": "Support for youth, families, and trusted adults across languages.",
+    "intro": "Find support, practice family conversations, challenge stigma, and see community needs without creating an account or sharing identifying information.",
+    "primary": "Find support",
+    "secondary": "Practice a conversation",
+    "pathTitle": "Choose your path",
+    "pathIntro": "Start with what feels closest to your situation. You can move around freely.",
+    "trustTitle": "Built for trust",
+    "privacy": "No login, no tracking forms, no names, no emails. Cầu Nối is a navigator, not a medical diagnosis tool.",
+    "bilingualTitle": "Why multilingual resources matter",
+    "bilingualBody": "Youth may describe stress, sadness, or anxiety differently at school than at home. Immigrant parents may care deeply but have fewer familiar words for therapy, confidentiality, or crisis support. Multilingual resources help families slow down, understand each other, and find help without shame.",
+    "ca45Title": "Why This Matters in CA-45",
+    "ca45Intro": "CA-45 includes many immigrant families, students, caregivers, and community organizations working to support youth wellbeing. Cầu Nối focuses on community needs, youth voice, and access to care.",
+    "ca45Cards": [
+      [
+        "Access barriers",
+        "Immigrant families may face cost concerns, transportation limits, unfamiliar systems, privacy worries, or uncertainty about which services are safe and appropriate for youth."
+      ],
+      [
+        "Language and stigma",
+        "A teen may know how to describe stress in one language at school, while a caregiver may be more comfortable in another language. Stigma can make both generations avoid the conversation."
+      ],
+      [
+        "Culturally responsive care",
+        "Helpful support respects language, family roles, faith, privacy, and lived experience while still giving youth a clear path to professional care when needed."
+      ],
+      [
+        "Anonymous community data",
+        "Anonymous survey responses help identify access gaps without asking for names, school names, contact details, or immigration status."
+      ]
+    ],
+    "focusTitle": "Congressional App Challenge focus",
+    "focusLabel": "Youth mental-health access",
+    "focusBody": "The app centers youth who may feel caught between school stress, family expectations, language access, stigma, and uncertainty about where to begin. Every feature gives a concrete next step while respecting privacy and cultural context.",
+    "pathways": [
+      [
+        "I am worried about myself",
+        "Find private, immediate, and school-based next steps without sharing your identity."
+      ],
+      [
+        "I am worried about a friend",
+        "Use simple scripts, warning signs, and crisis options to support someone safely."
+      ],
+      [
+        "I need to talk with family",
+        "Practice culturally respectful phrases before a hard conversation."
+      ]
+    ],
+    "features": [
+      [
+        "Culturally aware",
+        "Built for immigrant families and all CA-45 youth."
+      ],
+      [
+        "Conversation first",
+        "Scripts help teens and caregivers talk before a crisis grows."
+      ],
+      [
+        "Plain language",
+        "Core tools use practical, family-friendly language."
+      ],
+      [
+        "Private by design",
+        "No accounts, no names, no emails, and no identifying form fields."
+      ],
+      [
+        "Action oriented",
+        "Each page points toward a small, realistic next step."
+      ]
+    ]
+  },
+  "resourcesPage": {
+    "eyebrow": "Resource Finder",
+    "title": "Find CA-45 and Orange County support without giving your identity.",
+    "subtitle": "Local options organized by language, cost, resource type, city, and access format.",
+    "body": "Filter local options by language, cost, resource type, city, and in-person or virtual access. This page does not collect names, emails, addresses, or school IDs.",
+    "intro": "Resource information changes. Users should verify hours, eligibility, services, costs, and language access directly with providers before seeking care."
+  },
+  "resourceFinder": {
+    "filters": "Filtros",
+    "search": "Buscar recursos",
+    "searchPlaceholder": "Busca por nombre, ciudad, servicio o idioma",
+    "language": "Idioma",
+    "languageMatch": "Coincidencia de idioma",
+    "languageMatchHelp": "Los recursos que coinciden con el idioma aparecen primero.",
+    "cost": "Costo",
+    "type": "Tipo de recurso",
+    "mode": "Presencial o virtual",
+    "city": "Ciudad",
+    "privateNote": "No search terms or personal details are saved. Filters only change what appears on this screen.",
+    "verifyNote": "Verify hours, eligibility, cost, and language access directly with providers before seeking care.",
+    "title": "Buscador de recursos de CA-45 y Orange County",
+    "showing": "Mostrando",
+    "of": "de",
+    "resources": "recursos",
+    "anonymous": "Navegación anónima",
+    "phone": "Teléfono",
+    "languages": "Idiomas",
+    "format": "Formato",
+    "access": "Acceso",
+    "emptyTitle": "Ningún recurso coincide con esos filtros.",
+    "emptyBody": "Restablece los filtros o elige una categoría más amplia."
+  },
+  "filters": {
+    "allLanguages": "Todos los idiomas",
+    "allCosts": "Todos los costos",
+    "allResourceTypes": "Todos los tipos de recursos",
+    "anyFormat": "Cualquier formato",
+    "allCities": "Todas las ciudades",
+    "english": "Inglés",
+    "vietnamese": "Vietnamita",
+    "spanish": "Español",
+    "korean": "Coreano",
+    "chinese": "Chino",
+    "japanese": "Japonés",
+    "other": "Otro"
+  },
+  "map": {
+    "eyebrow": "Interactive Resource Map",
+    "title": "Map youth mental-health support across CA-45.",
+    "subtitle": "High-tech filtering for language, insurance, age, city, and service type.",
+    "body": "Explore counseling centers, school resources, crisis lines, community clinics, and bilingual services in a polished map view. Locations are approximate for planning.",
+    "filters": "Map filters",
+    "insurance": "Insurance / cost",
+    "age": "Age group",
+    "service": "Service type",
+    "city": "City",
+    "explore": "Explore",
+    "satellite": "Satellite",
+    "mapTitle": "CA-45 live resource map",
+    "fallback": "Mapbox token is missing. Add NEXT_PUBLIC_MAPBOX_TOKEN in Vercel to load Explore and Satellite map styles.",
+    "satelliteUnavailable": "Satellite view is temporarily unavailable.",
+    "note": "Pins are approximate resource locations for planning. Verify details directly with providers.",
+    "selected": "Selected resource",
+    "noMatch": "No map resources match those filters.",
+    "access": "Accessibility",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "resetView": "Reset view",
+    "useArea": "Use my area",
+    "distance": "Distance",
+    "cta": "Open details",
+    "urgent": "Urgent help"
+  },
+  "pages": {
+    "conversation": {
+      "eyebrow": "Family Conversation Helper",
+      "title": "Practice a hard conversation before you have it.",
+      "subtitle": "Side-by-side English and Vietnamese scripts for teens and families.",
+      "body": "Choose a scenario and practice respectful language that reduces blame, lowers stigma, and helps everyone focus on support."
+    },
+    "quiz": {
+      "eyebrow": "Anonymous Stigma Quiz",
+      "title": "Reflect on mental-health stigma without sharing your identity.",
+      "subtitle": "Eight quick questions, no names, no emails, no school names.",
+      "body": "Your anonymous answers help show where youth may need clearer language, family conversation tools, or resource awareness."
+    },
+    "dashboard": {
+      "eyebrow": "Community Dashboard",
+      "title": "Anonymous insights can reveal access gaps.",
+      "subtitle": "Live, aggregate trends from anonymous survey responses.",
+      "body": "The dashboard shows only community-level patterns. It does not display names, emails, phone numbers, school names, IP addresses, or individual identities."
+    },
+    "about": {
+      "eyebrow": "About Cầu Nối",
+      "title": "Built to connect youth, families, and support without collecting identity.",
+      "subtitle": "A Congressional App Challenge project focused on access, language, and stigma reduction.",
+      "body": "Cầu Nối is a youth mental-health navigator for CA-45 and Orange County. It helps users find resources, practice conversations, reflect on stigma, and understand community needs."
+    }
+  }
+}

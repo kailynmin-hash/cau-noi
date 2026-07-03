@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { incrementImpact } from "@/lib/impact";
+import { localizedOption } from "@/lib/i18n";
 import {
   type CostFilter,
   type CityFilter,
@@ -30,67 +31,10 @@ import {
   resources,
 } from "@/lib/resources";
 
-const finderCopy = {
-  en: {
-    filters: "Filters",
-    reset: "Reset",
-    search: "Search resources",
-    searchPlaceholder: "Search by name, city, service, or language",
-    language: "Language",
-    cost: "Cost",
-    type: "Resource type",
-    mode: "In-person or virtual",
-    city: "City",
-    privateNote: "No search terms or personal details are saved. Filters only change what appears on this screen.",
-    verifyNote: "Verify hours, eligibility, cost, and language access directly with providers before seeking care.",
-    title: "CA-45 and Orange County resource finder",
-    showing: "Showing",
-    of: "of",
-    resources: "resources",
-    anonymous: "Anonymous browsing",
-    phone: "Phone",
-    languages: "Languages",
-    format: "Format",
-    access: "Access",
-    website: "Website / info",
-    websiteComingSoon: "Website coming soon",
-    call: "Call",
-    emptyTitle: "No resources match those filters.",
-    emptyBody: "Try resetting filters or selecting a broader resource type.",
-  },
-  vi: {
-    filters: "Bộ lọc",
-    reset: "Đặt lại",
-    search: "Tìm kiếm nguồn hỗ trợ",
-    searchPlaceholder: "Tìm theo tên, thành phố, dịch vụ, hoặc ngôn ngữ",
-    language: "Ngôn ngữ",
-    cost: "Chi phí",
-    type: "Loại nguồn hỗ trợ",
-    mode: "Trực tiếp hoặc trực tuyến",
-    city: "Thành phố",
-    privateNote: "Không lưu từ khóa tìm kiếm hoặc thông tin cá nhân. Bộ lọc chỉ thay đổi nội dung hiển thị trên màn hình này.",
-    verifyNote: "Hãy xác minh giờ làm việc, điều kiện, chi phí, và hỗ trợ ngôn ngữ trực tiếp với nhà cung cấp trước khi tìm sự chăm sóc.",
-    title: "Tìm nguồn hỗ trợ tại CA-45 và Orange County",
-    showing: "Đang hiển thị",
-    of: "trong",
-    resources: "nguồn hỗ trợ",
-    anonymous: "Xem ẩn danh",
-    phone: "Điện thoại",
-    languages: "Ngôn ngữ",
-    format: "Hình thức",
-    access: "Tiếp cận",
-    website: "Trang web / thông tin",
-    websiteComingSoon: "Sắp có trang web",
-    call: "Gọi",
-    emptyTitle: "Không có nguồn hỗ trợ phù hợp với bộ lọc.",
-    emptyBody: "Hãy đặt lại bộ lọc hoặc chọn loại nguồn hỗ trợ rộng hơn.",
-  },
-} as const;
-
 export function ResourceFinder() {
-  const { language: appLanguage } = useLanguage();
-  const copy = finderCopy[appLanguage];
+  const { language: appLanguage, t } = useLanguage();
   const [query, setQuery] = useState("");
+  const [languageMatch, setLanguageMatch] = useState<LanguageFilter>("All languages");
   const [language, setLanguage] = useState<LanguageFilter>("All languages");
   const [cost, setCost] = useState<CostFilter>("All costs");
   const [resourceType, setResourceType] = useState<ResourceTypeFilter>("All resource types");
@@ -98,8 +42,8 @@ export function ResourceFinder() {
   const [city, setCity] = useState<CityFilter>("All cities");
 
   const filteredResources = useMemo(
-    () =>
-      resources.filter((resource) => {
+    () => {
+      const filtered = resources.filter((resource) => {
         const normalizedQuery = query.trim().toLowerCase();
         const searchableText = [
           resource.name,
@@ -125,12 +69,19 @@ export function ResourceFinder() {
         const modeMatches = mode === "Any format" || resource.mode === mode;
         const cityMatches = city === "All cities" || resource.city === city;
         return queryMatches && languageMatches && costMatches && typeMatches && modeMatches && cityMatches;
-      }),
-    [city, cost, language, mode, query, resourceType],
+      });
+
+      return [...filtered].sort((a, b) => {
+        if (languageMatch === "All languages") return 0;
+        return Number(b.languages.includes(languageMatch)) - Number(a.languages.includes(languageMatch));
+      });
+    },
+    [city, cost, language, languageMatch, mode, query, resourceType],
   );
 
   const resetFilters = () => {
     setQuery("");
+    setLanguageMatch("All languages");
     setLanguage("All languages");
     setCost("All costs");
     setResourceType("All resource types");
@@ -144,7 +95,7 @@ export function ResourceFinder() {
         <div className="mb-5 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 font-semibold text-slate-950">
             <Filter size={18} className="text-teal-700" aria-hidden="true" />
-            {copy.filters}
+            {t("resourceFinder.filters")}
           </div>
           <button
             type="button"
@@ -152,13 +103,13 @@ export function ResourceFinder() {
             className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-slate-200 px-2.5 text-xs font-semibold text-slate-700 transition hover:bg-teal-50"
           >
             <RotateCcw size={14} aria-hidden="true" />
-            {copy.reset}
+            {t("common.reset")}
           </button>
         </div>
 
         <div className="grid gap-4">
           <label className="grid gap-2 text-sm font-semibold text-slate-800">
-            {copy.search}
+            {t("resourceFinder.search")}
             <span className="relative">
               <Search
                 size={16}
@@ -169,36 +120,38 @@ export function ResourceFinder() {
                 type="search"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder={copy.searchPlaceholder}
+                placeholder={t("resourceFinder.searchPlaceholder")}
                 className="min-h-11 w-full rounded-md border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm font-medium text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
               />
             </span>
           </label>
-          <FilterSelect label={copy.language} value={language} options={languageOptions} onChange={setLanguage} />
-          <FilterSelect label={copy.cost} value={cost} options={costOptions} onChange={setCost} />
-          <FilterSelect label={copy.type} value={resourceType} options={resourceTypeOptions} onChange={setResourceType} />
-          <FilterSelect label={copy.mode} value={mode} options={modeOptions} onChange={setMode} />
-          <FilterSelect label={copy.city} value={city} options={cityOptions} onChange={setCity} />
+          <FilterSelect label={t("resourceFinder.languageMatch")} value={languageMatch} options={languageOptions} onChange={setLanguageMatch} language={appLanguage} />
+          <p className="-mt-2 text-xs leading-5 text-slate-500">{t("resourceFinder.languageMatchHelp")}</p>
+          <FilterSelect label={t("resourceFinder.language")} value={language} options={languageOptions} onChange={setLanguage} language={appLanguage} />
+          <FilterSelect label={t("resourceFinder.cost")} value={cost} options={costOptions} onChange={setCost} language={appLanguage} />
+          <FilterSelect label={t("resourceFinder.type")} value={resourceType} options={resourceTypeOptions} onChange={setResourceType} language={appLanguage} />
+          <FilterSelect label={t("resourceFinder.mode")} value={mode} options={modeOptions} onChange={setMode} language={appLanguage} />
+          <FilterSelect label={t("resourceFinder.city")} value={city} options={cityOptions} onChange={setCity} language={appLanguage} />
         </div>
 
         <p className="mt-5 rounded-md bg-[#f6faf7] p-3 text-sm leading-6 text-slate-600">
-          {copy.privateNote}
+          {t("resourceFinder.privateNote")}
         </p>
         <p className="mt-3 rounded-md bg-amber-50 p-3 text-sm leading-6 text-amber-950">
-          {copy.verifyNote}
+          {t("resourceFinder.verifyNote")}
         </p>
       </aside>
 
       <section aria-label="Resource results" className="min-w-0">
         <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-2xl font-semibold text-slate-950">{copy.title}</h2>
+            <h2 className="text-2xl font-semibold text-slate-950">{t("resourceFinder.title")}</h2>
             <p className="mt-1 text-sm text-slate-600">
-              {copy.showing} {filteredResources.length} {copy.of} {resources.length} {copy.resources}
+              {t("resourceFinder.showing")} {filteredResources.length} {t("resourceFinder.of")} {resources.length} {t("resourceFinder.resources")}
             </p>
           </div>
           <span className="w-fit rounded-md bg-teal-50 px-3 py-1.5 text-sm font-semibold text-teal-800">
-            {copy.anonymous}
+            {t("resourceFinder.anonymous")}
           </span>
         </div>
 
@@ -225,20 +178,20 @@ export function ResourceFinder() {
                 <p className="mb-5 leading-7 text-slate-700">{resource.description}</p>
 
                 <dl className="grid gap-3 text-sm text-slate-700">
-                  <ResourceMeta icon={<Phone size={16} aria-hidden="true" />} label={copy.phone} value={resource.phone} />
+                  <ResourceMeta icon={<Phone size={16} aria-hidden="true" />} label={t("resourceFinder.phone")} value={resource.phone} />
                   <ResourceMeta
                     icon={<Languages size={16} aria-hidden="true" />}
-                    label={copy.languages}
+                    label={t("resourceFinder.languages")}
                     value={resource.languages.join(", ")}
                   />
                   <ResourceMeta
                     icon={<MonitorSmartphone size={16} aria-hidden="true" />}
-                    label={copy.format}
+                    label={t("resourceFinder.format")}
                     value={resource.mode}
                   />
                   <ResourceMeta
                     icon={<Accessibility size={16} aria-hidden="true" />}
-                    label={copy.access}
+                    label={t("resourceFinder.access")}
                     value={resource.accessibility.join("; ")}
                   />
                 </dl>
@@ -275,7 +228,7 @@ export function ResourceFinder() {
                       onClick={() => incrementImpact("resourcesViewed")}
                       className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-teal-700 px-4 text-sm font-semibold text-white transition hover:bg-teal-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-200"
                     >
-                      {copy.website}
+                      {t("common.website")}
                       <ExternalLink size={16} aria-hidden="true" />
                     </a>
                   ) : (
@@ -284,7 +237,7 @@ export function ResourceFinder() {
                       disabled
                       className="inline-flex min-h-11 cursor-not-allowed items-center justify-center gap-2 rounded-md bg-slate-200 px-4 text-sm font-semibold text-slate-500"
                     >
-                      {copy.websiteComingSoon}
+                      {t("common.websiteComingSoon")}
                     </button>
                   )}
                   {!resource.phone.toLowerCase().includes("placeholder") && !resource.phone.toLowerCase().includes("ask school") && (
@@ -293,7 +246,7 @@ export function ResourceFinder() {
                       onClick={() => incrementImpact("resourcesViewed")}
                       className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-teal-700 px-4 text-sm font-semibold text-teal-800 transition hover:bg-teal-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-100"
                     >
-                      {copy.call}
+                      {t("common.call")}
                       <Phone size={16} aria-hidden="true" />
                     </a>
                   )}
@@ -303,8 +256,8 @@ export function ResourceFinder() {
           </div>
         ) : (
           <div className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center">
-            <h3 className="text-xl font-semibold text-slate-950">{copy.emptyTitle}</h3>
-            <p className="mt-2 text-sm text-slate-600">{copy.emptyBody}</p>
+            <h3 className="text-xl font-semibold text-slate-950">{t("resourceFinder.emptyTitle")}</h3>
+            <p className="mt-2 text-sm text-slate-600">{t("resourceFinder.emptyBody")}</p>
           </div>
         )}
       </section>
@@ -317,11 +270,13 @@ function FilterSelect<T extends string>({
   value,
   options,
   onChange,
+  language,
 }: {
   label: string;
   value: T;
   options: readonly T[];
   onChange: (value: T) => void;
+  language: typeof import("@/lib/i18n").languages[number];
 }) {
   return (
     <label className="grid gap-2 text-sm font-semibold text-slate-800">
@@ -333,7 +288,7 @@ function FilterSelect<T extends string>({
       >
         {options.map((option) => (
           <option key={option} value={option}>
-            {option}
+            {localizedOption(language, option)}
           </option>
         ))}
       </select>

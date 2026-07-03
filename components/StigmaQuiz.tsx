@@ -157,7 +157,8 @@ type DirectAnswers = Partial<Record<DirectQuestionKey, number>>;
 
 export function StigmaQuiz() {
   const { language: appLanguage } = useLanguage();
-  const copy = quizCopy[appLanguage];
+  const copy = quizCopy[appLanguage as keyof typeof quizCopy] ?? quizCopy.en;
+  const quizLanguage = appLanguage === "vi" ? "vi" : "en";
   const [ageGroup, setAgeGroup] = useState("");
   const [surveyLanguage, setSurveyLanguage] = useState("");
   const [directAnswers, setDirectAnswers] = useState<DirectAnswers>({});
@@ -240,7 +241,7 @@ export function StigmaQuiz() {
           number={index + 1}
           questionLabel={copy.question}
           options={copy.likert}
-          statement={item.statement[appLanguage]}
+          statement={item.statement[quizLanguage]}
           value={directAnswers[item.key]}
           onChange={(value) => setDirectAnswers((current) => ({ ...current, [item.key]: value }))}
         />
@@ -252,7 +253,7 @@ export function StigmaQuiz() {
           number={directQuestions.length + index + 1}
           questionLabel={copy.question}
           options={copy.likert}
-          statement={item.statement[appLanguage]}
+          statement={item.statement[quizLanguage]}
           value={stigmaAnswers[index]}
           onChange={(value) => setStigmaAnswers((current) => ({ ...current, [index]: value }))}
         />
@@ -340,9 +341,9 @@ export function StigmaQuiz() {
             {stigmaQuestions.map((item) => (
               <article key={item.myth.en} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-rose-700">{copy.myth}</p>
-                <h3 className="mt-2 font-semibold text-slate-950">{item.myth[appLanguage]}</h3>
+                <h3 className="mt-2 font-semibold text-slate-950">{item.myth[quizLanguage]}</h3>
                 <p className="mt-4 text-sm font-semibold uppercase tracking-[0.18em] text-teal-700">{copy.fact}</p>
-                <p className="mt-2 leading-7 text-slate-700">{item.fact[appLanguage]}</p>
+                <p className="mt-2 leading-7 text-slate-700">{item.fact[quizLanguage]}</p>
               </article>
             ))}
           </div>

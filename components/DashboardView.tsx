@@ -72,7 +72,7 @@ const selectFields =
 
 export function DashboardView() {
   const { language } = useLanguage();
-  const text = copy[language];
+  const text = copy[language as keyof typeof copy] ?? copy.en;
   const [responses, setResponses] = useState<SurveyResponse[]>([]);
   const [status, setStatus] = useState<DashboardStatus>("loading");
   const [error, setError] = useState("");

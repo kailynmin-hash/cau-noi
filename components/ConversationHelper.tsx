@@ -160,7 +160,8 @@ const scenarios = [
 
 export function ConversationHelper() {
   const { language } = useLanguage();
-  const text = copy[language];
+  const text = copy[language as keyof typeof copy] ?? copy.en;
+  const scenarioLanguage = language === "vi" ? "vi" : "en";
   const [activeId, setActiveId] = useState("parent");
   const active = scenarios.find((scenario) => scenario.id === activeId) ?? scenarios[0];
 
@@ -188,8 +189,8 @@ export function ConversationHelper() {
                   : "border-slate-200 bg-white text-slate-700 hover:bg-teal-50"
               }`}
             >
-              <span className="block font-semibold">{scenario.label[language]}</span>
-              <span className={activeId === scenario.id ? "text-teal-50" : "text-slate-500"}>{scenario.context[language]}</span>
+              <span className="block font-semibold">{scenario.label[scenarioLanguage]}</span>
+              <span className={activeId === scenario.id ? "text-teal-50" : "text-slate-500"}>{scenario.context[scenarioLanguage]}</span>
             </button>
           ))}
         </div>
@@ -200,7 +201,7 @@ export function ConversationHelper() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-teal-700">{text.dialogue}</p>
-              <h2 className="mt-1 text-2xl font-semibold text-slate-950">{active.label[language]}</h2>
+              <h2 className="mt-1 text-2xl font-semibold text-slate-950">{active.label[scenarioLanguage]}</h2>
             </div>
             <button
               type="button"
@@ -223,8 +224,8 @@ export function ConversationHelper() {
         </article>
 
         <div className="grid gap-4 md:grid-cols-3">
-          <InfoCard icon={MessageCircleHeart} title={text.feedback} body={active.feedback[language]} />
-          <InfoCard icon={RefreshCw} title={text.alternative} body={active.alternative[language]} />
+          <InfoCard icon={MessageCircleHeart} title={text.feedback} body={active.feedback[scenarioLanguage]} />
+          <InfoCard icon={RefreshCw} title={text.alternative} body={active.alternative[scenarioLanguage]} />
           <Link href={active.href} className="rounded-lg border border-slate-200 bg-[#f6faf7] p-5 shadow-sm transition hover:border-teal-300 hover:bg-teal-50">
             <Route size={20} className="text-teal-700" aria-hidden="true" />
             <h3 className="mt-3 font-semibold text-slate-950">{text.next}</h3>

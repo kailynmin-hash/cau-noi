@@ -1,12 +1,13 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import type { LanguageCode } from "@/lib/i18n";
+import { isLanguageCode, translate, translateValue, type LanguageCode } from "@/lib/i18n";
 
 type LanguageContextValue = {
   language: LanguageCode;
   setLanguage: (language: LanguageCode) => void;
-  toggleLanguage: () => void;
+  t: (key: string) => string;
+  tv: <T,>(key: string, fallbackValue: T) => T;
 };
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
@@ -15,7 +16,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<LanguageCode>(() => {
     if (typeof window === "undefined") return "en";
     const saved = window.localStorage.getItem("cau-noi-language");
-    return saved === "en" || saved === "vi" ? saved : "en";
+    return isLanguageCode(saved) ? saved : "en";
   });
 
   useEffect(() => {
@@ -31,7 +32,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     () => ({
       language,
       setLanguage,
-      toggleLanguage: () => setLanguage(language === "en" ? "vi" : "en"),
+      t: (key: string) => translate(language, key),
+      tv: <T,>(key: string, fallbackValue: T) => translateValue(language, key, fallbackValue),
     }),
     [language],
   );

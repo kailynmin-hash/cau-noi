@@ -3,11 +3,9 @@
 import Link from "next/link";
 import { PhoneCall, ShieldCheck } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
-import { uiText } from "@/lib/i18n";
 
 export function CrisisBanner({ compact = false }: { compact?: boolean }) {
-  const { language } = useLanguage();
-  const ui = uiText[language];
+  const { t } = useLanguage();
 
   return (
     <section className="border-y border-rose-200/70 bg-rose-50 text-rose-950">
@@ -17,9 +15,9 @@ export function CrisisBanner({ compact = false }: { compact?: boolean }) {
             <PhoneCall size={18} aria-hidden="true" />
           </span>
           <div>
-            <p className="font-semibold">{ui.crisisTitle}</p>
+            <p className="font-semibold">{t("crisis.title")}</p>
             <p className="text-sm leading-6 text-rose-900">
-              {compact ? ui.crisisBodyCompact : ui.crisisBody}
+              {compact ? t("crisis.bodyCompact") : t("crisis.body")}
             </p>
           </div>
         </div>
@@ -27,7 +25,7 @@ export function CrisisBanner({ compact = false }: { compact?: boolean }) {
           href="tel:988"
           className="inline-flex min-h-11 items-center justify-center rounded-md bg-rose-600 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-700"
         >
-          {ui.call988}
+          {t("common.call988")}
         </a>
       </div>
     </section>
@@ -35,8 +33,7 @@ export function CrisisBanner({ compact = false }: { compact?: boolean }) {
 }
 
 export function SiteFooter() {
-  const { language } = useLanguage();
-  const ui = uiText[language];
+  const { t } = useLanguage();
 
   return (
     <footer className="mt-auto border-t border-teal-950/10 bg-white">
@@ -45,19 +42,19 @@ export function SiteFooter() {
         <div>
           <div className="mb-3 flex items-center gap-2 font-semibold text-slate-950">
             <ShieldCheck size={18} className="text-teal-700" aria-hidden="true" />
-            {ui.privacyTitle}
+            {t("footer.privacyTitle")}
           </div>
-          <p className="max-w-2xl leading-6">{ui.privacyBody}</p>
+          <p className="max-w-2xl leading-6">{t("footer.privacyBody")}</p>
         </div>
         <div className="flex flex-wrap gap-3 md:justify-end">
           <Link href="/about" className="rounded-md px-1 font-medium text-teal-800 hover:text-teal-950">
-            {ui.footerAbout}
+            {t("footer.about")}
           </Link>
           <Link href="/resources" className="rounded-md px-1 font-medium text-teal-800 hover:text-teal-950">
-            {ui.footerResources}
+            {t("footer.resources")}
           </Link>
           <Link href="/quiz" className="rounded-md px-1 font-medium text-teal-800 hover:text-teal-950">
-            {ui.footerQuiz}
+            {t("footer.quiz")}
           </Link>
         </div>
       </div>
