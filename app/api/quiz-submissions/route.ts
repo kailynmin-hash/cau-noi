@@ -13,21 +13,24 @@ const requiredFields: Array<keyof SurveyResponse> = [
 ];
 
 const tableName = "survey_responses";
-const storageNotConfiguredMessage = "Quiz storage is not configured yet.";
-const saveFailedMessage = "We couldn't save your response. Please try again.";
+const expectedColumns = requiredFields;
 
 export async function GET() {
   const config = getSupabaseConfig();
 
   if (!config.ok) {
-    console.error("[quiz-submissions] diagnostics storage config missing", config.debug);
+    console.error("quiz submission error", config.debug);
 
     return NextResponse.json(
       {
         ok: false,
-        status: "storage_not_configured",
-        error: storageNotConfiguredMessage,
-        debug: config.debug,
+        routeLoaded: true,
+        hasSupabaseUrl: config.debug.hasSupabaseUrl,
+        hasSupabaseAnonKey: config.debug.hasSupabaseAnonKey,
+        tableName,
+        expectedColumns,
+        debugError: config.debug.message,
+        debugDetails: config.debug,
       },
       { status: 503 },
     );
@@ -38,21 +41,25 @@ export async function GET() {
 
   if (error) {
     const debugError = {
-      ...config.debug,
       tableName,
+      expectedColumns,
       code: error.code,
       message: error.message,
       details: error.details,
       hint: error.hint,
     };
-    console.error("[quiz-submissions] diagnostics table check failed", debugError);
+    console.error("quiz submission error", debugError);
 
     return NextResponse.json(
       {
         ok: false,
-        status: "table_check_failed",
-        error: saveFailedMessage,
-        debug: debugError,
+        routeLoaded: true,
+        hasSupabaseUrl: config.debug.hasSupabaseUrl,
+        hasSupabaseAnonKey: config.debug.hasSupabaseAnonKey,
+        tableName,
+        expectedColumns,
+        debugError: error.message,
+        debugDetails: debugError,
       },
       { status: 500 },
     );
@@ -60,33 +67,32 @@ export async function GET() {
 
   return NextResponse.json({
     ok: true,
-    status: "ready",
-    debug: {
-      ...config.debug,
-      tableName,
-      columns: requiredFields,
-    },
+    routeLoaded: true,
+    hasSupabaseUrl: config.debug.hasSupabaseUrl,
+    hasSupabaseAnonKey: config.debug.hasSupabaseAnonKey,
+    tableName,
+    expectedColumns,
   });
 }
 
 export async function POST(request: Request) {
   const submitPath = new URL(request.url).pathname;
-  const isDevelopment = process.env.NODE_ENV !== "production";
   const config = getSupabaseConfig();
 
   if (!config.ok) {
     const configError = {
-      ...config.debug,
       submitPath,
+      tableName,
+      expectedColumns,
+      ...config.debug,
     };
-    console.error("[quiz-submissions] Supabase config missing", configError);
+    console.error("quiz submission error", configError);
 
     return NextResponse.json(
       {
         ok: false,
-        status: "storage_not_configured",
-        error: storageNotConfiguredMessage,
-        ...(isDevelopment ? { debug: configError } : {}),
+        debugError: config.debug.message,
+        debugDetails: configError,
       },
       { status: 503 },
     );
@@ -99,9 +105,7 @@ export async function POST(request: Request) {
     const missingFields = requiredFields.filter((field) => body[field] === undefined || body[field] === null || body[field] === "");
 
     if (missingFields.length > 0) {
-      if (isDevelopment) {
-        console.warn("[quiz-submissions] validation failed", { submitPath, missingFields });
-      }
+      console.warn("[quiz-submissions] validation failed", { submitPath, missingFields });
 
       return NextResponse.json(
         { ok: false, error: "Please complete every quiz question before submitting." },
@@ -120,11 +124,12 @@ export async function POST(request: Request) {
     };
 
     const insertColumns = Object.keys(response);
-    console.info("[quiz-submissions] inserting anonymous survey response", {
+    console.info("quiz submission insert attempt", {
       submitPath,
-      ...config.debug,
       tableName,
       columns: insertColumns,
+      hasSupabaseUrl: config.debug.hasSupabaseUrl,
+      hasSupabaseAnonKey: config.debug.hasSupabaseAnonKey,
     });
 
     const { error } = await supabase.from(tableName).insert(response);
@@ -132,7 +137,8 @@ export async function POST(request: Request) {
     if (error) {
       const debugError = {
         submitPath,
-        ...config.debug,
+        hasSupabaseUrl: config.debug.hasSupabaseUrl,
+        hasSupabaseAnonKey: config.debug.hasSupabaseAnonKey,
         tableName,
         columns: insertColumns,
         code: error.code,
@@ -140,35 +146,36 @@ export async function POST(request: Request) {
         details: error.details,
         hint: error.hint,
       };
-      console.error("[quiz-submissions] Supabase insert failed", debugError);
+      console.error("quiz submission error", error);
+      console.error("quiz submission error details", debugError);
 
       return NextResponse.json(
         {
           ok: false,
-          error: saveFailedMessage,
-          ...(isDevelopment ? { debug: debugError } : {}),
+          debugError: error.message,
+          debugDetails: debugError,
         },
         { status: 500 },
       );
     }
 
-    if (isDevelopment) {
-      console.info("[quiz-submissions] submission saved", { submitPath, status: 200 });
-    }
+    console.info("quiz submission saved", { submitPath, tableName, columns: insertColumns });
 
     return NextResponse.json({ ok: true }, { status: 200 });
   } catch (error) {
     const debugError = normalizeError(error);
-    console.error("[quiz-submissions] request failed", {
-      submitPath,
-      ...debugError,
-    });
+    console.error("quiz submission error", error);
 
     return NextResponse.json(
       {
         ok: false,
-        error: saveFailedMessage,
-        ...(isDevelopment ? { debug: { submitPath, ...debugError } } : {}),
+        debugError: debugError.message,
+        debugDetails: {
+          submitPath,
+          tableName,
+          expectedColumns,
+          ...debugError,
+        },
       },
       { status: 500 },
     );
@@ -188,25 +195,25 @@ function getSupabaseConfig():
     } {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const supabaseKey = serviceRoleKey ?? anonKey;
   const parsedUrl = parseSupabaseUrl(supabaseUrl);
   const debug: SupabaseConfigDebug = {
     hasSupabaseUrl: Boolean(supabaseUrl),
     hasSupabaseAnonKey: Boolean(anonKey),
-    hasSupabaseServiceRoleKey: Boolean(serviceRoleKey),
-    usingServiceRoleKey: Boolean(serviceRoleKey),
     supabaseUrlOrigin: parsedUrl.origin,
     supabaseUrlPathname: parsedUrl.pathname,
     supabaseUrlIsValid: parsedUrl.valid,
-    message: !supabaseUrl || !supabaseKey ? "Supabase environment variables are missing." : undefined,
+    message: getConfigMessage({
+      hasSupabaseUrl: Boolean(supabaseUrl),
+      hasSupabaseAnonKey: Boolean(anonKey),
+      supabaseUrlIsValid: parsedUrl.valid,
+    }),
   };
 
-  if (!supabaseUrl || !supabaseKey || !parsedUrl.valid) {
+  if (!supabaseUrl || !anonKey || !parsedUrl.valid) {
     return { ok: false, debug };
   }
 
-  return { ok: true, supabaseUrl, supabaseKey, debug };
+  return { ok: true, supabaseUrl, supabaseKey: anonKey, debug };
 }
 
 function createSupabaseClient(supabaseUrl: string, supabaseKey: string) {
@@ -238,13 +245,36 @@ function parseSupabaseUrl(value: string | undefined) {
 type SupabaseConfigDebug = {
   hasSupabaseUrl: boolean;
   hasSupabaseAnonKey: boolean;
-  hasSupabaseServiceRoleKey: boolean;
-  usingServiceRoleKey: boolean;
   supabaseUrlOrigin: string | null;
   supabaseUrlPathname: string | null;
   supabaseUrlIsValid: boolean;
   message?: string;
 };
+
+function getConfigMessage({
+  hasSupabaseUrl,
+  hasSupabaseAnonKey,
+  supabaseUrlIsValid,
+}: {
+  hasSupabaseUrl: boolean;
+  hasSupabaseAnonKey: boolean;
+  supabaseUrlIsValid: boolean;
+}) {
+  const missing = [
+    !hasSupabaseUrl ? "NEXT_PUBLIC_SUPABASE_URL" : null,
+    !hasSupabaseAnonKey ? "NEXT_PUBLIC_SUPABASE_ANON_KEY" : null,
+  ].filter(Boolean);
+
+  if (missing.length > 0) {
+    return `Missing Vercel environment variable(s): ${missing.join(", ")}`;
+  }
+
+  if (!supabaseUrlIsValid) {
+    return "NEXT_PUBLIC_SUPABASE_URL must be a valid https://*.supabase.co URL with no extra path.";
+  }
+
+  return undefined;
+}
 
 function normalizeError(error: unknown) {
   if (error instanceof Error) {
