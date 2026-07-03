@@ -248,8 +248,8 @@ export function ResourceMap() {
   };
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[320px_1fr]">
-      <aside className="h-fit rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+    <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[280px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(520px,1fr)_320px]">
+      <aside className="min-w-0 rounded-lg border border-slate-200 bg-white p-4 shadow-sm lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto">
         <div className="mb-5 flex items-center justify-between gap-3">
           <p className="flex items-center gap-2 font-semibold text-slate-950">
             <Filter size={18} className="text-teal-700" aria-hidden="true" />
@@ -271,69 +271,68 @@ export function ResourceMap() {
         {mapMessage && <p className="mt-5 rounded-md bg-rose-50 p-3 text-sm leading-6 text-rose-950">{text.satelliteUnavailable}</p>}
       </aside>
 
-      <section className="grid gap-4 lg:grid-cols-[1fr_360px]">
-        <div className="relative min-h-[620px] overflow-hidden rounded-lg border border-teal-900/30 bg-[#061d1b] p-3 text-white shadow-sm">
-          <div className="absolute left-4 top-4 z-20 flex items-center gap-2 rounded-lg border border-white/15 bg-black/35 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-teal-50 backdrop-blur">
-            <span>{text.mapTitle}</span>
-            <span className="group relative inline-flex">
-              <button
-                type="button"
-                aria-label={text.note}
-                className="grid size-5 place-items-center rounded-full text-[13px] font-bold leading-none text-teal-50/90 outline-none transition hover:bg-white/15 focus-visible:ring-2 focus-visible:ring-white/50"
-              >
-                ⓘ
-              </button>
-              <span
-                role="tooltip"
-                className="pointer-events-none absolute left-0 top-7 z-40 hidden w-72 max-w-[calc(100vw-2rem)] rounded-md border border-white/15 bg-white px-3 py-2 text-left text-xs font-medium normal-case leading-5 tracking-normal text-slate-700 shadow-xl group-hover:block group-focus-within:block sm:w-80"
-              >
-                {text.note}
-              </span>
-            </span>
-          </div>
-
-          <div className="absolute right-4 top-4 z-20 flex rounded-lg border border-white/15 bg-black/35 p-1 backdrop-blur">
-            {(["explore", "satellite"] as const).map((option) => (
-              <button
-                key={option}
-                type="button"
-                onClick={() => setMode(option)}
-                className={`min-h-9 rounded-md px-3 text-sm font-semibold transition ${
-                  mode === option ? "bg-white text-teal-950" : "text-white hover:bg-white/10"
-                }`}
-              >
-                {option === "explore" ? text.explore : text.satellite}
-              </button>
-            ))}
-          </div>
-
-          {mapboxToken ? (
-            <div ref={mapContainerRef} className="h-[590px] min-h-[70vh] rounded-lg" />
-          ) : (
-            <div className="grid h-[590px] min-h-[70vh] place-items-center rounded-lg border border-white/10 bg-teal-950/70 p-8 text-center">
-              <div className="max-w-md">
-                <p className="text-lg font-semibold text-white">{text.fallback}</p>
-                <p className="mt-3 text-sm leading-6 text-teal-50">NEXT_PUBLIC_MAPBOX_TOKEN</p>
-              </div>
-            </div>
-          )}
-
-          <div className="absolute bottom-4 left-4 z-20 flex flex-wrap gap-2">
-            <MapButton label={text.zoomIn} onClick={() => mapRef.current?.zoomIn()} icon={Plus} />
-            <MapButton label={text.zoomOut} onClick={() => mapRef.current?.zoomOut()} icon={Minus} />
-            <MapButton label={text.resetView} onClick={resetView} icon={Crosshair} />
+      <div className="relative min-h-[560px] min-w-0 overflow-hidden rounded-lg border border-teal-900/30 bg-[#061d1b] p-3 text-white shadow-sm lg:min-h-[650px]">
+        <div className="absolute left-4 top-4 z-20 flex items-center gap-2 rounded-lg border border-white/15 bg-black/35 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-teal-50 backdrop-blur">
+          <span>{text.mapTitle}</span>
+          <span className="group relative inline-flex">
             <button
               type="button"
-              onClick={useMyArea}
-              className="inline-flex min-h-10 items-center gap-2 rounded-md border border-white/15 bg-black/35 px-3 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/15 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
+              aria-label={text.note}
+              className="grid size-5 place-items-center rounded-full text-[13px] font-bold leading-none text-teal-50/90 outline-none transition hover:bg-white/15 focus-visible:ring-2 focus-visible:ring-white/50"
             >
-              <LocateFixed size={16} aria-hidden="true" />
-              {text.useArea}
+              ⓘ
             </button>
-          </div>
+            <span
+              role="tooltip"
+              className="pointer-events-none absolute left-0 top-7 z-40 hidden w-72 max-w-[calc(100vw-2rem)] rounded-md border border-white/15 bg-white px-3 py-2 text-left text-xs font-medium normal-case leading-5 tracking-normal text-slate-700 shadow-xl group-hover:block group-focus-within:block sm:w-80"
+            >
+              {text.note}
+            </span>
+          </span>
         </div>
 
-        <aside className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="absolute right-4 top-4 z-20 flex rounded-lg border border-white/15 bg-black/35 p-1 backdrop-blur">
+          {(["explore", "satellite"] as const).map((option) => (
+            <button
+              key={option}
+              type="button"
+              onClick={() => setMode(option)}
+              className={`min-h-9 rounded-md px-3 text-sm font-semibold transition ${
+                mode === option ? "bg-white text-teal-950" : "text-white hover:bg-white/10"
+              }`}
+            >
+              {option === "explore" ? text.explore : text.satellite}
+            </button>
+          ))}
+        </div>
+
+        {mapboxToken ? (
+          <div ref={mapContainerRef} className="h-[540px] min-h-[560px] w-full rounded-lg lg:h-[650px] lg:min-h-[650px]" />
+        ) : (
+          <div className="grid h-[540px] min-h-[560px] w-full place-items-center rounded-lg border border-white/10 bg-teal-950/70 p-8 text-center lg:h-[650px] lg:min-h-[650px]">
+            <div className="max-w-md">
+              <p className="text-lg font-semibold text-white">{text.fallback}</p>
+              <p className="mt-3 text-sm leading-6 text-teal-50">NEXT_PUBLIC_MAPBOX_TOKEN</p>
+            </div>
+          </div>
+        )}
+
+        <div className="absolute bottom-4 left-4 z-20 flex flex-wrap gap-2">
+          <MapButton label={text.zoomIn} onClick={() => mapRef.current?.zoomIn()} icon={Plus} />
+          <MapButton label={text.zoomOut} onClick={() => mapRef.current?.zoomOut()} icon={Minus} />
+          <MapButton label={text.resetView} onClick={resetView} icon={Crosshair} />
+          <button
+            type="button"
+            onClick={useMyArea}
+            className="inline-flex min-h-10 items-center gap-2 rounded-md border border-white/15 bg-black/35 px-3 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/15 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
+          >
+            <LocateFixed size={16} aria-hidden="true" />
+            {text.useArea}
+          </button>
+        </div>
+      </div>
+
+      <aside className="min-w-0 rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto xl:col-span-1">
           {selected ? (
             <>
               <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${isUrgent(selected) ? "text-rose-700" : "text-teal-700"}`}>
@@ -393,7 +392,6 @@ export function ResourceMap() {
             <p className="leading-7 text-slate-600">{text.noMatch}</p>
           )}
         </aside>
-      </section>
     </div>
   );
 }
@@ -430,12 +428,12 @@ function Select<T extends string>({
   onChange: (value: T) => void;
 }) {
   return (
-    <label className="grid gap-2 text-sm font-semibold text-slate-800">
+    <label className="grid min-w-0 gap-2 text-sm font-semibold text-slate-800">
       {label}
       <select
         value={value}
         onChange={(event) => onChange(event.target.value as T)}
-        className="min-h-11 rounded-md border border-slate-200 bg-white px-3 text-sm font-medium text-slate-800 shadow-sm outline-none transition focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+        className="min-h-11 w-full max-w-full rounded-md border border-slate-200 bg-white px-3 text-sm font-medium text-slate-800 shadow-sm outline-none transition focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
       >
         {options.map((option) => (
           <option key={option} value={option}>
