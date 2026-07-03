@@ -5,7 +5,7 @@ import Link from "next/link";
 import { AlertCircle, BookOpen, CheckCircle2, HelpCircle, Languages, LockKeyhole, MessageCircleHeart, RotateCcw, Save } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { incrementImpact } from "@/lib/impact";
-import { type SurveyResponse, supabase } from "@/lib/supabase";
+import { type SurveyResponse } from "@/lib/supabase";
 
 const quizCopy = {
   en: {
@@ -26,6 +26,7 @@ const quizCopy = {
     thankYouBody:
       "Your anonymous response was submitted. No names, emails, phone numbers, school names, or IP addresses were stored in the survey response.",
     errorTitle: "Submission was not saved",
+    errorBody: "We couldn't save your response. Please try again.",
     mythFact: "Myth vs. fact",
     mythFactIntro: "Use these explanations as conversation starters. They are not a diagnosis or medical advice.",
     myth: "Myth",
@@ -58,6 +59,7 @@ const quizCopy = {
     thankYouBody:
       "Câu trả lời ẩn danh của bạn đã được gửi. Không có tên, email, số điện thoại, tên trường, hoặc địa chỉ IP nào được lưu trong phản hồi khảo sát.",
     errorTitle: "Chưa lưu được phản hồi",
+    errorBody: "Chúng tôi chưa lưu được câu trả lời của bạn. Vui lòng thử lại.",
     mythFact: "Hiểu lầm và sự thật",
     mythFactIntro: "Bạn có thể dùng phần giải thích này để bắt đầu trò chuyện. Đây không phải chẩn đoán hoặc lời khuyên y tế.",
     myth: "Hiểu lầm",
@@ -193,11 +195,40 @@ export function StigmaQuiz() {
     setStatus("saving");
     setError("");
 
-    const { error: insertError } = await supabase.from("survey_responses").insert(response);
+    const submitUrl = "/api/quiz-submissions";
 
-    if (insertError) {
+    try {
+      if (process.env.NODE_ENV !== "production") {
+        console.info("[quiz] submitting anonymous response", { submitUrl });
+      }
+
+      const result = await fetch(submitUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(response),
+      });
+      const payload = (await result.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
+
+      if (process.env.NODE_ENV !== "production") {
+        console.info("[quiz] submission response", {
+          submitUrl,
+          status: result.status,
+          error: payload?.error,
+        });
+      }
+
+      if (!result.ok || !payload?.ok) {
+        throw new Error(payload?.error ?? "Quiz submission failed.");
+      }
+    } catch (submitError) {
+      if (process.env.NODE_ENV !== "production") {
+        console.error("[quiz] submission failed", {
+          submitUrl,
+          error: submitError,
+        });
+      }
       setStatus("error");
-      setError(insertError.message);
+      setError(copy.errorBody);
       return;
     }
 
@@ -327,7 +358,7 @@ export function StigmaQuiz() {
             <AlertCircle size={18} aria-hidden="true" />
             {copy.errorTitle}
           </p>
-          <p className="mt-2 text-sm leading-6">{error}</p>
+          <p className="mt-2 text-sm leading-6">{error || copy.errorBody}</p>
         </section>
       )}
 
