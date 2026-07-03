@@ -31,6 +31,7 @@ export function translate(language: LanguageCode, key: string): string {
   const localized = readPath(getDictionary(language), key);
   const fallback = readPath(dictionaries.en, key);
   if (typeof localized === "string" && localized.length > 0) return localized;
+  warnMissing(language, key);
   if (typeof fallback === "string" && fallback.length > 0) return fallback;
   return key;
 }
@@ -38,12 +39,31 @@ export function translate(language: LanguageCode, key: string): string {
 export function translateValue<T>(language: LanguageCode, key: string, fallbackValue: T): T {
   const localized = readPath(getDictionary(language), key);
   const fallback = readPath(dictionaries.en, key);
+  if (localized === undefined && language !== "en") warnMissing(language, key);
   return (localized ?? fallback ?? fallbackValue) as T;
 }
 
 export function localizedOption(language: LanguageCode, value: string) {
   const key = optionTranslationKeys[value];
   return key ? translate(language, key) : value;
+}
+
+export function resourceKey(name: string) {
+  return name
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+export function localizedResource(language: LanguageCode, resource: { name: string; description: string; city: string; resourceType: string }) {
+  const key = resourceKey(resource.name);
+  return {
+    name: translate(language, `resources.${key}.name`),
+    description: translate(language, `resources.${key}.description`),
+    city: translate(language, `resources.${key}.city`),
+    category: translate(language, `resources.${key}.category`) || localizedOption(language, resource.resourceType),
+  };
 }
 
 const optionTranslationKeys: Record<string, string> = {
@@ -59,6 +79,22 @@ const optionTranslationKeys: Record<string, string> = {
   Chinese: "filters.chinese",
   Japanese: "filters.japanese",
   Other: "filters.other",
+  Free: "filters.free",
+  "Sliding Scale": "filters.slidingScale",
+  "Insurance Accepted": "filters.insuranceAccepted",
+  "In-Person": "filters.inPerson",
+  Virtual: "filters.virtual",
+  Hotline: "filters.hotline",
+  Hybrid: "filters.hybrid",
+  "Website coming soon": "common.websiteComingSoon",
+  "988 Suicide & Crisis Lifeline": "resourceTypes.crisis",
+  "Orange County Health Care Agency Behavioral Health Services": "resourceTypes.ocHca",
+  "CHOC WellSpaces": "resourceTypes.choc",
+  "School counselors and school wellness centers": "resourceTypes.school",
+  "Teen peer support programs": "resourceTypes.peer",
+  "Community clinics": "resourceTypes.clinics",
+  "Family support resources": "resourceTypes.family",
+  "Vietnamese-language mental-health resources": "resourceTypes.vietnamese",
 };
 
 function readPath(source: unknown, path: string): unknown {
@@ -66,4 +102,9 @@ function readPath(source: unknown, path: string): unknown {
     if (!current || typeof current !== "object") return undefined;
     return (current as Record<string, unknown>)[part];
   }, source);
+}
+
+function warnMissing(language: LanguageCode, key: string) {
+  if (language === "en" || typeof window === "undefined") return;
+  console.warn(`[i18n] Missing translation for "${key}" in "${language}". Falling back to English.`);
 }

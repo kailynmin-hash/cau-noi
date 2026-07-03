@@ -157,7 +157,14 @@
     "korean": "Tiếng Hàn",
     "chinese": "Tiếng Trung",
     "japanese": "Tiếng Nhật",
-    "other": "Khác"
+    "other": "Khác",
+    "free": "Miễn phí",
+    "slidingScale": "Theo khả năng chi trả",
+    "insuranceAccepted": "Nhận bảo hiểm",
+    "inPerson": "Trực tiếp",
+    "virtual": "Trực tuyến",
+    "hotline": "Đường dây nóng",
+    "hybrid": "Kết hợp"
   },
   "map": {
     "eyebrow": "Interactive Resource Map",
@@ -203,13 +210,264 @@
       "eyebrow": "Community Dashboard",
       "title": "Anonymous insights can reveal access gaps.",
       "subtitle": "Live, aggregate trends from anonymous survey responses.",
-      "body": "The dashboard shows only community-level patterns. It does not display names, emails, phone numbers, school names, IP addresses, or individual identities."
+      "body": "The dashboard shows only community-level patterns. It does not display names, emails, phone numbers, school names, IP addresses, or individual identities.",
+      "indicatorsTitle": "Privacy-safe indicators",
+      "indicatorsIntro": "Only anonymous, aggregate survey fields are displayed. No names, emails, phone numbers, school names, or IP addresses appear here.",
+      "impactTitle": "Why This Matters in CA-45",
+      "impactIntro": "Mental-health access is shaped by language, trust, cost, family expectations, and knowing where to begin. Cầu Nối presents these issues in an educational, community-focused, nonpartisan way.",
+      "cards": [
+        [
+          "Mental-health access barriers",
+          "Immigrant families may face stigma, cost concerns, transportation limits, unfamiliar health systems, uncertainty about confidentiality, and pressure to keep struggles private at home."
+        ],
+        [
+          "Language and stigma challenges",
+          "Multilingual resources help youth explain emotions more clearly and help caregivers understand support options without relying on a child to translate sensitive health information."
+        ],
+        [
+          "Culturally responsive care and anonymous data",
+          "Care works better when it respects language, family roles, privacy, and lived experience. Anonymous survey responses help identify access gaps while avoiding identifying information."
+        ]
+      ]
     },
     "about": {
       "eyebrow": "About Cầu Nối",
       "title": "Built to connect youth, families, and support without collecting identity.",
       "subtitle": "A Congressional App Challenge project focused on access, language, and stigma reduction.",
-      "body": "Cầu Nối is a youth mental-health navigator for CA-45 and Orange County. It helps users find resources, practice conversations, reflect on stigma, and understand community needs."
+      "body": "Cầu Nối is a youth mental-health navigator for CA-45 and Orange County. It helps users find resources, practice conversations, reflect on stigma, and understand community needs.",
+      "why": "Vì sao điều này quan trọng",
+      "boundaries": "Ranh giới dữ liệu",
+      "boundaryBody": "Cầu Nối không nên lưu tên, email, số điện thoại, vị trí chính xác, mã số học sinh, tình trạng di trú, hoặc câu trả lời tự do có thể định danh một người.",
+      "cards": [
+        [
+          "Tiếp cận ngôn ngữ",
+          "Thanh thiếu niên và người chăm sóc có thể cần những từ khác nhau để diễn tả căng thẳng, lo âu, trầm buồn, hoặc khủng hoảng."
+        ],
+        [
+          "Giảm định kiến",
+          "Khảo sát và câu gợi ý giúp nhìn việc tìm hỗ trợ như một sự mạnh mẽ, chuẩn bị, và chăm sóc cho sức khỏe gia đình."
+        ],
+        [
+          "Riêng tư từ thiết kế",
+          "Ứng dụng tránh hoàn toàn các trường định danh và không yêu cầu người dùng tiết lộ họ là ai."
+        ]
+      ]
     }
+  },
+  "resourceTypes": {
+    "crisis": "988 Đường dây Khủng hoảng và Phòng chống Tự tử",
+    "ocHca": "Dịch vụ sức khỏe hành vi Orange County",
+    "choc": "Không gian WellSpaces của CHOC",
+    "school": "Cố vấn học đường và trung tâm sức khỏe",
+    "peer": "Chương trình hỗ trợ đồng trang lứa cho teen",
+    "clinics": "Phòng khám cộng đồng",
+    "family": "Nguồn hỗ trợ gia đình",
+    "vietnamese": "Nguồn sức khỏe tinh thần tiếng Việt"
+  },
+  "resources": {
+    "988-suicide-and-crisis-lifeline": {
+      "name": "988 Suicide & Crisis Lifeline",
+      "city": "Nationwide / CA-45",
+      "category": "988 Đường dây Khủng hoảng và Phòng chống Tự tử",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "oc-links-behavioral-health-navigation": {
+      "name": "OC Links Behavioral Health Navigation",
+      "city": "Orange County",
+      "category": "Dịch vụ sức khỏe hành vi Orange County",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "oc-hca-children-and-youth-behavioral-health-services": {
+      "name": "OC HCA Children & Youth Behavioral Health Services",
+      "city": "Orange County",
+      "category": "Dịch vụ sức khỏe hành vi Orange County",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "be-well-oc-orange-campus": {
+      "name": "Be Well OC Orange Campus",
+      "city": "Orange",
+      "category": "Dịch vụ sức khỏe hành vi Orange County",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "nami-orange-county-warmline": {
+      "name": "NAMI Orange County WarmLine",
+      "city": "Fountain Valley",
+      "category": "Chương trình hỗ trợ đồng trang lứa cho teen",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "nami-orange-county-teens-and-young-adults": {
+      "name": "NAMI Orange County Teens & Young Adults",
+      "city": "Fountain Valley",
+      "category": "Chương trình hỗ trợ đồng trang lứa cho teen",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "nami-orange-county-family-support-groups": {
+      "name": "NAMI Orange County Family Support Groups",
+      "city": "Fountain Valley",
+      "category": "Nguồn hỗ trợ gia đình",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "western-youth-services-mental-health-clinics": {
+      "name": "Western Youth Services Mental Health Clinics",
+      "city": "Santa Ana",
+      "category": "Phòng khám cộng đồng",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "waymakers-youth-shelters": {
+      "name": "Waymakers Youth Shelters",
+      "city": "Orange County",
+      "category": "Chương trình hỗ trợ đồng trang lứa cho teen",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "the-priority-center": {
+      "name": "The Priority Center",
+      "city": "Santa Ana",
+      "category": "Nguồn hỗ trợ gia đình",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "choc-pediatric-mental-health-services": {
+      "name": "CHOC Pediatric Mental Health Services",
+      "city": "Orange",
+      "category": "Không gian WellSpaces của CHOC",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "choc-wellspaces": {
+      "name": "CHOC WellSpaces",
+      "city": "Orange County schools",
+      "category": "Không gian WellSpaces của CHOC",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "ocapica-behavioral-health-services": {
+      "name": "OCAPICA Behavioral Health Services",
+      "city": "Garden Grove",
+      "category": "Nguồn sức khỏe tinh thần tiếng Việt",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "southland-integrated-services-behavioral-health": {
+      "name": "Southland Integrated Services Behavioral Health",
+      "city": "Garden Grove",
+      "category": "Nguồn sức khỏe tinh thần tiếng Việt",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "families-together-oc-garden-grove-health-center": {
+      "name": "Families Together OC Garden Grove Health Center",
+      "city": "Garden Grove",
+      "category": "Phòng khám cộng đồng",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "serve-the-people-behavioral-health": {
+      "name": "Serve the People Behavioral Health",
+      "city": "Santa Ana",
+      "category": "Phòng khám cộng đồng",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "altamed-behavioral-health-services": {
+      "name": "AltaMed Behavioral Health Services",
+      "city": "Orange County",
+      "category": "Phòng khám cộng đồng",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "latino-health-access": {
+      "name": "Latino Health Access",
+      "city": "Santa Ana",
+      "category": "Nguồn hỗ trợ gia đình",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "lgbtq-center-oc-therapy": {
+      "name": "LGBTQ Center OC Therapy",
+      "city": "Santa Ana",
+      "category": "Chương trình hỗ trợ đồng trang lứa cho teen",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "california-youth-crisis-line": {
+      "name": "California Youth Crisis Line",
+      "city": "California / CA-45",
+      "category": "Chương trình hỗ trợ đồng trang lứa cho teen",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "teen-line-by-didi-hirsch": {
+      "name": "Teen Line by Didi Hirsch",
+      "city": "California / CA-45",
+      "category": "Chương trình hỗ trợ đồng trang lứa cho teen",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "the-trevor-project": {
+      "name": "The Trevor Project",
+      "city": "Nationwide / CA-45",
+      "category": "Chương trình hỗ trợ đồng trang lứa cho teen",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "crisis-text-line": {
+      "name": "Crisis Text Line",
+      "city": "Nationwide / CA-45",
+      "category": "988 Đường dây Khủng hoảng và Phòng chống Tự tử",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "ggusd-mental-health-resources": {
+      "name": "GGUSD Mental Health Resources",
+      "city": "Garden Grove",
+      "category": "Cố vấn học đường và trung tâm sức khỏe",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "westminster-high-school-the-well": {
+      "name": "Westminster High School THE WELL",
+      "city": "Westminster",
+      "category": "Cố vấn học đường và trung tâm sức khỏe",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "hbuhsd-wellness-resources": {
+      "name": "HBUHSD Wellness Resources",
+      "city": "Huntington Beach / Fountain Valley / Westminster",
+      "category": "Cố vấn học đường và trung tâm sức khỏe",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "fountain-valley-school-district-mental-health-and-wellness-resources": {
+      "name": "Fountain Valley School District Mental Health & Wellness Resources",
+      "city": "Fountain Valley",
+      "category": "Cố vấn học đường và trung tâm sức khỏe",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    },
+    "westminster-school-district-family-community-resources": {
+      "name": "Westminster School District Family/Community Resources",
+      "city": "Westminster",
+      "category": "Cố vấn học đường và trung tâm sức khỏe",
+      "description": "Nguồn hỗ trợ sức khỏe tinh thần và thanh thiếu niên đã được xác minh. Hãy truy cập trang web để xem thông tin mới nhất về dịch vụ, chi phí, điều kiện và hỗ trợ ngôn ngữ."
+    }
+  },
+  "impact": {
+    "title": "Chỉ số tác động cộng đồng",
+    "intro": "Các tín hiệu ẩn danh cho thấy Cầu Nối đang được dùng như một công cụ điều hướng hỗ trợ youth.",
+    "resources": "Nguồn hỗ trợ đã xem",
+    "conversations": "Lượt luyện trò chuyện",
+    "quizzes": "Khảo sát đã hoàn tất",
+    "submissions": "Phản hồi khảo sát",
+    "aggregate": "Ẩn danh và tổng hợp"
+  },
+  "homeShowcase": {
+    "statsTitle": "Hữu ích ngay từ lần bấm đầu tiên",
+    "stats": [
+      [
+        "6",
+        "trang điều hướng"
+      ],
+      [
+        "8",
+        "câu khảo sát ẩn danh"
+      ],
+      [
+        "6",
+        "ngôn ngữ hỗ trợ"
+      ],
+      [
+        "24/7",
+        "hỗ trợ khủng hoảng qua 988"
+      ]
+    ],
+    "testimonialsTitle": "Phản hồi cộng đồng ẩn danh",
+    "testimonials": [
+      "Em sẽ dùng trang này trước khi nói với ba mẹ vì nó cho em những câu nghe vẫn tôn trọng.",
+      "Phần đa ngôn ngữ giúp giải thích sức khỏe tinh thần dễ hơn mà không giống như đang trách ai.",
+      "Có nguồn hỗ trợ và phần tập trò chuyện cùng một nơi làm việc xin giúp đỡ bớt quá sức."
+    ]
   }
 }

@@ -157,7 +157,14 @@
     "korean": "Korean",
     "chinese": "Chinese",
     "japanese": "Japanese",
-    "other": "Other"
+    "other": "Other",
+    "free": "Free",
+    "slidingScale": "Sliding Scale",
+    "insuranceAccepted": "Insurance Accepted",
+    "inPerson": "In-Person",
+    "virtual": "Virtual",
+    "hotline": "Hotline",
+    "hybrid": "Hybrid"
   },
   "map": {
     "eyebrow": "Interactive Resource Map",
@@ -203,13 +210,264 @@
       "eyebrow": "Community Dashboard",
       "title": "Anonymous insights can reveal access gaps.",
       "subtitle": "Live, aggregate trends from anonymous survey responses.",
-      "body": "The dashboard shows only community-level patterns. It does not display names, emails, phone numbers, school names, IP addresses, or individual identities."
+      "body": "The dashboard shows only community-level patterns. It does not display names, emails, phone numbers, school names, IP addresses, or individual identities.",
+      "indicatorsTitle": "Privacy-safe indicators",
+      "indicatorsIntro": "Only anonymous, aggregate survey fields are displayed. No names, emails, phone numbers, school names, or IP addresses appear here.",
+      "impactTitle": "Why This Matters in CA-45",
+      "impactIntro": "Mental-health access is shaped by language, trust, cost, family expectations, and knowing where to begin. Cầu Nối presents these issues in an educational, community-focused, nonpartisan way.",
+      "cards": [
+        [
+          "Mental-health access barriers",
+          "Immigrant families may face stigma, cost concerns, transportation limits, unfamiliar health systems, uncertainty about confidentiality, and pressure to keep struggles private at home."
+        ],
+        [
+          "Language and stigma challenges",
+          "Multilingual resources help youth explain emotions more clearly and help caregivers understand support options without relying on a child to translate sensitive health information."
+        ],
+        [
+          "Culturally responsive care and anonymous data",
+          "Care works better when it respects language, family roles, privacy, and lived experience. Anonymous survey responses help identify access gaps while avoiding identifying information."
+        ]
+      ]
     },
     "about": {
       "eyebrow": "About Cầu Nối",
       "title": "Built to connect youth, families, and support without collecting identity.",
       "subtitle": "A Congressional App Challenge project focused on access, language, and stigma reduction.",
-      "body": "Cầu Nối is a youth mental-health navigator for CA-45 and Orange County. It helps users find resources, practice conversations, reflect on stigma, and understand community needs."
+      "body": "Cầu Nối is a youth mental-health navigator for CA-45 and Orange County. It helps users find resources, practice conversations, reflect on stigma, and understand community needs.",
+      "why": "Why it matters",
+      "boundaries": "Data boundaries",
+      "boundaryBody": "Cầu Nối should not store names, emails, phone numbers, exact locations, school IDs, immigration status, or free-text disclosures that could identify a person. Future versions should keep analytics aggregate, opt-in, and privacy reviewed.",
+      "cards": [
+        [
+          "Language access",
+          "Youth and caregivers may need different words to describe stress, anxiety, depression, or crisis. Multilingual prompts lower the first barrier."
+        ],
+        [
+          "Stigma reduction",
+          "The quiz and scripts reframe help-seeking as strength, preparation, and care for family wellbeing."
+        ],
+        [
+          "Privacy by design",
+          "The app avoids identity fields entirely. It gives guidance without asking users to disclose who they are."
+        ]
+      ]
     }
+  },
+  "resourceTypes": {
+    "crisis": "988 Suicide & Crisis Lifeline",
+    "ocHca": "Orange County Health Care Agency Behavioral Health Services",
+    "choc": "CHOC WellSpaces",
+    "school": "School counselors and school wellness centers",
+    "peer": "Teen peer support programs",
+    "clinics": "Community clinics",
+    "family": "Family support resources",
+    "vietnamese": "Vietnamese-language mental-health resources"
+  },
+  "resources": {
+    "988-suicide-and-crisis-lifeline": {
+      "name": "988 Suicide & Crisis Lifeline",
+      "city": "Nationwide / CA-45",
+      "category": "988 Suicide & Crisis Lifeline",
+      "description": "Immediate 24/7 crisis support for anyone experiencing suicidal thoughts, emotional distress, or concern for someone else."
+    },
+    "oc-links-behavioral-health-navigation": {
+      "name": "OC Links Behavioral Health Navigation",
+      "city": "Orange County",
+      "category": "Orange County Health Care Agency Behavioral Health Services",
+      "description": "Free county behavioral-health navigation that connects residents to mental-health and substance-use referrals, crisis support, and programs."
+    },
+    "oc-hca-children-and-youth-behavioral-health-services": {
+      "name": "OC HCA Children & Youth Behavioral Health Services",
+      "city": "Orange County",
+      "category": "Orange County Health Care Agency Behavioral Health Services",
+      "description": "County children and youth behavioral-health services, including prevention, crisis recovery, outpatient support, and specialty programs."
+    },
+    "be-well-oc-orange-campus": {
+      "name": "Be Well OC Orange Campus",
+      "city": "Orange",
+      "category": "Orange County Health Care Agency Behavioral Health Services",
+      "description": "Orange County mental-health and substance-use support campus with system navigation for residents seeking help."
+    },
+    "nami-orange-county-warmline": {
+      "name": "NAMI Orange County WarmLine",
+      "city": "Fountain Valley",
+      "category": "Teen peer support programs",
+      "description": "Free confidential emotional support and resource connection for Orange County residents by phone, text, or chat."
+    },
+    "nami-orange-county-teens-and-young-adults": {
+      "name": "NAMI Orange County Teens & Young Adults",
+      "city": "Fountain Valley",
+      "category": "Teen peer support programs",
+      "description": "Teen and young-adult mental-health resources, peer stories, and support pathways from NAMI Orange County."
+    },
+    "nami-orange-county-family-support-groups": {
+      "name": "NAMI Orange County Family Support Groups",
+      "city": "Fountain Valley",
+      "category": "Family support resources",
+      "description": "Peer-led family support groups and education for caregivers and loved ones supporting someone with a mental-health condition."
+    },
+    "western-youth-services-mental-health-clinics": {
+      "name": "Western Youth Services Mental Health Clinics",
+      "city": "Santa Ana",
+      "category": "Community clinics",
+      "description": "Outpatient mental-health services for Orange County children and youth, including Medi-Cal eligible clients under 21."
+    },
+    "waymakers-youth-shelters": {
+      "name": "Waymakers Youth Shelters",
+      "city": "Orange County",
+      "category": "Teen peer support programs",
+      "description": "Short-term shelter and crisis intervention for runaway, homeless, abused, and at-risk youth ages 11-17."
+    },
+    "the-priority-center": {
+      "name": "The Priority Center",
+      "city": "Santa Ana",
+      "category": "Family support resources",
+      "description": "Early intervention, crisis support, mental-health services, and family advocacy for Orange County children and families."
+    },
+    "choc-pediatric-mental-health-services": {
+      "name": "CHOC Pediatric Mental Health Services",
+      "city": "Orange",
+      "category": "CHOC WellSpaces",
+      "description": "Pediatric mental-health resources, education, and behavioral-health information for children, teens, parents, and caregivers."
+    },
+    "choc-wellspaces": {
+      "name": "CHOC WellSpaces",
+      "city": "Orange County schools",
+      "category": "CHOC WellSpaces",
+      "description": "Youth-centered wellness spaces and school-linked supports designed to reduce stress and connect students with trusted adults."
+    },
+    "ocapica-behavioral-health-services": {
+      "name": "OCAPICA Behavioral Health Services",
+      "city": "Garden Grove",
+      "category": "Vietnamese-language mental-health resources",
+      "description": "Culturally responsive behavioral-health services including therapy, case management, wellness workshops, referrals, and peer support."
+    },
+    "southland-integrated-services-behavioral-health": {
+      "name": "Southland Integrated Services Behavioral Health",
+      "city": "Garden Grove",
+      "category": "Vietnamese-language mental-health resources",
+      "description": "Culturally responsive behavioral-health care for Vietnamese Americans and other Orange County communities, including therapy and medication support."
+    },
+    "families-together-oc-garden-grove-health-center": {
+      "name": "Families Together OC Garden Grove Health Center",
+      "city": "Garden Grove",
+      "category": "Community clinics",
+      "description": "Community clinic in Garden Grove offering medical care and mental-health services such as individual counseling."
+    },
+    "serve-the-people-behavioral-health": {
+      "name": "Serve the People Behavioral Health",
+      "city": "Santa Ana",
+      "category": "Community clinics",
+      "description": "Affordable behavioral-health care and counseling services from an integrated community health center in Santa Ana."
+    },
+    "altamed-behavioral-health-services": {
+      "name": "AltaMed Behavioral Health Services",
+      "city": "Orange County",
+      "category": "Community clinics",
+      "description": "Short-term therapy and behavioral-health linkage through AltaMed for patients and families needing mental-health support."
+    },
+    "latino-health-access": {
+      "name": "Latino Health Access",
+      "city": "Santa Ana",
+      "category": "Family support resources",
+      "description": "Community-based health education, services, and advocacy with culturally and linguistically appropriate programs for Orange County families."
+    },
+    "lgbtq-center-oc-therapy": {
+      "name": "LGBTQ Center OC Therapy",
+      "city": "Santa Ana",
+      "category": "Teen peer support programs",
+      "description": "LGBTQ-affirming therapy, groups, and mental-health support for Orange County community members."
+    },
+    "california-youth-crisis-line": {
+      "name": "California Youth Crisis Line",
+      "city": "California / CA-45",
+      "category": "Teen peer support programs",
+      "description": "24/7 statewide crisis support for youth ages 12-24 and families in crisis, with counseling and local resource referrals."
+    },
+    "teen-line-by-didi-hirsch": {
+      "name": "Teen Line by Didi Hirsch",
+      "city": "California / CA-45",
+      "category": "Teen peer support programs",
+      "description": "Peer-to-peer teen support line where trained teens help other teens talk through stress, relationships, anxiety, and crisis concerns."
+    },
+    "the-trevor-project": {
+      "name": "The Trevor Project",
+      "city": "Nationwide / CA-45",
+      "category": "Teen peer support programs",
+      "description": "24/7 crisis support and suicide prevention services for LGBTQ+ young people by phone, chat, and text."
+    },
+    "crisis-text-line": {
+      "name": "Crisis Text Line",
+      "city": "Nationwide / CA-45",
+      "category": "988 Suicide & Crisis Lifeline",
+      "description": "Free 24/7 confidential text-based crisis support with trained volunteer Crisis Counselors."
+    },
+    "ggusd-mental-health-resources": {
+      "name": "GGUSD Mental Health Resources",
+      "city": "Garden Grove",
+      "category": "School counselors and school wellness centers",
+      "description": "Garden Grove Unified mental-health resource page with crisis numbers, district supports, and community resource links for students and families."
+    },
+    "westminster-high-school-the-well": {
+      "name": "Westminster High School THE WELL",
+      "city": "Westminster",
+      "category": "School counselors and school wellness centers",
+      "description": "On-campus wellness center offering free student mental-health services, family support, case management, and referrals during school hours."
+    },
+    "hbuhsd-wellness-resources": {
+      "name": "HBUHSD Wellness Resources",
+      "city": "Huntington Beach / Fountain Valley / Westminster",
+      "category": "School counselors and school wellness centers",
+      "description": "Huntington Beach Union High School District wellness resources and student mental-health supports, including teletherapy information."
+    },
+    "fountain-valley-school-district-mental-health-and-wellness-resources": {
+      "name": "Fountain Valley School District Mental Health & Wellness Resources",
+      "city": "Fountain Valley",
+      "category": "School counselors and school wellness centers",
+      "description": "District mental-health and wellness resource page with crisis contacts, community partners, and family support links."
+    },
+    "westminster-school-district-family-community-resources": {
+      "name": "Westminster School District Family/Community Resources",
+      "city": "Westminster",
+      "category": "School counselors and school wellness centers",
+      "description": "Westminster School District family and community resource hub with mental-health, wellness, medical, and support information."
+    }
+  },
+  "impact": {
+    "title": "Community impact metrics",
+    "intro": "Anonymous signals show how Cầu Nối is being used as a youth support navigator.",
+    "resources": "Resources viewed",
+    "conversations": "Conversations practiced",
+    "quizzes": "Quizzes completed",
+    "submissions": "Survey submissions",
+    "aggregate": "Anonymous and aggregate"
+  },
+  "homeShowcase": {
+    "statsTitle": "Built to feel useful from the first click",
+    "stats": [
+      [
+        "6",
+        "navigation pages"
+      ],
+      [
+        "8",
+        "anonymous quiz prompts"
+      ],
+      [
+        "6",
+        "supported languages"
+      ],
+      [
+        "24/7",
+        "crisis access through 988"
+      ]
+    ],
+    "testimonialsTitle": "Anonymous community feedback",
+    "testimonials": [
+      "I would use this before talking to my parents because it gives me words that still sound respectful.",
+      "The multilingual parts make it easier to explain mental health without making it feel like blame.",
+      "Seeing resources and conversation practice in one place makes asking for help feel less overwhelming."
+    ]
   }
 }

@@ -41,10 +41,10 @@
     "quiz": "Quiz"
   },
   "home": {
-    "eyebrow": "Cầu Nối means bridge",
-    "title": "A multilingual mental-health navigator for CA-45 youth.",
-    "subtitle": "Support for youth, families, and trusted adults across languages.",
-    "intro": "Find support, practice family conversations, challenge stigma, and see community needs without creating an account or sharing identifying information.",
+    "eyebrow": "Cầu Nối は「橋」を意味します",
+    "title": "CA-45 の若者のための多言語メンタルヘルス・ナビゲーター。",
+    "subtitle": "若者、家族、信頼できる大人のための多言語サポート。",
+    "intro": "アカウント作成や個人情報共有なしで、支援を探し、家族との会話を練習し、スティグマを減らし、地域のニーズを理解できます。",
     "primary": "Find support",
     "secondary": "Practice a conversation",
     "pathTitle": "Choose your path",
@@ -114,11 +114,11 @@
     ]
   },
   "resourcesPage": {
-    "eyebrow": "Resource Finder",
-    "title": "Find CA-45 and Orange County support without giving your identity.",
-    "subtitle": "Local options organized by language, cost, resource type, city, and access format.",
-    "body": "Filter local options by language, cost, resource type, city, and in-person or virtual access. This page does not collect names, emails, addresses, or school IDs.",
-    "intro": "Resource information changes. Users should verify hours, eligibility, services, costs, and language access directly with providers before seeking care."
+    "eyebrow": "リソース検索",
+    "title": "身元を伝えずに CA-45 とオレンジ郡の支援を探せます。",
+    "subtitle": "言語、費用、種類、都市、形式で整理された地域の選択肢。",
+    "body": "言語、費用、リソース種類、都市、対面/オンラインで地域の選択肢を絞り込めます。",
+    "intro": "情報は変わることがあります。利用前に時間、条件、費用、言語サポートを提供者へ確認してください。"
   },
   "resourceFinder": {
     "filters": "フィルター",
@@ -157,13 +157,20 @@
     "korean": "韓国語",
     "chinese": "中国語",
     "japanese": "日本語",
-    "other": "その他"
+    "other": "その他",
+    "free": "無料",
+    "slidingScale": "所得に応じた料金",
+    "insuranceAccepted": "保険利用可",
+    "inPerson": "対面",
+    "virtual": "オンライン",
+    "hotline": "ホットライン",
+    "hybrid": "ハイブリッド"
   },
   "map": {
-    "eyebrow": "Interactive Resource Map",
-    "title": "Map youth mental-health support across CA-45.",
-    "subtitle": "High-tech filtering for language, insurance, age, city, and service type.",
-    "body": "Explore counseling centers, school resources, crisis lines, community clinics, and bilingual services in a polished map view. Locations are approximate for planning.",
+    "eyebrow": "インタラクティブ・リソース地図",
+    "title": "CA-45 の若者向けメンタルヘルス支援マップ。",
+    "subtitle": "言語、保険、年齢、都市、サービス種類で絞り込み。",
+    "body": "地図でリソースを探索できます。位置は計画用の概算です。",
     "filters": "Map filters",
     "insurance": "Insurance / cost",
     "age": "Age group",
@@ -188,28 +195,279 @@
   },
   "pages": {
     "conversation": {
-      "eyebrow": "Family Conversation Helper",
-      "title": "Practice a hard conversation before you have it.",
-      "subtitle": "Side-by-side English and Vietnamese scripts for teens and families.",
-      "body": "Choose a scenario and practice respectful language that reduces blame, lowers stigma, and helps everyone focus on support."
+      "eyebrow": "家族会話ヘルパー",
+      "title": "難しい会話を始める前に練習しましょう。",
+      "subtitle": "若者と家族のための敬意あるスクリプト。",
+      "body": "場面を選び、責めずにスティグマを減らし、支援に集中する言葉を練習できます。"
     },
     "quiz": {
-      "eyebrow": "Anonymous Stigma Quiz",
-      "title": "Reflect on mental-health stigma without sharing your identity.",
-      "subtitle": "Eight quick questions, no names, no emails, no school names.",
-      "body": "Your anonymous answers help show where youth may need clearer language, family conversation tools, or resource awareness."
+      "eyebrow": "匿名スティグマ・クイズ",
+      "title": "身元を共有せずにメンタルヘルスのスティグマを振り返れます。",
+      "subtitle": "名前、メール、学校名なしの8つの質問。",
+      "body": "匿名回答は、より明確な言葉、家族会話ツール、リソース認知が必要な場所を示します。"
     },
     "dashboard": {
-      "eyebrow": "Community Dashboard",
-      "title": "Anonymous insights can reveal access gaps.",
-      "subtitle": "Live, aggregate trends from anonymous survey responses.",
-      "body": "The dashboard shows only community-level patterns. It does not display names, emails, phone numbers, school names, IP addresses, or individual identities."
+      "eyebrow": "コミュニティ・ダッシュボード",
+      "title": "匿名インサイトはアクセス格差を明らかにできます。",
+      "subtitle": "匿名調査回答からの集計傾向。",
+      "body": "ダッシュボードは地域レベルの傾向のみを表示し、個人情報は表示しません。",
+      "indicatorsTitle": "Privacy-safe indicators",
+      "indicatorsIntro": "Only anonymous, aggregate survey fields are displayed. No names, emails, phone numbers, school names, or IP addresses appear here.",
+      "impactTitle": "Why This Matters in CA-45",
+      "impactIntro": "Mental-health access is shaped by language, trust, cost, family expectations, and knowing where to begin. Cầu Nối presents these issues in an educational, community-focused, nonpartisan way.",
+      "cards": [
+        [
+          "Mental-health access barriers",
+          "Immigrant families may face stigma, cost concerns, transportation limits, unfamiliar health systems, uncertainty about confidentiality, and pressure to keep struggles private at home."
+        ],
+        [
+          "Language and stigma challenges",
+          "Multilingual resources help youth explain emotions more clearly and help caregivers understand support options without relying on a child to translate sensitive health information."
+        ],
+        [
+          "Culturally responsive care and anonymous data",
+          "Care works better when it respects language, family roles, privacy, and lived experience. Anonymous survey responses help identify access gaps while avoiding identifying information."
+        ]
+      ]
     },
     "about": {
-      "eyebrow": "About Cầu Nối",
-      "title": "Built to connect youth, families, and support without collecting identity.",
-      "subtitle": "A Congressional App Challenge project focused on access, language, and stigma reduction.",
-      "body": "Cầu Nối is a youth mental-health navigator for CA-45 and Orange County. It helps users find resources, practice conversations, reflect on stigma, and understand community needs."
+      "eyebrow": "Cầu Nối について",
+      "title": "身元を収集せずに若者、家族、支援をつなぎます。",
+      "subtitle": "アクセス、言語、スティグマ軽減に焦点を当てたプロジェクト。",
+      "body": "Cầu Nối はリソース検索、会話練習、スティグマの振り返り、地域ニーズの理解を助けます。",
+      "why": "なぜ重要か",
+      "boundaries": "データの境界",
+      "boundaryBody": "Cầu Nối は氏名、メール、電話番号、正確な位置、学校ID、移民ステータス、個人を特定し得る自由記述を保存すべきではありません。",
+      "cards": [
+        [
+          "言語アクセス",
+          "若者と保護者は、ストレス、不安、うつ、危機を説明するために異なる言葉を必要とすることがあります。"
+        ],
+        [
+          "スティグマの軽減",
+          "クイズと会話スクリプトは、助けを求めることを強さと家族へのケアとして捉え直します。"
+        ],
+        [
+          "プライバシー重視",
+          "このアプリは本人確認情報を避け、身元を明かさずに案内します。"
+        ]
+      ]
     }
+  },
+  "resourceTypes": {
+    "crisis": "988 自殺・危機ライフライン",
+    "ocHca": "オレンジ郡行動保健サービス",
+    "choc": "CHOC WellSpaces",
+    "school": "学校カウンセラーとウェルネスセンター",
+    "peer": "若者ピアサポートプログラム",
+    "clinics": "地域クリニック",
+    "family": "家族支援リソース",
+    "vietnamese": "ベトナム語メンタルヘルスリソース"
+  },
+  "resources": {
+    "988-suicide-and-crisis-lifeline": {
+      "name": "988 Suicide & Crisis Lifeline",
+      "city": "Nationwide / CA-45",
+      "category": "988 自殺・危機ライフライン",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "oc-links-behavioral-health-navigation": {
+      "name": "OC Links Behavioral Health Navigation",
+      "city": "Orange County",
+      "category": "オレンジ郡行動保健サービス",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "oc-hca-children-and-youth-behavioral-health-services": {
+      "name": "OC HCA Children & Youth Behavioral Health Services",
+      "city": "Orange County",
+      "category": "オレンジ郡行動保健サービス",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "be-well-oc-orange-campus": {
+      "name": "Be Well OC Orange Campus",
+      "city": "Orange",
+      "category": "オレンジ郡行動保健サービス",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "nami-orange-county-warmline": {
+      "name": "NAMI Orange County WarmLine",
+      "city": "Fountain Valley",
+      "category": "若者ピアサポートプログラム",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "nami-orange-county-teens-and-young-adults": {
+      "name": "NAMI Orange County Teens & Young Adults",
+      "city": "Fountain Valley",
+      "category": "若者ピアサポートプログラム",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "nami-orange-county-family-support-groups": {
+      "name": "NAMI Orange County Family Support Groups",
+      "city": "Fountain Valley",
+      "category": "家族支援リソース",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "western-youth-services-mental-health-clinics": {
+      "name": "Western Youth Services Mental Health Clinics",
+      "city": "Santa Ana",
+      "category": "地域クリニック",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "waymakers-youth-shelters": {
+      "name": "Waymakers Youth Shelters",
+      "city": "Orange County",
+      "category": "若者ピアサポートプログラム",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "the-priority-center": {
+      "name": "The Priority Center",
+      "city": "Santa Ana",
+      "category": "家族支援リソース",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "choc-pediatric-mental-health-services": {
+      "name": "CHOC Pediatric Mental Health Services",
+      "city": "Orange",
+      "category": "CHOC WellSpaces",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "choc-wellspaces": {
+      "name": "CHOC WellSpaces",
+      "city": "Orange County schools",
+      "category": "CHOC WellSpaces",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "ocapica-behavioral-health-services": {
+      "name": "OCAPICA Behavioral Health Services",
+      "city": "Garden Grove",
+      "category": "ベトナム語メンタルヘルスリソース",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "southland-integrated-services-behavioral-health": {
+      "name": "Southland Integrated Services Behavioral Health",
+      "city": "Garden Grove",
+      "category": "ベトナム語メンタルヘルスリソース",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "families-together-oc-garden-grove-health-center": {
+      "name": "Families Together OC Garden Grove Health Center",
+      "city": "Garden Grove",
+      "category": "地域クリニック",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "serve-the-people-behavioral-health": {
+      "name": "Serve the People Behavioral Health",
+      "city": "Santa Ana",
+      "category": "地域クリニック",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "altamed-behavioral-health-services": {
+      "name": "AltaMed Behavioral Health Services",
+      "city": "Orange County",
+      "category": "地域クリニック",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "latino-health-access": {
+      "name": "Latino Health Access",
+      "city": "Santa Ana",
+      "category": "家族支援リソース",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "lgbtq-center-oc-therapy": {
+      "name": "LGBTQ Center OC Therapy",
+      "city": "Santa Ana",
+      "category": "若者ピアサポートプログラム",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "california-youth-crisis-line": {
+      "name": "California Youth Crisis Line",
+      "city": "California / CA-45",
+      "category": "若者ピアサポートプログラム",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "teen-line-by-didi-hirsch": {
+      "name": "Teen Line by Didi Hirsch",
+      "city": "California / CA-45",
+      "category": "若者ピアサポートプログラム",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "the-trevor-project": {
+      "name": "The Trevor Project",
+      "city": "Nationwide / CA-45",
+      "category": "若者ピアサポートプログラム",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "crisis-text-line": {
+      "name": "Crisis Text Line",
+      "city": "Nationwide / CA-45",
+      "category": "988 自殺・危機ライフライン",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "ggusd-mental-health-resources": {
+      "name": "GGUSD Mental Health Resources",
+      "city": "Garden Grove",
+      "category": "学校カウンセラーとウェルネスセンター",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "westminster-high-school-the-well": {
+      "name": "Westminster High School THE WELL",
+      "city": "Westminster",
+      "category": "学校カウンセラーとウェルネスセンター",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "hbuhsd-wellness-resources": {
+      "name": "HBUHSD Wellness Resources",
+      "city": "Huntington Beach / Fountain Valley / Westminster",
+      "category": "学校カウンセラーとウェルネスセンター",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "fountain-valley-school-district-mental-health-and-wellness-resources": {
+      "name": "Fountain Valley School District Mental Health & Wellness Resources",
+      "city": "Fountain Valley",
+      "category": "学校カウンセラーとウェルネスセンター",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    },
+    "westminster-school-district-family-community-resources": {
+      "name": "Westminster School District Family/Community Resources",
+      "city": "Westminster",
+      "category": "学校カウンセラーとウェルネスセンター",
+      "description": "確認済みのメンタルヘルスおよび若者支援リソースです。最新のサービス、費用、対象条件、言語サポートはウェブサイトで確認してください。"
+    }
+  },
+  "impact": {
+    "title": "コミュニティ影響指標",
+    "intro": "匿名のシグナルは、Cầu Nối が若者支援ナビとしてどのように使われているかを示します。",
+    "resources": "閲覧したリソース",
+    "conversations": "練習した会話",
+    "quizzes": "完了したクイズ",
+    "submissions": "調査回答",
+    "aggregate": "匿名・集計"
+  },
+  "homeShowcase": {
+    "statsTitle": "最初のクリックから役立つ設計",
+    "stats": [
+      [
+        "6",
+        "ナビゲーションページ"
+      ],
+      [
+        "8",
+        "匿名クイズ項目"
+      ],
+      [
+        "6",
+        "対応言語"
+      ],
+      [
+        "24/7",
+        "988を通じた危機支援"
+      ]
+    ],
+    "testimonialsTitle": "匿名のコミュニティフィードバック",
+    "testimonials": [
+      "親に話す前に使いたいです。敬意ある言葉を見つけられるからです。",
+      "多言語部分は、責める感じなくメンタルヘルスを説明しやすくします。",
+      "リソースと会話練習が一か所にあり、助けを求める負担が減ります。"
+    ]
   }
 }

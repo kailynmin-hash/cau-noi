@@ -13,6 +13,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
+import { localizedOption, localizedResource, type LanguageCode } from "@/lib/i18n";
 import {
   type AgeGroupFilter,
   type CityFilter,
@@ -33,68 +34,36 @@ const initialZoom = 12;
 const minZoom = 10;
 const maxZoom = 17;
 
-const copy = {
-  en: {
-    filters: "Map filters",
-    reset: "Reset",
-    language: "Language",
-    insurance: "Insurance / cost",
-    age: "Age group",
-    service: "Service type",
-    city: "City",
-    explore: "Explore",
-    satellite: "Satellite",
-    mapTitle: "CA-45 live resource map",
-    fallback:
-      "Mapbox token is missing. Add NEXT_PUBLIC_MAPBOX_TOKEN in Vercel to load Explore and Satellite map styles.",
-    satelliteUnavailable: "Satellite view is temporarily unavailable.",
-    note: "Pins are approximate resource locations for demo planning. Verify details directly with providers.",
-    selected: "Selected resource",
-    noMatch: "No map resources match those filters.",
-    access: "Accessibility",
-    zoomIn: "Zoom in",
-    zoomOut: "Zoom out",
-    resetView: "Reset view",
-    useArea: "Use my area",
-    distance: "Distance",
-    cta: "Open details",
-    websiteComingSoon: "Website coming soon",
-    urgent: "Urgent help",
-  },
-  vi: {
-    filters: "Bộ lọc bản đồ",
-    reset: "Đặt lại",
-    language: "Ngôn ngữ",
-    insurance: "Bảo hiểm / chi phí",
-    age: "Nhóm tuổi",
-    service: "Loại dịch vụ",
-    city: "Thành phố",
-    explore: "Khám phá",
-    satellite: "Vệ tinh",
-    mapTitle: "Bản đồ nguồn hỗ trợ CA-45",
-    fallback:
-      "Thiếu Mapbox token. Hãy thêm NEXT_PUBLIC_MAPBOX_TOKEN trong Vercel để tải bản đồ Explore và Satellite.",
-    satelliteUnavailable: "Chế độ vệ tinh tạm thời không khả dụng.",
-    note: "Các điểm ghim là vị trí nguồn hỗ trợ gần đúng cho bản demo. Hãy xác minh trực tiếp với nhà cung cấp.",
-    selected: "Nguồn hỗ trợ đã chọn",
-    noMatch: "Không có nguồn hỗ trợ phù hợp với bộ lọc.",
-    access: "Tiếp cận",
-    zoomIn: "Phóng to",
-    zoomOut: "Thu nhỏ",
-    resetView: "Đặt lại bản đồ",
-    useArea: "Dùng vị trí của tôi",
-    distance: "Khoảng cách",
-    cta: "Xem chi tiết",
-    websiteComingSoon: "Sắp có trang web",
-    urgent: "Hỗ trợ khẩn cấp",
-  },
-} as const;
-
 type MapMode = "explore" | "satellite";
 
 export function ResourceMap() {
-  const { language } = useLanguage();
-  const text = copy[language as keyof typeof copy] ?? copy.en;
+  const { language, t } = useLanguage();
+  const text = {
+    filters: t("map.filters"),
+    reset: t("common.reset"),
+    language: t("resourceFinder.language"),
+    insurance: t("map.insurance"),
+    age: t("map.age"),
+    service: t("map.service"),
+    city: t("map.city"),
+    explore: t("map.explore"),
+    satellite: t("map.satellite"),
+    mapTitle: t("map.mapTitle"),
+    fallback: t("map.fallback"),
+    satelliteUnavailable: t("map.satelliteUnavailable"),
+    note: t("map.note"),
+    selected: t("map.selected"),
+    noMatch: t("map.noMatch"),
+    access: t("map.access"),
+    zoomIn: t("map.zoomIn"),
+    zoomOut: t("map.zoomOut"),
+    resetView: t("map.resetView"),
+    useArea: t("map.useArea"),
+    distance: t("map.distance"),
+    cta: t("map.cta"),
+    websiteComingSoon: t("common.websiteComingSoon"),
+    urgent: t("map.urgent"),
+  };
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapboxMap | null>(null);
   const markerRef = useRef<Marker[]>([]);
@@ -129,6 +98,7 @@ export function ResourceMap() {
 
   const selected = filtered.find((resource) => resource.name === selectedName) ?? filtered[0] ?? null;
   const popupResource = selectedResource && filtered.some((resource) => resource.name === selectedResource.name) ? selectedResource : null;
+  const localizedSelected = selected ? localizedResource(language, selected) : null;
 
   const syncMarkers = () => {
     const map = mapRef.current;
@@ -230,7 +200,7 @@ export function ResourceMap() {
       maxWidth: "340px",
     })
       .setLngLat([popupResource.coordinates.lng, popupResource.coordinates.lat])
-      .setDOMContent(createResourcePopup(popupResource))
+      .setDOMContent(createResourcePopup(popupResource, language))
       .addTo(map);
 
     let isCleaningUp = false;
@@ -248,7 +218,7 @@ export function ResourceMap() {
         popupRef.current = null;
       }
     };
-  }, [popupResource]);
+  }, [language, popupResource]);
 
   const resetFilters = () => {
     setLanguageFilter("All languages");
@@ -355,18 +325,18 @@ export function ResourceMap() {
               <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${isUrgent(selected) ? "text-rose-700" : "text-teal-700"}`}>
                 {isUrgent(selected) ? text.urgent : text.selected}
               </p>
-              <h2 className="mt-2 text-2xl font-semibold text-slate-950">{selected.name}</h2>
-              <p className="mt-2 text-sm font-medium text-slate-600">{selected.city}</p>
+              <h2 className="mt-2 text-2xl font-semibold text-slate-950">{localizedSelected?.name}</h2>
+              <p className="mt-2 text-sm font-medium text-slate-600">{localizedSelected?.city}</p>
               {userLocation && (
                 <p className="mt-2 text-sm font-semibold text-teal-800">
                   {text.distance}: {distanceMiles(userLocation, selected.coordinates).toFixed(1)} mi
                 </p>
               )}
-              <p className="mt-4 leading-7 text-slate-700">{selected.description}</p>
+              <p className="mt-4 leading-7 text-slate-700">{localizedSelected?.description}</p>
               <div className="mt-5 flex flex-wrap gap-2">
                 {[...selected.languages, ...selected.costTypes, ...selected.ageGroups].map((tag) => (
                   <span key={tag} className="rounded-md bg-teal-50 px-2.5 py-1 text-xs font-semibold text-teal-900">
-                    {tag}
+                    {localizedOption(language, tag)}
                   </span>
                 ))}
               </div>
@@ -481,12 +451,13 @@ function isUrgent(resource: Resource) {
   return resource.resourceType === "988 Suicide & Crisis Lifeline";
 }
 
-function createResourcePopup(resource: Resource) {
+function createResourcePopup(resource: Resource, language: LanguageCode) {
+  const localized = localizedResource(language, resource);
   const fallback = "Resource details unavailable";
-  const name = resource.name || fallback;
-  const description = resource.description || fallback;
-  const city = resource.city || fallback;
-  const category = resource.resourceType || resource.serviceType || fallback;
+  const name = localized.name || fallback;
+  const description = localized.description || fallback;
+  const city = localized.city || fallback;
+  const category = localized.category || fallback;
   const phone = hasUsablePhone(resource.phone) ? resource.phone : "";
   const websiteUrl = resource.websiteUrl || "";
 
@@ -531,7 +502,7 @@ function createResourcePopup(resource: Resource) {
   } else {
     const fallback = document.createElement("p");
     fallback.className = "resource-map-popup-fallback";
-    fallback.textContent = "Website coming soon";
+    fallback.textContent = localizedOption(language, "Website coming soon");
     container.append(fallback);
   }
 

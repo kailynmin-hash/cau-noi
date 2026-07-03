@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { incrementImpact } from "@/lib/impact";
-import { localizedOption } from "@/lib/i18n";
+import { localizedOption, localizedResource } from "@/lib/i18n";
 import {
   type CostFilter,
   type CityFilter,
@@ -158,36 +158,53 @@ export function ResourceFinder() {
         {filteredResources.length > 0 ? (
           <div className="grid min-w-0 gap-4 md:grid-cols-2">
             {filteredResources.map((resource) => (
-              <article key={resource.name} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+              <ResourceCard key={resource.name} resource={resource} language={appLanguage} />
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center">
+            <h3 className="text-xl font-semibold text-slate-950">{t("resourceFinder.emptyTitle")}</h3>
+            <p className="mt-2 text-sm text-slate-600">{t("resourceFinder.emptyBody")}</p>
+          </div>
+        )}
+      </section>
+    </div>
+  );
+
+  function ResourceCard({ resource, language }: { resource: (typeof resources)[number]; language: typeof appLanguage }) {
+    const localized = localizedResource(language, resource);
+
+    return (
+      <article className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
                 <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-teal-700">
-                      {resource.resourceType}
+                      {localized.category}
                     </p>
                     <p className="mt-2 flex items-center gap-2 text-sm font-medium text-slate-600">
                       <MapPin size={16} aria-hidden="true" />
-                      {resource.city}
+                      {localized.city}
                     </p>
-                    <h3 className="mt-2 text-xl font-semibold text-slate-950">{resource.name}</h3>
+                    <h3 className="mt-2 text-xl font-semibold text-slate-950">{localized.name}</h3>
                   </div>
                   <span className="w-fit rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">
-                    {resource.mode}
+                    {localizedOption(language, resource.mode)}
                   </span>
                 </div>
 
-                <p className="mb-5 leading-7 text-slate-700">{resource.description}</p>
+                <p className="mb-5 leading-7 text-slate-700">{localized.description}</p>
 
                 <dl className="grid gap-3 text-sm text-slate-700">
                   <ResourceMeta icon={<Phone size={16} aria-hidden="true" />} label={t("resourceFinder.phone")} value={resource.phone} />
                   <ResourceMeta
                     icon={<Languages size={16} aria-hidden="true" />}
                     label={t("resourceFinder.languages")}
-                    value={resource.languages.join(", ")}
+                    value={resource.languages.map((item) => localizedOption(language, item)).join(", ")}
                   />
                   <ResourceMeta
                     icon={<MonitorSmartphone size={16} aria-hidden="true" />}
                     label={t("resourceFinder.format")}
-                    value={resource.mode}
+                    value={localizedOption(language, resource.mode)}
                   />
                   <ResourceMeta
                     icon={<Accessibility size={16} aria-hidden="true" />}
@@ -202,7 +219,7 @@ export function ResourceFinder() {
                       key={costType}
                       className="rounded-md bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-900"
                     >
-                      {costType}
+                      {localizedOption(language, costType)}
                     </span>
                   ))}
                 </div>
@@ -252,17 +269,8 @@ export function ResourceFinder() {
                   )}
                 </div>
               </article>
-            ))}
-          </div>
-        ) : (
-          <div className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center">
-            <h3 className="text-xl font-semibold text-slate-950">{t("resourceFinder.emptyTitle")}</h3>
-            <p className="mt-2 text-sm text-slate-600">{t("resourceFinder.emptyBody")}</p>
-          </div>
-        )}
-      </section>
-    </div>
-  );
+    );
+  }
 }
 
 function FilterSelect<T extends string>({

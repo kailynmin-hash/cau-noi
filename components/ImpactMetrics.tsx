@@ -6,28 +6,8 @@ import { useLanguage } from "@/components/LanguageProvider";
 import { readLocalImpact, type LocalImpactMetrics } from "@/lib/impact";
 import { supabase } from "@/lib/supabase";
 
-const copy = {
-  en: {
-    title: "Community impact metrics",
-    intro: "Anonymous signals show how Cầu Nối is being used as a youth support navigator.",
-    resources: "Resources viewed",
-    conversations: "Conversations practiced",
-    quizzes: "Quizzes completed",
-    submissions: "Survey submissions",
-  },
-  vi: {
-    title: "Chỉ số tác động cộng đồng",
-    intro: "Các tín hiệu ẩn danh cho thấy Cầu Nối đang được dùng như một công cụ điều hướng hỗ trợ youth.",
-    resources: "Nguồn hỗ trợ đã xem",
-    conversations: "Lượt luyện trò chuyện",
-    quizzes: "Khảo sát đã hoàn tất",
-    submissions: "Phản hồi khảo sát",
-  },
-} as const;
-
 export function ImpactMetrics() {
-  const { language } = useLanguage();
-  const text = copy[language as keyof typeof copy] ?? copy.en;
+  const { t } = useLanguage();
   const [local, setLocal] = useState<LocalImpactMetrics>({ resourcesViewed: 0, conversationsPracticed: 0, quizzesCompleted: 0 });
   const [submissions, setSubmissions] = useState(0);
 
@@ -49,17 +29,17 @@ export function ImpactMetrics() {
   }, [refresh]);
 
   const metrics = [
-    { label: text.resources, value: local.resourcesViewed, icon: Search },
-    { label: text.conversations, value: local.conversationsPracticed, icon: MessageCircleHeart },
-    { label: text.quizzes, value: local.quizzesCompleted, icon: ClipboardCheck },
-    { label: text.submissions, value: submissions, icon: BarChart3 },
+    { label: t("impact.resources"), value: local.resourcesViewed, icon: Search },
+    { label: t("impact.conversations"), value: local.conversationsPracticed, icon: MessageCircleHeart },
+    { label: t("impact.quizzes"), value: local.quizzesCompleted, icon: ClipboardCheck },
+    { label: t("impact.submissions"), value: submissions, icon: BarChart3 },
   ];
 
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
       <div className="mb-5">
-        <h2 className="text-2xl font-semibold text-slate-950">{text.title}</h2>
-        <p className="mt-2 leading-7 text-slate-600">{text.intro}</p>
+        <h2 className="text-2xl font-semibold text-slate-950">{t("impact.title")}</h2>
+        <p className="mt-2 leading-7 text-slate-600">{t("impact.intro")}</p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {metrics.map((metric) => (
@@ -72,7 +52,7 @@ export function ImpactMetrics() {
       </div>
       <p className="mt-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-teal-700">
         <BookOpen size={14} aria-hidden="true" />
-        Anonymous and aggregate
+        {t("impact.aggregate")}
       </p>
     </section>
   );
