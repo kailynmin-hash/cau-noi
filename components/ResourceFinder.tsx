@@ -11,6 +11,7 @@ import {
   MonitorSmartphone,
   Phone,
   RotateCcw,
+  Search,
   Tags,
 } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
@@ -31,6 +32,8 @@ const finderCopy = {
   en: {
     filters: "Filters",
     reset: "Reset",
+    search: "Search resources",
+    searchPlaceholder: "Search by name, city, service, or language",
     language: "Language",
     cost: "Cost",
     type: "Resource type",
@@ -55,6 +58,8 @@ const finderCopy = {
   vi: {
     filters: "Bộ lọc",
     reset: "Đặt lại",
+    search: "Tìm kiếm nguồn hỗ trợ",
+    searchPlaceholder: "Tìm theo tên, thành phố, dịch vụ, hoặc ngôn ngữ",
     language: "Ngôn ngữ",
     cost: "Chi phí",
     type: "Loại nguồn hỗ trợ",
@@ -81,6 +86,7 @@ const finderCopy = {
 export function ResourceFinder() {
   const { language: appLanguage } = useLanguage();
   const copy = finderCopy[appLanguage];
+  const [query, setQuery] = useState("");
   const [language, setLanguage] = useState<LanguageFilter>("All languages");
   const [cost, setCost] = useState<CostFilter>("All costs");
   const [resourceType, setResourceType] = useState<ResourceTypeFilter>("All resource types");
@@ -89,6 +95,23 @@ export function ResourceFinder() {
   const filteredResources = useMemo(
     () =>
       resources.filter((resource) => {
+        const normalizedQuery = query.trim().toLowerCase();
+        const searchableText = [
+          resource.name,
+          resource.resourceType,
+          resource.city,
+          resource.description,
+          resource.mode,
+          resource.serviceType,
+          ...resource.languages,
+          ...resource.costTypes,
+          ...resource.ageGroups,
+          ...resource.accessibility,
+          ...resource.tags,
+        ]
+          .join(" ")
+          .toLowerCase();
+        const queryMatches = normalizedQuery.length === 0 || searchableText.includes(normalizedQuery);
         const languageMatches = language === "All languages" || resource.languages.includes(language);
         const costMatches = cost === "All costs" || resource.costTypes.includes(cost);
         const typeMatches = resourceType === "All resource types" || resource.resourceType === resourceType;
@@ -96,12 +119,13 @@ export function ResourceFinder() {
           mode === "Any format" ||
           resource.mode === mode ||
           (mode !== "In-Person and Virtual" && resource.mode === "In-Person and Virtual");
-        return languageMatches && costMatches && typeMatches && modeMatches;
+        return queryMatches && languageMatches && costMatches && typeMatches && modeMatches;
       }),
-    [cost, language, mode, resourceType],
+    [cost, language, mode, query, resourceType],
   );
 
   const resetFilters = () => {
+    setQuery("");
     setLanguage("All languages");
     setCost("All costs");
     setResourceType("All resource types");
@@ -127,6 +151,23 @@ export function ResourceFinder() {
         </div>
 
         <div className="grid gap-4">
+          <label className="grid gap-2 text-sm font-semibold text-slate-800">
+            {copy.search}
+            <span className="relative">
+              <Search
+                size={16}
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                aria-hidden="true"
+              />
+              <input
+                type="search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder={copy.searchPlaceholder}
+                className="min-h-11 w-full rounded-md border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm font-medium text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+              />
+            </span>
+          </label>
           <FilterSelect label={copy.language} value={language} options={languageOptions} onChange={setLanguage} />
           <FilterSelect label={copy.cost} value={cost} options={costOptions} onChange={setCost} />
           <FilterSelect label={copy.type} value={resourceType} options={resourceTypeOptions} onChange={setResourceType} />
