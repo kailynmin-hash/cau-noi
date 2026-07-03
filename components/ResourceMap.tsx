@@ -15,11 +15,13 @@ import {
 import { useLanguage } from "@/components/LanguageProvider";
 import {
   type AgeGroupFilter,
+  type CityFilter,
   type CostFilter,
   type LanguageFilter,
   type Resource,
   type ServiceTypeFilter,
   ageGroupOptions,
+  cityOptions,
   costOptions,
   languageOptions,
   resources,
@@ -39,6 +41,7 @@ const copy = {
     insurance: "Insurance / cost",
     age: "Age group",
     service: "Service type",
+    city: "City",
     explore: "Explore",
     satellite: "Satellite",
     mapTitle: "CA-45 live resource map",
@@ -65,6 +68,7 @@ const copy = {
     insurance: "Bảo hiểm / chi phí",
     age: "Nhóm tuổi",
     service: "Loại dịch vụ",
+    city: "Thành phố",
     explore: "Khám phá",
     satellite: "Vệ tinh",
     mapTitle: "Bản đồ nguồn hỗ trợ CA-45",
@@ -104,6 +108,7 @@ export function ResourceMap() {
   const [costFilter, setCostFilter] = useState<CostFilter>("All costs");
   const [ageFilter, setAgeFilter] = useState<AgeGroupFilter>("All age groups");
   const [serviceFilter, setServiceFilter] = useState<ServiceTypeFilter>("All service types");
+  const [cityFilter, setCityFilter] = useState<CityFilter>("All cities");
   const [selectedName, setSelectedName] = useState(resources[0].name);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
@@ -115,9 +120,10 @@ export function ResourceMap() {
         const costMatch = costFilter === "All costs" || resource.costTypes.includes(costFilter);
         const ageMatch = ageFilter === "All age groups" || resource.ageGroups.includes(ageFilter) || resource.ageGroups.includes("All ages");
         const serviceMatch = serviceFilter === "All service types" || resource.serviceType === serviceFilter;
-        return languageMatch && costMatch && ageMatch && serviceMatch;
+        const cityMatch = cityFilter === "All cities" || resource.city === cityFilter;
+        return languageMatch && costMatch && ageMatch && serviceMatch && cityMatch;
       }),
-    [ageFilter, costFilter, languageFilter, serviceFilter],
+    [ageFilter, cityFilter, costFilter, languageFilter, serviceFilter],
   );
 
   const selected = filtered.find((resource) => resource.name === selectedName) ?? filtered[0] ?? null;
@@ -228,6 +234,7 @@ export function ResourceMap() {
     setCostFilter("All costs");
     setAgeFilter("All age groups");
     setServiceFilter("All service types");
+    setCityFilter("All cities");
   };
 
   const resetView = () => {
@@ -267,6 +274,7 @@ export function ResourceMap() {
           <Select label={text.insurance} value={costFilter} options={costOptions} onChange={setCostFilter} />
           <Select label={text.age} value={ageFilter} options={ageGroupOptions} onChange={setAgeFilter} />
           <Select label={text.service} value={serviceFilter} options={serviceTypeOptions} onChange={setServiceFilter} />
+          <Select label={text.city} value={cityFilter} options={cityOptions} onChange={setCityFilter} />
         </div>
         {!mapboxToken && <p className="mt-5 rounded-md bg-sky-50 p-3 text-sm leading-6 text-sky-950">{text.fallback}</p>}
         {mapMessage && <p className="mt-5 rounded-md bg-rose-50 p-3 text-sm leading-6 text-rose-950">{text.satelliteUnavailable}</p>}
@@ -352,9 +360,9 @@ export function ResourceMap() {
                   ))}
                 </ul>
               </div>
-              {selected.url ? (
+              {selected.websiteUrl ? (
                 <a
-                  href={selected.url}
+                  href={selected.websiteUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md px-4 text-sm font-semibold text-white transition focus-visible:outline-none focus-visible:ring-4 ${
@@ -457,7 +465,7 @@ function createResourcePopup(resource: Resource) {
   const description = resource.description || "Description coming soon.";
   const city = resource.city || "Location details coming soon.";
   const category = resource.resourceType || resource.serviceType || "Resource";
-  const websiteUrl = resource.url || "";
+  const websiteUrl = resource.websiteUrl || "";
 
   const container = document.createElement("article");
   container.className = "resource-map-popup-card";

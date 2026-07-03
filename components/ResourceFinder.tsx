@@ -18,9 +18,11 @@ import { useLanguage } from "@/components/LanguageProvider";
 import { incrementImpact } from "@/lib/impact";
 import {
   type CostFilter,
+  type CityFilter,
   type LanguageFilter,
   type ModeFilter,
   type ResourceTypeFilter,
+  cityOptions,
   costOptions,
   languageOptions,
   modeOptions,
@@ -38,6 +40,7 @@ const finderCopy = {
     cost: "Cost",
     type: "Resource type",
     mode: "In-person or virtual",
+    city: "City",
     privateNote: "No search terms or personal details are saved. Filters only change what appears on this screen.",
     verifyNote: "Verify hours, eligibility, cost, and language access directly with providers before seeking care.",
     title: "CA-45 and Orange County resource finder",
@@ -64,6 +67,7 @@ const finderCopy = {
     cost: "Chi phí",
     type: "Loại nguồn hỗ trợ",
     mode: "Trực tiếp hoặc trực tuyến",
+    city: "Thành phố",
     privateNote: "Không lưu từ khóa tìm kiếm hoặc thông tin cá nhân. Bộ lọc chỉ thay đổi nội dung hiển thị trên màn hình này.",
     verifyNote: "Hãy xác minh giờ làm việc, điều kiện, chi phí, và hỗ trợ ngôn ngữ trực tiếp với nhà cung cấp trước khi tìm sự chăm sóc.",
     title: "Tìm nguồn hỗ trợ tại CA-45 và Orange County",
@@ -91,6 +95,7 @@ export function ResourceFinder() {
   const [cost, setCost] = useState<CostFilter>("All costs");
   const [resourceType, setResourceType] = useState<ResourceTypeFilter>("All resource types");
   const [mode, setMode] = useState<ModeFilter>("Any format");
+  const [city, setCity] = useState<CityFilter>("All cities");
 
   const filteredResources = useMemo(
     () =>
@@ -99,9 +104,11 @@ export function ResourceFinder() {
         const searchableText = [
           resource.name,
           resource.resourceType,
+          resource.category,
           resource.city,
           resource.description,
           resource.mode,
+          resource.format,
           resource.serviceType,
           ...resource.languages,
           ...resource.costTypes,
@@ -115,13 +122,11 @@ export function ResourceFinder() {
         const languageMatches = language === "All languages" || resource.languages.includes(language);
         const costMatches = cost === "All costs" || resource.costTypes.includes(cost);
         const typeMatches = resourceType === "All resource types" || resource.resourceType === resourceType;
-        const modeMatches =
-          mode === "Any format" ||
-          resource.mode === mode ||
-          (mode !== "In-Person and Virtual" && resource.mode === "In-Person and Virtual");
-        return queryMatches && languageMatches && costMatches && typeMatches && modeMatches;
+        const modeMatches = mode === "Any format" || resource.mode === mode;
+        const cityMatches = city === "All cities" || resource.city === city;
+        return queryMatches && languageMatches && costMatches && typeMatches && modeMatches && cityMatches;
       }),
-    [cost, language, mode, query, resourceType],
+    [city, cost, language, mode, query, resourceType],
   );
 
   const resetFilters = () => {
@@ -130,11 +135,12 @@ export function ResourceFinder() {
     setCost("All costs");
     setResourceType("All resource types");
     setMode("Any format");
+    setCity("All cities");
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
-      <aside className="h-fit rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
+      <aside className="h-fit min-w-0 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <div className="mb-5 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 font-semibold text-slate-950">
             <Filter size={18} className="text-teal-700" aria-hidden="true" />
@@ -172,6 +178,7 @@ export function ResourceFinder() {
           <FilterSelect label={copy.cost} value={cost} options={costOptions} onChange={setCost} />
           <FilterSelect label={copy.type} value={resourceType} options={resourceTypeOptions} onChange={setResourceType} />
           <FilterSelect label={copy.mode} value={mode} options={modeOptions} onChange={setMode} />
+          <FilterSelect label={copy.city} value={city} options={cityOptions} onChange={setCity} />
         </div>
 
         <p className="mt-5 rounded-md bg-[#f6faf7] p-3 text-sm leading-6 text-slate-600">
@@ -182,7 +189,7 @@ export function ResourceFinder() {
         </p>
       </aside>
 
-      <section aria-label="Resource results">
+      <section aria-label="Resource results" className="min-w-0">
         <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 className="text-2xl font-semibold text-slate-950">{copy.title}</h2>
@@ -196,7 +203,7 @@ export function ResourceFinder() {
         </div>
 
         {filteredResources.length > 0 ? (
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid min-w-0 gap-4 md:grid-cols-2">
             {filteredResources.map((resource) => (
               <article key={resource.name} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
                 <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -260,9 +267,9 @@ export function ResourceFinder() {
                 </div>
 
                 <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-                  {resource.url ? (
+                  {resource.websiteUrl ? (
                     <a
-                      href={resource.url}
+                      href={resource.websiteUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => incrementImpact("resourcesViewed")}
@@ -322,7 +329,7 @@ function FilterSelect<T extends string>({
       <select
         value={value}
         onChange={(event) => onChange(event.target.value as T)}
-        className="min-h-11 rounded-md border border-slate-200 bg-white px-3 text-sm font-medium text-slate-800 shadow-sm outline-none transition focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+        className="min-h-11 w-full max-w-full rounded-md border border-slate-200 bg-white px-3 text-sm font-medium text-slate-800 shadow-sm outline-none transition focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
       >
         {options.map((option) => (
           <option key={option} value={option}>
@@ -336,12 +343,12 @@ function FilterSelect<T extends string>({
 
 function ResourceMeta({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
   return (
-    <div className="flex gap-2">
+    <div className="flex min-w-0 gap-2">
       <dt className="flex min-w-24 items-center gap-1.5 font-semibold text-slate-950">
         <span className="text-teal-700">{icon}</span>
         {label}
       </dt>
-      <dd>{value}</dd>
+      <dd className="min-w-0 break-words">{value}</dd>
     </div>
   );
 }
