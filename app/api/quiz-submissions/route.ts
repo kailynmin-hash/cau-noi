@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { type SurveyResponse, supabase } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
+import { type SurveyResponse } from "@/lib/supabase";
 
 const requiredFields: Array<keyof SurveyResponse> = [
   "age_group",
@@ -13,13 +14,42 @@ const requiredFields: Array<keyof SurveyResponse> = [
 
 export async function POST(request: Request) {
   const submitPath = new URL(request.url).pathname;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const isDevelopment = process.env.NODE_ENV !== "production";
+
+  if (!supabaseUrl || !supabaseKey) {
+    const configError = {
+      submitPath,
+      hasSupabaseUrl: Boolean(supabaseUrl),
+      hasSupabaseKey: Boolean(supabaseKey),
+      message: "Supabase environment variables are missing.",
+    };
+    console.error("[quiz-submissions] Supabase config missing", configError);
+
+    return NextResponse.json(
+      {
+        ok: false,
+        error: "We couldn't save your response. Please try again.",
+        ...(isDevelopment ? { debug: configError } : {}),
+      },
+      { status: 500 },
+    );
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseKey, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  });
 
   try {
     const body = (await request.json()) as Partial<SurveyResponse>;
     const missingFields = requiredFields.filter((field) => body[field] === undefined || body[field] === null || body[field] === "");
 
     if (missingFields.length > 0) {
-      if (process.env.NODE_ENV !== "production") {
+      if (isDevelopment) {
         console.warn("[quiz-submissions] validation failed", { submitPath, missingFields });
       }
 
@@ -42,36 +72,58 @@ export async function POST(request: Request) {
     const { error } = await supabase.from("survey_responses").insert(response);
 
     if (error) {
-      if (process.env.NODE_ENV !== "production") {
-        console.error("[quiz-submissions] Supabase insert failed", {
-          submitPath,
-          status: error.code,
-          error: error.message,
-        });
-      }
+      const debugError = {
+        submitPath,
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+      };
+      console.error("[quiz-submissions] Supabase insert failed", debugError);
 
       return NextResponse.json(
-        { ok: false, error: "We couldn't save your response. Please try again." },
+        {
+          ok: false,
+          error: "We couldn't save your response. Please try again.",
+          ...(isDevelopment ? { debug: debugError } : {}),
+        },
         { status: 500 },
       );
     }
 
-    if (process.env.NODE_ENV !== "production") {
+    if (isDevelopment) {
       console.info("[quiz-submissions] submission saved", { submitPath, status: 200 });
     }
 
     return NextResponse.json({ ok: true }, { status: 200 });
   } catch (error) {
-    if (process.env.NODE_ENV !== "production") {
-      console.error("[quiz-submissions] request failed", {
-        submitPath,
-        error,
-      });
-    }
+    const debugError = normalizeError(error);
+    console.error("[quiz-submissions] request failed", {
+      submitPath,
+      ...debugError,
+    });
 
     return NextResponse.json(
-      { ok: false, error: "We couldn't save your response. Please try again." },
+      {
+        ok: false,
+        error: "We couldn't save your response. Please try again.",
+        ...(isDevelopment ? { debug: { submitPath, ...debugError } } : {}),
+      },
       { status: 500 },
     );
   }
+}
+
+function normalizeError(error: unknown) {
+  if (error instanceof Error) {
+    return {
+      name: error.name,
+      message: error.message,
+      stack: error.stack,
+    };
+  }
+
+  return {
+    message: String(error),
+  };
 }
