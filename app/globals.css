@@ -122,6 +122,7 @@ article.rounded-lg:hover {
 .resource-map-popup-card {
   display: grid;
   gap: 8px;
+  max-width: 340px;
   min-width: 240px;
   padding: 16px;
 }
@@ -148,6 +149,7 @@ article.rounded-lg:hover {
 
 .resource-map-popup-location,
 .resource-map-popup-description,
+.resource-map-popup-phone,
 .resource-map-popup-fallback {
   color: #475569;
   font-size: 13px;
@@ -157,6 +159,11 @@ article.rounded-lg:hover {
 
 .resource-map-popup-description {
   color: #334155;
+}
+
+.resource-map-popup-phone {
+  color: #0f766e;
+  font-weight: 750;
 }
 
 .resource-map-popup-link {

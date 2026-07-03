@@ -110,6 +110,7 @@ export function ResourceMap() {
   const [serviceFilter, setServiceFilter] = useState<ServiceTypeFilter>("All service types");
   const [cityFilter, setCityFilter] = useState<CityFilter>("All cities");
   const [selectedName, setSelectedName] = useState(resources[0].name);
+  const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
@@ -127,6 +128,7 @@ export function ResourceMap() {
   );
 
   const selected = filtered.find((resource) => resource.name === selectedName) ?? filtered[0] ?? null;
+  const popupResource = selectedResource && filtered.some((resource) => resource.name === selectedResource.name) ? selectedResource : null;
 
   const syncMarkers = () => {
     const map = mapRef.current;
@@ -136,7 +138,7 @@ export function ResourceMap() {
     markerRef.current = filtered.map((resource) => {
       const markerEl = document.createElement("button");
       markerEl.type = "button";
-      markerEl.className = `group grid size-9 place-items-center rounded-full border-2 text-white shadow-lg shadow-black/25 transition hover:scale-110 ${
+      markerEl.className = `group grid size-9 place-items-center rounded-full border-2 text-white shadow-lg shadow-black/25 transition hover:border-white hover:shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40 ${
         isUrgent(resource) ? "border-rose-100 bg-rose-500" : "border-teal-100 bg-teal-500"
       }`;
       markerEl.setAttribute("aria-label", resource.name);
@@ -145,17 +147,7 @@ export function ResourceMap() {
         event.preventDefault();
         event.stopPropagation();
         setSelectedName(resource.name);
-        popupRef.current?.remove();
-        popupRef.current = new mapboxgl.Popup({
-          offset: 20,
-          closeButton: true,
-          closeOnClick: false,
-          className: "resource-map-popup",
-          maxWidth: "320px",
-        })
-          .setLngLat([resource.coordinates.lng, resource.coordinates.lat])
-          .setDOMContent(createResourcePopup(resource))
-          .addTo(map);
+        setSelectedResource(resource);
       });
 
       return new mapboxgl.Marker({ element: markerEl, anchor: "center" })
@@ -182,6 +174,9 @@ export function ResourceMap() {
     });
 
     map.addControl(new mapboxgl.AttributionControl({ compact: true }), "bottom-right");
+    map.on("click", () => {
+      setSelectedResource(null);
+    });
     map.on("style.load", () => {
       styleFallbackRef.current = false;
       setMapMessage("");
@@ -221,13 +216,39 @@ export function ResourceMap() {
   }, [filtered]);
 
   useEffect(() => {
-    if (!selected || !mapRef.current) return;
-    mapRef.current.flyTo({
-      center: [selected.coordinates.lng, selected.coordinates.lat],
-      zoom: Math.max(mapRef.current.getZoom(), 11.5),
-      duration: 700,
+    const map = mapRef.current;
+    popupRef.current?.remove();
+    popupRef.current = null;
+
+    if (!map || !popupResource) return;
+
+    const popup = new mapboxgl.Popup({
+      offset: 20,
+      closeButton: true,
+      closeOnClick: false,
+      className: "resource-map-popup",
+      maxWidth: "340px",
+    })
+      .setLngLat([popupResource.coordinates.lng, popupResource.coordinates.lat])
+      .setDOMContent(createResourcePopup(popupResource))
+      .addTo(map);
+
+    let isCleaningUp = false;
+    popup.on("close", () => {
+      if (isCleaningUp) return;
+      popupRef.current = null;
+      setSelectedResource(null);
     });
-  }, [selected]);
+    popupRef.current = popup;
+
+    return () => {
+      isCleaningUp = true;
+      popup.remove();
+      if (popupRef.current === popup) {
+        popupRef.current = null;
+      }
+    };
+  }, [popupResource]);
 
   const resetFilters = () => {
     setLanguageFilter("All languages");
@@ -461,10 +482,12 @@ function isUrgent(resource: Resource) {
 }
 
 function createResourcePopup(resource: Resource) {
-  const name = resource.name || "Mental-health resource";
-  const description = resource.description || "Description coming soon.";
-  const city = resource.city || "Location details coming soon.";
-  const category = resource.resourceType || resource.serviceType || "Resource";
+  const fallback = "Resource details unavailable";
+  const name = resource.name || fallback;
+  const description = resource.description || fallback;
+  const city = resource.city || fallback;
+  const category = resource.resourceType || resource.serviceType || fallback;
+  const phone = hasUsablePhone(resource.phone) ? resource.phone : "";
   const websiteUrl = resource.websiteUrl || "";
 
   const container = document.createElement("article");
@@ -489,6 +512,13 @@ function createResourcePopup(resource: Resource) {
 
   container.append(eyebrow, title, location, body);
 
+  if (phone) {
+    const phoneLine = document.createElement("p");
+    phoneLine.className = "resource-map-popup-phone";
+    phoneLine.textContent = phone;
+    container.append(phoneLine);
+  }
+
   if (websiteUrl.startsWith("http")) {
     const link = document.createElement("a");
     link.className = "resource-map-popup-link";
@@ -506,4 +536,9 @@ function createResourcePopup(resource: Resource) {
   }
 
   return container;
+}
+
+function hasUsablePhone(phone: string) {
+  const normalized = phone.trim().toLowerCase();
+  return normalized.length > 0 && !normalized.includes("placeholder") && !normalized.includes("ask school");
 }
