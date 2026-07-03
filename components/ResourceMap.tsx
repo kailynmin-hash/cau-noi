@@ -269,13 +269,27 @@ export function ResourceMap() {
         </div>
         {!mapboxToken && <p className="mt-5 rounded-md bg-sky-50 p-3 text-sm leading-6 text-sky-950">{text.fallback}</p>}
         {mapMessage && <p className="mt-5 rounded-md bg-rose-50 p-3 text-sm leading-6 text-rose-950">{text.satelliteUnavailable}</p>}
-        <p className="mt-3 rounded-md bg-amber-50 p-3 text-sm leading-6 text-amber-950">{text.note}</p>
       </aside>
 
       <section className="grid gap-4 lg:grid-cols-[1fr_360px]">
         <div className="relative min-h-[620px] overflow-hidden rounded-lg border border-teal-900/30 bg-[#061d1b] p-3 text-white shadow-sm">
-          <div className="absolute left-4 top-4 z-20 rounded-lg border border-white/15 bg-black/35 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-teal-50 backdrop-blur">
-            {text.mapTitle}
+          <div className="absolute left-4 top-4 z-20 flex items-center gap-2 rounded-lg border border-white/15 bg-black/35 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-teal-50 backdrop-blur">
+            <span>{text.mapTitle}</span>
+            <span className="group relative inline-flex">
+              <button
+                type="button"
+                aria-label={text.note}
+                className="grid size-5 place-items-center rounded-full text-[13px] font-bold leading-none text-teal-50/90 outline-none transition hover:bg-white/15 focus-visible:ring-2 focus-visible:ring-white/50"
+              >
+                ⓘ
+              </button>
+              <span
+                role="tooltip"
+                className="pointer-events-none absolute left-0 top-7 z-40 hidden w-72 max-w-[calc(100vw-2rem)] rounded-md border border-white/15 bg-white px-3 py-2 text-left text-xs font-medium normal-case leading-5 tracking-normal text-slate-700 shadow-xl group-hover:block group-focus-within:block sm:w-80"
+              >
+                {text.note}
+              </span>
+            </span>
           </div>
 
           <div className="absolute right-4 top-4 z-20 flex rounded-lg border border-white/15 bg-black/35 p-1 backdrop-blur">
