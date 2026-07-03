@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import mapboxgl, { type Map as MapboxMap, type Marker } from "mapbox-gl";
+import mapboxgl, { type Map as MapboxMap, type Marker, type Popup } from "mapbox-gl";
 import {
   Crosshair,
   Filter,
@@ -94,6 +94,7 @@ export function ResourceMap() {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapboxMap | null>(null);
   const markerRef = useRef<Marker[]>([]);
+  const popupRef = useRef<Popup | null>(null);
   const userMarkerRef = useRef<Marker | null>(null);
   const styleFallbackRef = useRef(false);
   const requestedModeRef = useRef<MapMode>("explore");
@@ -134,22 +135,25 @@ export function ResourceMap() {
       }`;
       markerEl.setAttribute("aria-label", resource.name);
       markerEl.innerHTML = `<span class="size-3 rounded-full bg-white shadow-sm"></span>`;
-      markerEl.addEventListener("click", () => {
+      markerEl.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
         setSelectedName(resource.name);
-        map.flyTo({
-          center: [resource.coordinates.lng, resource.coordinates.lat],
-          zoom: Math.max(map.getZoom(), 12.4),
-          duration: 850,
-        });
+        popupRef.current?.remove();
+        popupRef.current = new mapboxgl.Popup({
+          offset: 20,
+          closeButton: true,
+          closeOnClick: false,
+          className: "resource-map-popup",
+          maxWidth: "320px",
+        })
+          .setLngLat([resource.coordinates.lng, resource.coordinates.lat])
+          .setDOMContent(createResourcePopup(resource))
+          .addTo(map);
       });
-
-      const popup = new mapboxgl.Popup({ offset: 18, closeButton: false }).setHTML(
-        `<div style="font-family: system-ui; min-width: 180px;"><strong>${resource.name}</strong><br/><span>${resource.city}</span></div>`,
-      );
 
       return new mapboxgl.Marker({ element: markerEl, anchor: "center" })
         .setLngLat([resource.coordinates.lng, resource.coordinates.lat])
-        .setPopup(popup)
         .addTo(map);
     });
   };
@@ -189,6 +193,7 @@ export function ResourceMap() {
 
     return () => {
       markerRef.current.forEach((marker) => marker.remove());
+      popupRef.current?.remove();
       userMarkerRef.current?.remove();
       map.remove();
       mapRef.current = null;
@@ -445,4 +450,52 @@ function toRad(value: number) {
 
 function isUrgent(resource: Resource) {
   return resource.resourceType === "988 Suicide & Crisis Lifeline";
+}
+
+function createResourcePopup(resource: Resource) {
+  const name = resource.name || "Mental-health resource";
+  const description = resource.description || "Description coming soon.";
+  const city = resource.city || "Location details coming soon.";
+  const category = resource.resourceType || resource.serviceType || "Resource";
+  const websiteUrl = resource.url || "";
+
+  const container = document.createElement("article");
+  container.className = "resource-map-popup-card";
+  container.addEventListener("click", (event) => event.stopPropagation());
+
+  const eyebrow = document.createElement("p");
+  eyebrow.className = "resource-map-popup-category";
+  eyebrow.textContent = category;
+
+  const title = document.createElement("h3");
+  title.className = "resource-map-popup-title";
+  title.textContent = name;
+
+  const location = document.createElement("p");
+  location.className = "resource-map-popup-location";
+  location.textContent = city;
+
+  const body = document.createElement("p");
+  body.className = "resource-map-popup-description";
+  body.textContent = description;
+
+  container.append(eyebrow, title, location, body);
+
+  if (websiteUrl.startsWith("http")) {
+    const link = document.createElement("a");
+    link.className = "resource-map-popup-link";
+    link.href = websiteUrl;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = "Visit website";
+    link.addEventListener("click", (event) => event.stopPropagation());
+    container.append(link);
+  } else {
+    const fallback = document.createElement("p");
+    fallback.className = "resource-map-popup-fallback";
+    fallback.textContent = "Website coming soon";
+    container.append(fallback);
+  }
+
+  return container;
 }
