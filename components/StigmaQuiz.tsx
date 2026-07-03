@@ -24,9 +24,10 @@ const quizCopy = {
     submitting: "Submitting...",
     thankYou: "Thank you",
     thankYouBody:
-      "Your anonymous response was submitted. No names, emails, phone numbers, school names, or IP addresses were stored in the survey response.",
+      "Thank you — your anonymous response was saved. No names, emails, phone numbers, school names, or IP addresses were stored in the survey response.",
     errorTitle: "Submission was not saved",
     errorBody: "We couldn't save your response. Please try again.",
+    storageNotConfigured: "Quiz storage is not configured yet.",
     mythFact: "Myth vs. fact",
     mythFactIntro: "Use these explanations as conversation starters. They are not a diagnosis or medical advice.",
     myth: "Myth",
@@ -57,9 +58,10 @@ const quizCopy = {
     submitting: "Đang gửi...",
     thankYou: "Cảm ơn bạn",
     thankYouBody:
-      "Câu trả lời ẩn danh của bạn đã được gửi. Không có tên, email, số điện thoại, tên trường, hoặc địa chỉ IP nào được lưu trong phản hồi khảo sát.",
+      "Cảm ơn bạn — câu trả lời ẩn danh của bạn đã được lưu. Không có tên, email, số điện thoại, tên trường, hoặc địa chỉ IP nào được lưu trong phản hồi khảo sát.",
     errorTitle: "Chưa lưu được phản hồi",
     errorBody: "Chúng tôi chưa lưu được câu trả lời của bạn. Vui lòng thử lại.",
+    storageNotConfigured: "Chưa cấu hình nơi lưu câu trả lời cho quiz.",
     mythFact: "Hiểu lầm và sự thật",
     mythFactIntro: "Bạn có thể dùng phần giải thích này để bắt đầu trò chuyện. Đây không phải chẩn đoán hoặc lời khuyên y tế.",
     myth: "Hiểu lầm",
@@ -198,9 +200,10 @@ export function StigmaQuiz() {
     const submitUrl = "/api/quiz-submissions";
 
     try {
-      if (process.env.NODE_ENV !== "production") {
-        console.info("[quiz] submitting anonymous response", { submitUrl });
-      }
+      console.info("[quiz] submitting anonymous response", {
+        requestUrl: submitUrl,
+        requestBody: response,
+      });
 
       const result = await fetch(submitUrl, {
         method: "POST",
@@ -209,26 +212,26 @@ export function StigmaQuiz() {
       });
       const payload = (await result.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
 
-      if (process.env.NODE_ENV !== "production") {
-        console.info("[quiz] submission response", {
-          submitUrl,
-          status: result.status,
-          error: payload?.error,
-        });
-      }
+      console.info("[quiz] submission response", {
+        requestUrl: submitUrl,
+        responseStatus: result.status,
+        responseJson: payload,
+      });
 
       if (!result.ok || !payload?.ok) {
+        if (result.status === 503) {
+          setError(copy.storageNotConfigured);
+        }
         throw new Error(payload?.error ?? "Quiz submission failed.");
       }
     } catch (submitError) {
-      if (process.env.NODE_ENV !== "production") {
-        console.error("[quiz] submission failed", {
-          submitUrl,
-          error: submitError,
-        });
-      }
+      console.error("[quiz] submission failed", {
+        requestUrl: submitUrl,
+        requestBody: response,
+        error: submitError,
+      });
       setStatus("error");
-      setError(copy.errorBody);
+      setError((current) => current || copy.errorBody);
       return;
     }
 
