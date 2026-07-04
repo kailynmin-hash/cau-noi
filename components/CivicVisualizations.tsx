@@ -78,10 +78,10 @@ export function InsightCard({ title, body, sourceName, sourceUrl }: { title: str
   );
 }
 
-export function MiniBarChart({ data, ariaLabel }: { data: ChartDatum[]; ariaLabel: string }) {
+export function MiniBarChart({ data, ariaLabel, framed = true }: { data: ChartDatum[]; ariaLabel: string; framed?: boolean }) {
   const chartData = data.slice(0, 8);
   return (
-    <ChartFrame ariaLabel={ariaLabel}>
+    <ChartFrame ariaLabel={ariaLabel} framed={framed}>
       <ResponsiveContainer width="100%" height={260}>
         <BarChart data={chartData} layout="vertical" margin={{ left: 8, right: 16, top: 8, bottom: 8 }}>
           <CartesianGrid stroke="#e2e8f0" horizontal={false} />
@@ -95,10 +95,10 @@ export function MiniBarChart({ data, ariaLabel }: { data: ChartDatum[]; ariaLabe
   );
 }
 
-export function LanguageAccessChart({ data, ariaLabel }: { data: ChartDatum[]; ariaLabel: string }) {
+export function LanguageAccessChart({ data, ariaLabel, framed = true }: { data: ChartDatum[]; ariaLabel: string; framed?: boolean }) {
   const chartData = data.slice(0, 8);
   return (
-    <ChartFrame ariaLabel={ariaLabel}>
+    <ChartFrame ariaLabel={ariaLabel} framed={framed}>
       <ResponsiveContainer width="100%" height={260}>
         <AreaChart data={chartData} margin={{ left: 4, right: 16, top: 8, bottom: 8 }}>
           <defs>
@@ -118,10 +118,10 @@ export function LanguageAccessChart({ data, ariaLabel }: { data: ChartDatum[]; a
   );
 }
 
-export function ResourceCategoryChart({ data, ariaLabel }: { data: ChartDatum[]; ariaLabel: string }) {
+export function ResourceCategoryChart({ data, ariaLabel, framed = true }: { data: ChartDatum[]; ariaLabel: string; framed?: boolean }) {
   const chartData = data.slice(0, 8);
   return (
-    <ChartFrame ariaLabel={ariaLabel}>
+    <ChartFrame ariaLabel={ariaLabel} framed={framed}>
       <ResponsiveContainer width="100%" height={260}>
         <PieChart>
           <Tooltip contentStyle={{ borderRadius: 8, borderColor: "#99f6e4" }} />
@@ -136,9 +136,9 @@ export function ResourceCategoryChart({ data, ariaLabel }: { data: ChartDatum[];
   );
 }
 
-export function TrendLineChart({ data, ariaLabel }: { data: ChartDatum[]; ariaLabel: string }) {
+export function TrendLineChart({ data, ariaLabel, framed = true }: { data: ChartDatum[]; ariaLabel: string; framed?: boolean }) {
   return (
-    <ChartFrame ariaLabel={ariaLabel}>
+    <ChartFrame ariaLabel={ariaLabel} framed={framed}>
       <ResponsiveContainer width="100%" height={260}>
         <LineChart data={data} margin={{ left: 4, right: 16, top: 8, bottom: 8 }}>
           <CartesianGrid stroke="#e2e8f0" vertical={false} />
@@ -187,7 +187,7 @@ export function ResourceCoverageMap({ data, ariaLabel }: { data: { city: string;
               className="block rounded-full border-2 border-white bg-teal-400 shadow-[0_0_28px_rgba(45,212,191,0.55)] transition duration-300 group-hover:scale-125 group-hover:bg-rose-400"
               style={{ width: size, height: size }}
             />
-            <span className="pointer-events-none absolute left-1/2 top-full mt-2 hidden w-40 -translate-x-1/2 rounded-md bg-white px-3 py-2 text-center text-xs font-semibold text-slate-900 shadow-xl group-hover:block">
+            <span className="pointer-events-none absolute left-1/2 top-full mt-2 w-40 -translate-x-1/2 rounded-md border border-white/10 bg-white/95 px-3 py-2 text-center text-xs font-semibold text-slate-900 shadow-xl backdrop-blur transition group-hover:scale-105">
               {item.city}: {item.count}
             </span>
           </div>
@@ -197,7 +197,9 @@ export function ResourceCoverageMap({ data, ariaLabel }: { data: { city: string;
   );
 }
 
-function ChartFrame({ children, ariaLabel }: { children: ReactNode; ariaLabel: string }) {
+function ChartFrame({ children, ariaLabel, framed }: { children: ReactNode; ariaLabel: string; framed: boolean }) {
+  if (!framed) return <div aria-label={ariaLabel}>{children}</div>;
+
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-teal-200 hover:shadow-lg" aria-label={ariaLabel}>
       {children}
