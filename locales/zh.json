@@ -208,25 +208,25 @@
     },
     "dashboard": {
       "eyebrow": "社区仪表板",
-      "title": "匿名洞察可以揭示获得支持的差距。",
-      "subtitle": "匿名调查回复的汇总趋势。",
-      "body": "仪表板只显示社区层面的模式，不显示个人身份。",
-      "indicatorsTitle": "Privacy-safe indicators",
-      "indicatorsIntro": "Only anonymous, aggregate survey fields are displayed. No names, emails, phone numbers, school names, or IP addresses appear here.",
-      "impactTitle": "Why This Matters in CA-45",
-      "impactIntro": "Mental-health access is shaped by language, trust, cost, family expectations, and knowing where to begin. Cầu Nối presents these issues in an educational, community-focused, nonpartisan way.",
+      "title": "匿名社区洞察",
+      "subtitle": "来自青少年和家庭匿名调查回应的实时汇总趋势。",
+      "body": "仪表板将匿名问卷回应转化为社区层面的洞察，不显示个人答案或可识别信息。",
+      "indicatorsTitle": "实时社区洞察",
+      "indicatorsIntro": "匿名调查回应提交后，这些图表会从 Supabase 更新。仪表板只显示总数、平均值和百分比分布。",
+      "impactTitle": "为什么这对 CA-45 很重要",
+      "impactIntro": "心理健康服务的可及性受到语言、信任、费用、家庭期待以及是否知道从哪里开始的影响。Cầu Nối 以教育性、社区导向、非党派的方式呈现这些问题。",
       "cards": [
         [
-          "Mental-health access barriers",
-          "Immigrant families may face stigma, cost concerns, transportation limits, unfamiliar health systems, uncertainty about confidentiality, and pressure to keep struggles private at home."
+          "移民家庭的获取障碍",
+          "青少年可能面对费用、交通、复杂系统、隐私担忧，或不知道如何寻求帮助。清晰的资源导航可以让第一步不那么困难。"
         ],
         [
-          "Language and stigma challenges",
-          "Multilingual resources help youth explain emotions more clearly and help caregivers understand support options without relying on a child to translate sensitive health information."
+          "语言与污名挑战",
+          "一些家庭在不同世代之间可能没有共同的心理健康词汇。双语说明可以减少羞耻感，支持家庭沟通，并帮助青少年表达自己的需要。"
         ],
         [
-          "Culturally responsive care and anonymous data",
-          "Care works better when it respects language, family roles, privacy, and lived experience. Anonymous survey responses help identify access gaps while avoiding identifying information."
+          "文化回应式照护",
+          "当照护尊重语言、家庭角色、隐私和生活经历时，效果会更好。匿名调查回应有助于识别获取服务的缺口，同时避免收集可识别信息。"
         ]
       ]
     },
@@ -555,5 +555,33 @@
       }
     },
     "submitFailed": "测验提交失败。"
+  },
+  "dashboard": {
+    "loading": "正在加载社区洞察…",
+    "errorTitle": "无法加载仪表板数据。",
+    "emptyTitle": "暂无回应。",
+    "emptyBody": "匿名问卷提交后，社区层面的汇总趋势会显示在这里。页面不会显示姓名、电子邮件、电话号码、学校名称、IP 地址或个人回应。",
+    "live": "实时匿名调查数据",
+    "total": "回应总数",
+    "averages": "社区平均值",
+    "breakdowns": "百分比分布",
+    "languageBreakdown": "首选语言分布",
+    "insights": "获取支持的趋势",
+    "comfort": "在家谈论的舒适度",
+    "help": "知道在哪里获得帮助",
+    "barrier": "语言障碍结果",
+    "stigma": "平均污名分数",
+    "bilingual": "会使用双语工具",
+    "highBarrier": "较高语言障碍",
+    "lowComfort": "在家谈论舒适度较低",
+    "lowAwareness": "资源认知较低",
+    "scale": "1-5 李克特平均值",
+    "percentHelp": "符合此信号的匿名回应百分比。",
+    "aggregateOnly": "仅显示汇总结果。绝不显示个人回应。",
+    "aggregateHelper": "仅匿名调查回应",
+    "realtime": "实时更新，并以每 15 秒轮询作为备用",
+    "noLanguage": "未选择语言",
+    "responsesLabel": "份回应",
+    "errorBody": "请检查连接，并稍后再试。"
   }
 }

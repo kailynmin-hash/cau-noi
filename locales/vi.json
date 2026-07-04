@@ -207,26 +207,26 @@
       "body": "Câu trả lời ẩn danh giúp cộng đồng thấy nơi thanh thiếu niên cần ngôn ngữ rõ hơn, công cụ trò chuyện gia đình, hoặc hiểu biết về nguồn hỗ trợ."
     },
     "dashboard": {
-      "eyebrow": "Community Dashboard",
-      "title": "Anonymous insights can reveal access gaps.",
-      "subtitle": "Live, aggregate trends from anonymous survey responses.",
-      "body": "The dashboard shows only community-level patterns. It does not display names, emails, phone numbers, school names, IP addresses, or individual identities.",
-      "indicatorsTitle": "Privacy-safe indicators",
-      "indicatorsIntro": "Only anonymous, aggregate survey fields are displayed. No names, emails, phone numbers, school names, or IP addresses appear here.",
-      "impactTitle": "Why This Matters in CA-45",
-      "impactIntro": "Mental-health access is shaped by language, trust, cost, family expectations, and knowing where to begin. Cầu Nối presents these issues in an educational, community-focused, nonpartisan way.",
+      "eyebrow": "Bảng Thông Tin Cộng Đồng",
+      "title": "Thông Tin Ẩn Danh Của Cộng Đồng",
+      "subtitle": "Xu hướng tổng hợp trực tiếp từ phản hồi ẩn danh của thanh thiếu niên và gia đình.",
+      "body": "Bảng thông tin chuyển các phản hồi khảo sát ẩn danh thành góc nhìn cấp cộng đồng mà không hiển thị câu trả lời cá nhân hoặc thông tin nhận dạng.",
+      "indicatorsTitle": "Thông Tin Cộng Đồng Trực Tiếp",
+      "indicatorsIntro": "Các biểu đồ này cập nhật từ Supabase khi có phản hồi khảo sát ẩn danh mới. Bảng chỉ hiển thị tổng số, điểm trung bình, và tỷ lệ phần trăm.",
+      "impactTitle": "Vì Sao Điều Này Quan Trọng ở CA-45",
+      "impactIntro": "Việc tiếp cận chăm sóc sức khỏe tinh thần chịu ảnh hưởng bởi ngôn ngữ, niềm tin, chi phí, kỳ vọng gia đình, và việc biết bắt đầu từ đâu. Cầu Nối trình bày các vấn đề này theo hướng giáo dục, vì cộng đồng, và không thiên về chính trị.",
       "cards": [
         [
-          "Mental-health access barriers",
-          "Immigrant families may face stigma, cost concerns, transportation limits, unfamiliar health systems, uncertainty about confidentiality, and pressure to keep struggles private at home."
+          "Rào cản tiếp cận của gia đình di dân",
+          "Thanh thiếu niên có thể gặp lo lắng về chi phí, di chuyển, hệ thống khó hiểu, quyền riêng tư, hoặc không biết cách mở lời xin hỗ trợ. Điều hướng nguồn lực rõ ràng giúp bước đầu bớt nặng nề."
         ],
         [
-          "Language and stigma challenges",
-          "Multilingual resources help youth explain emotions more clearly and help caregivers understand support options without relying on a child to translate sensitive health information."
+          "Thách thức về ngôn ngữ và định kiến",
+          "Một số gia đình không có cùng vốn từ về sức khỏe tinh thần giữa các thế hệ. Giải thích song ngữ có thể giảm mặc cảm, hỗ trợ giao tiếp trong gia đình, và giúp các em nói rõ điều mình cần."
         ],
         [
-          "Culturally responsive care and anonymous data",
-          "Care works better when it respects language, family roles, privacy, and lived experience. Anonymous survey responses help identify access gaps while avoiding identifying information."
+          "Chăm sóc phù hợp văn hóa",
+          "Sự hỗ trợ hiệu quả hơn khi tôn trọng ngôn ngữ, vai trò gia đình, quyền riêng tư, và trải nghiệm sống. Phản hồi khảo sát ẩn danh giúp nhận diện khoảng trống tiếp cận mà không thu thập thông tin nhận dạng."
         ]
       ]
     },
@@ -555,5 +555,33 @@
       }
     },
     "submitFailed": "Không gửi được câu trả lời khảo sát."
+  },
+  "dashboard": {
+    "loading": "Đang tải thông tin cộng đồng…",
+    "errorTitle": "Không thể tải dữ liệu bảng thông tin.",
+    "emptyTitle": "Chưa có phản hồi.",
+    "emptyBody": "Khi có người gửi khảo sát ẩn danh, các xu hướng tổng hợp của cộng đồng sẽ hiện ở đây. Trang này không hiển thị tên, email, số điện thoại, tên trường, địa chỉ IP, hoặc từng câu trả lời riêng lẻ.",
+    "live": "Dữ liệu khảo sát ẩn danh trực tiếp",
+    "total": "Tổng số phản hồi",
+    "averages": "Điểm trung bình cộng đồng",
+    "breakdowns": "Tỷ lệ phần trăm",
+    "languageBreakdown": "Phân tích ngôn ngữ ưu tiên",
+    "insights": "Xu hướng tiếp cận hỗ trợ",
+    "comfort": "Thoải mái nói chuyện ở nhà",
+    "help": "Biết nơi tìm hỗ trợ",
+    "barrier": "Kết quả về rào cản ngôn ngữ",
+    "stigma": "Điểm định kiến trung bình",
+    "bilingual": "Sẽ dùng công cụ song ngữ",
+    "highBarrier": "Rào cản ngôn ngữ cao",
+    "lowComfort": "Ít thoải mái nói chuyện ở nhà",
+    "lowAwareness": "Ít biết nguồn hỗ trợ",
+    "scale": "Điểm trung bình Likert 1-5",
+    "percentHelp": "Tỷ lệ phản hồi ẩn danh phù hợp với tín hiệu này.",
+    "aggregateOnly": "Chỉ hiển thị kết quả tổng hợp. Không bao giờ hiển thị từng phản hồi riêng lẻ.",
+    "aggregateHelper": "Chỉ từ phản hồi khảo sát ẩn danh",
+    "realtime": "Cập nhật trực tiếp, dự phòng bằng cách tải lại mỗi 15 giây",
+    "noLanguage": "Chưa chọn ngôn ngữ",
+    "responsesLabel": "phản hồi",
+    "errorBody": "Vui lòng kiểm tra kết nối và thử lại sau ít phút."
   }
 }

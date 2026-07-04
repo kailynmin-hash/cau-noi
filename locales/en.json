@@ -208,24 +208,24 @@
     },
     "dashboard": {
       "eyebrow": "Community Dashboard",
-      "title": "Anonymous insights can reveal access gaps.",
-      "subtitle": "Live, aggregate trends from anonymous survey responses.",
-      "body": "The dashboard shows only community-level patterns. It does not display names, emails, phone numbers, school names, IP addresses, or individual identities.",
-      "indicatorsTitle": "Privacy-safe indicators",
-      "indicatorsIntro": "Only anonymous, aggregate survey fields are displayed. No names, emails, phone numbers, school names, or IP addresses appear here.",
+      "title": "Anonymous Community Insights",
+      "subtitle": "Live aggregate trends from anonymous youth and family survey responses.",
+      "body": "The dashboard turns anonymous quiz responses into community-level insight without showing individual answers or identifying information.",
+      "indicatorsTitle": "Live Community Insights",
+      "indicatorsIntro": "These charts update from Supabase as anonymous survey responses are submitted. The dashboard displays totals, averages, and percentage breakdowns only.",
       "impactTitle": "Why This Matters in CA-45",
       "impactIntro": "Mental-health access is shaped by language, trust, cost, family expectations, and knowing where to begin. Cầu Nối presents these issues in an educational, community-focused, nonpartisan way.",
       "cards": [
         [
-          "Mental-health access barriers",
-          "Immigrant families may face stigma, cost concerns, transportation limits, unfamiliar health systems, uncertainty about confidentiality, and pressure to keep struggles private at home."
+          "Immigrant family access barriers",
+          "Young people may face cost concerns, transportation limits, confusing systems, privacy worries, or uncertainty about how to ask for care. Clear resource navigation can make the first step less overwhelming."
         ],
         [
           "Language and stigma challenges",
-          "Multilingual resources help youth explain emotions more clearly and help caregivers understand support options without relying on a child to translate sensitive health information."
+          "Some families may not share the same mental-health vocabulary across generations. Bilingual explanations can reduce shame, support family communication, and help youth describe what they need."
         ],
         [
-          "Culturally responsive care and anonymous data",
+          "Culturally responsive care",
           "Care works better when it respects language, family roles, privacy, and lived experience. Anonymous survey responses help identify access gaps while avoiding identifying information."
         ]
       ]
@@ -555,5 +555,33 @@
       }
     },
     "submitFailed": "Quiz submission failed."
+  },
+  "dashboard": {
+    "loading": "Loading community insights…",
+    "errorTitle": "Unable to load dashboard data.",
+    "emptyTitle": "No responses yet.",
+    "emptyBody": "When anonymous quiz responses are submitted, aggregate community trends will appear here. No names, emails, phone numbers, school names, IP addresses, or individual rows are shown.",
+    "live": "Live anonymous survey data",
+    "total": "Total responses",
+    "averages": "Community averages",
+    "breakdowns": "Percentage breakdowns",
+    "languageBreakdown": "Preferred language breakdown",
+    "insights": "Access trends",
+    "comfort": "Comfort talking at home",
+    "help": "Knows where to get help",
+    "barrier": "Language barrier results",
+    "stigma": "Average stigma score",
+    "bilingual": "Would use bilingual tool",
+    "highBarrier": "High language barrier",
+    "lowComfort": "Low comfort talking at home",
+    "lowAwareness": "Low resource awareness",
+    "scale": "1-5 Likert average",
+    "percentHelp": "Percent of anonymous responses meeting this signal.",
+    "aggregateOnly": "Aggregate results only. Individual responses are never displayed.",
+    "aggregateHelper": "Anonymous survey responses only",
+    "realtime": "Realtime updates with 15-second polling fallback",
+    "noLanguage": "No language selected",
+    "responsesLabel": "responses",
+    "errorBody": "Please check the connection and try again shortly."
   }
 }

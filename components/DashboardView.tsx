@@ -18,61 +18,39 @@ import { supabase, type SurveyResponse } from "@/lib/supabase";
 
 type DashboardStatus = "loading" | "ready" | "empty" | "error";
 
-const copy = {
-  en: {
-    loading: "Loading live anonymous survey data...",
-    errorTitle: "Dashboard data could not load",
-    emptyTitle: "No anonymous responses yet",
-    emptyBody:
-      "Once students or families submit the stigma quiz, this dashboard will show aggregate trends here. No names, emails, phone numbers, school names, or IP addresses are displayed.",
-    live: "Live from Supabase",
-    total: "Total responses",
-    averages: "Community averages",
-    breakdowns: "Percentage breakdowns",
-    insights: "Access trends",
-    comfort: "Comfort talking to family",
-    help: "Knows where to get help",
-    barrier: "Language barrier",
-    stigma: "Stigma score",
-    bilingual: "Would use bilingual tool",
-    highBarrier: "High language barrier",
-    lowComfort: "Low family comfort",
-    lowAwareness: "Low resource awareness",
-    scale: "1-5 Likert average",
-    percentHelp: "Percent of anonymous responses meeting this signal.",
-    aggregateOnly: "Aggregate only",
-  },
-  vi: {
-    loading: "Đang tải dữ liệu khảo sát ẩn danh trực tiếp...",
-    errorTitle: "Không tải được dữ liệu bảng thông tin",
-    emptyTitle: "Chưa có phản hồi ẩn danh",
-    emptyBody:
-      "Khi học sinh hoặc gia đình gửi khảo sát định kiến, bảng này sẽ hiển thị xu hướng tổng hợp. Không hiển thị tên, email, số điện thoại, tên trường, hoặc địa chỉ IP.",
-    live: "Cập nhật từ Supabase",
-    total: "Tổng phản hồi",
-    averages: "Điểm trung bình cộng đồng",
-    breakdowns: "Tỷ lệ phần trăm",
-    insights: "Xu hướng tiếp cận",
-    comfort: "Thoải mái nói với gia đình",
-    help: "Biết nơi tìm hỗ trợ",
-    barrier: "Rào cản ngôn ngữ",
-    stigma: "Điểm định kiến",
-    bilingual: "Sẽ dùng công cụ song ngữ",
-    highBarrier: "Rào cản ngôn ngữ cao",
-    lowComfort: "Ít thoải mái nói với gia đình",
-    lowAwareness: "Ít biết nguồn hỗ trợ",
-    scale: "Điểm trung bình Likert 1-5",
-    percentHelp: "Tỷ lệ phản hồi ẩn danh phù hợp với tín hiệu này.",
-    aggregateOnly: "Chỉ dữ liệu tổng hợp",
-  },
-} as const;
-
 const selectFields =
   "age_group, language, comfort_talking_home, knows_where_to_get_help, language_barrier, stigma_score, would_use_bilingual_tool";
 
 export function DashboardView() {
-  const { language } = useLanguage();
-  const text = copy[language as keyof typeof copy] ?? copy.en;
+  const { t } = useLanguage();
+  const text = {
+    loading: t("dashboard.loading"),
+    errorTitle: t("dashboard.errorTitle"),
+    errorBody: t("dashboard.errorBody"),
+    emptyTitle: t("dashboard.emptyTitle"),
+    emptyBody: t("dashboard.emptyBody"),
+    live: t("dashboard.live"),
+    total: t("dashboard.total"),
+    averages: t("dashboard.averages"),
+    breakdowns: t("dashboard.breakdowns"),
+    languageBreakdown: t("dashboard.languageBreakdown"),
+    insights: t("dashboard.insights"),
+    comfort: t("dashboard.comfort"),
+    help: t("dashboard.help"),
+    barrier: t("dashboard.barrier"),
+    stigma: t("dashboard.stigma"),
+    bilingual: t("dashboard.bilingual"),
+    highBarrier: t("dashboard.highBarrier"),
+    lowComfort: t("dashboard.lowComfort"),
+    lowAwareness: t("dashboard.lowAwareness"),
+    scale: t("dashboard.scale"),
+    percentHelp: t("dashboard.percentHelp"),
+    aggregateOnly: t("dashboard.aggregateOnly"),
+    aggregateHelper: t("dashboard.aggregateHelper"),
+    realtime: t("dashboard.realtime"),
+    noLanguage: t("dashboard.noLanguage"),
+    responsesLabel: t("dashboard.responsesLabel"),
+  };
   const [responses, setResponses] = useState<SurveyResponse[]>([]);
   const [status, setStatus] = useState<DashboardStatus>("loading");
   const [error, setError] = useState("");
@@ -80,6 +58,7 @@ export function DashboardView() {
   const loadResponses = useCallback(async () => {
     const { data, error: readError } = await supabase.from("survey_responses").select(selectFields);
     if (readError) {
+      console.error("dashboard survey_responses read error", readError);
       setStatus("error");
       setError(readError.message);
       return;
@@ -99,7 +78,7 @@ export function DashboardView() {
       })
       .subscribe();
 
-    const interval = window.setInterval(loadResponses, 30000);
+    const interval = window.setInterval(loadResponses, 15000);
 
     return () => {
       window.clearTimeout(firstLoad);
@@ -126,7 +105,8 @@ export function DashboardView() {
           <AlertCircle size={18} aria-hidden="true" />
           {text.errorTitle}
         </p>
-        <p className="mt-2 text-sm leading-6">{error}</p>
+        <p className="mt-2 text-sm leading-6">{text.errorBody}</p>
+        {process.env.NODE_ENV === "development" ? <p className="mt-2 text-xs leading-5 opacity-80">{error}</p> : null}
       </div>
     );
   }
@@ -162,11 +142,11 @@ export function DashboardView() {
           <Wifi size={18} aria-hidden="true" />
           {text.live}
         </p>
-        <p className="text-sm">{text.aggregateOnly}</p>
+        <p className="text-sm">{text.realtime}</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        <SummaryCard icon={Users} label={text.total} value={String(aggregates.responseCount)} helper="survey_responses" />
+        <SummaryCard icon={Users} label={text.total} value={String(aggregates.responseCount)} helper={text.aggregateHelper} />
         {scoreRows.map((row) => (
           <SummaryCard key={row.label} icon={row.icon} label={row.label} value={formatScore(row.value)} helper={text.scale} />
         ))}
@@ -201,13 +181,21 @@ export function DashboardView() {
         </article>
       </section>
 
-      <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="text-2xl font-semibold text-slate-950">{text.insights}</h2>
-        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {scoreRows.map((row, index) => (
-            <MiniTrend key={row.label} label={row.label} value={row.value} index={index} />
-          ))}
-        </div>
+      <section className="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
+        <article className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 className="text-2xl font-semibold text-slate-950">{text.languageBreakdown}</h2>
+          <LanguageBreakdown rows={aggregates.languageBreakdown} noLanguage={text.noLanguage} responsesLabel={text.responsesLabel} />
+        </article>
+
+        <article className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 className="text-2xl font-semibold text-slate-950">{text.insights}</h2>
+          <p className="mt-1 text-sm text-slate-600">{text.aggregateOnly}</p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            {scoreRows.map((row, index) => (
+              <MiniTrend key={row.label} label={row.label} value={row.value} index={index} />
+            ))}
+          </div>
+        </article>
       </section>
     </div>
   );
@@ -226,6 +214,12 @@ function getAggregates(responses: SurveyResponse[]) {
   const percent = (predicate: (response: SurveyResponse) => boolean) =>
     responseCount === 0 ? 0 : Math.round((responses.filter(predicate).length / responseCount) * 100);
 
+  const languageCounts = responses.reduce<Record<string, number>>((counts, response) => {
+    const preferredLanguage = String(response.language ?? "").trim();
+    counts[preferredLanguage] = (counts[preferredLanguage] ?? 0) + 1;
+    return counts;
+  }, {});
+
   return {
     responseCount,
     comfort_talking_home: average("comfort_talking_home"),
@@ -236,6 +230,13 @@ function getAggregates(responses: SurveyResponse[]) {
     highLanguageBarrierPercent: percent((response) => Number(response.language_barrier) >= 4),
     lowComfortPercent: percent((response) => Number(response.comfort_talking_home) <= 2),
     lowAwarenessPercent: percent((response) => Number(response.knows_where_to_get_help) <= 2),
+    languageBreakdown: Object.entries(languageCounts)
+      .map(([language, count]) => ({
+        language,
+        count,
+        percent: responseCount === 0 ? 0 : Math.round((count / responseCount) * 100),
+      }))
+      .sort((a, b) => b.count - a.count || a.language.localeCompare(b.language)),
   };
 }
 
@@ -279,6 +280,37 @@ function PercentRing({ label, value }: { label: string; value: number }) {
         <span className="grid size-11 place-items-center rounded-full bg-white">{value}%</span>
       </div>
       <p className="font-medium text-slate-800">{label}</p>
+    </div>
+  );
+}
+
+function LanguageBreakdown({
+  rows,
+  noLanguage,
+  responsesLabel,
+}: {
+  rows: { language: string; count: number; percent: number }[];
+  noLanguage: string;
+  responsesLabel: string;
+}) {
+  return (
+    <div className="mt-5 grid gap-3">
+      {rows.map((row) => (
+        <div key={row.language || noLanguage} className="rounded-lg bg-[#f6faf7] p-4">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="font-semibold text-slate-900">{row.language || noLanguage}</p>
+              <p className="mt-1 text-sm text-slate-600">
+                {row.count} {responsesLabel}
+              </p>
+            </div>
+            <span className="rounded-full bg-white px-3 py-1 text-sm font-semibold text-teal-800 shadow-sm">{row.percent}%</span>
+          </div>
+          <div className="mt-3 h-3 overflow-hidden rounded-full bg-white">
+            <div className="h-full rounded-full bg-teal-600" style={{ width: `${row.percent}%` }} />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

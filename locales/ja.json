@@ -207,26 +207,26 @@
       "body": "匿名回答は、より明確な言葉、家族会話ツール、リソース認知が必要な場所を示します。"
     },
     "dashboard": {
-      "eyebrow": "コミュニティ・ダッシュボード",
-      "title": "匿名インサイトはアクセス格差を明らかにできます。",
-      "subtitle": "匿名調査回答からの集計傾向。",
-      "body": "ダッシュボードは地域レベルの傾向のみを表示し、個人情報は表示しません。",
-      "indicatorsTitle": "Privacy-safe indicators",
-      "indicatorsIntro": "Only anonymous, aggregate survey fields are displayed. No names, emails, phone numbers, school names, or IP addresses appear here.",
-      "impactTitle": "Why This Matters in CA-45",
-      "impactIntro": "Mental-health access is shaped by language, trust, cost, family expectations, and knowing where to begin. Cầu Nối presents these issues in an educational, community-focused, nonpartisan way.",
+      "eyebrow": "コミュニティダッシュボード",
+      "title": "匿名コミュニティインサイト",
+      "subtitle": "若者と家族の匿名調査回答から得たリアルタイムの集計傾向。",
+      "body": "このダッシュボードは、匿名クイズ回答を、個別回答や識別情報を表示しないコミュニティレベルのインサイトに変換します。",
+      "indicatorsTitle": "リアルタイムコミュニティインサイト",
+      "indicatorsIntro": "匿名調査回答が送信されると、これらのチャートは Supabase から更新されます。ダッシュボードは総数、平均、割合のみを表示します。",
+      "impactTitle": "CA-45でこれが重要な理由",
+      "impactIntro": "メンタルヘルスへのアクセスは、言語、信頼、費用、家族の期待、どこから始めるかに左右されます。Cầu Nối はこれらの課題を教育的でコミュニティ中心、非党派的な形で示します。",
       "cards": [
         [
-          "Mental-health access barriers",
-          "Immigrant families may face stigma, cost concerns, transportation limits, unfamiliar health systems, uncertainty about confidentiality, and pressure to keep struggles private at home."
+          "移民家庭のアクセス障壁",
+          "若者は費用、交通、複雑な制度、プライバシーへの不安、支援の求め方がわからないことに直面する場合があります。明確なリソース案内は最初の一歩を軽くします。"
         ],
         [
-          "Language and stigma challenges",
-          "Multilingual resources help youth explain emotions more clearly and help caregivers understand support options without relying on a child to translate sensitive health information."
+          "言語とスティグマの課題",
+          "家族の世代間でメンタルヘルスの語彙が共有されていないことがあります。バイリンガルの説明は恥の感覚を減らし、家族の対話を支え、若者が必要な支援を伝える助けになります。"
         ],
         [
-          "Culturally responsive care and anonymous data",
-          "Care works better when it respects language, family roles, privacy, and lived experience. Anonymous survey responses help identify access gaps while avoiding identifying information."
+          "文化に配慮したケア",
+          "ケアは、言語、家族の役割、プライバシー、生活経験を尊重するとより効果的です。匿名調査回答は、識別情報を避けながらアクセスの格差を見つける助けになります。"
         ]
       ]
     },
@@ -555,5 +555,33 @@
       }
     },
     "submitFailed": "クイズの送信に失敗しました。"
+  },
+  "dashboard": {
+    "loading": "コミュニティのインサイトを読み込み中…",
+    "errorTitle": "ダッシュボードデータを読み込めません。",
+    "emptyTitle": "まだ回答がありません。",
+    "emptyBody": "匿名のクイズ回答が送信されると、コミュニティ全体の集計傾向がここに表示されます。氏名、メール、電話番号、学校名、IPアドレス、個別回答は表示されません。",
+    "live": "リアルタイム匿名調査データ",
+    "total": "回答総数",
+    "averages": "コミュニティ平均",
+    "breakdowns": "割合の内訳",
+    "languageBreakdown": "希望言語の内訳",
+    "insights": "アクセス傾向",
+    "comfort": "家庭で話す安心感",
+    "help": "助けを得る場所を知っている",
+    "barrier": "言語の壁の結果",
+    "stigma": "平均スティグマスコア",
+    "bilingual": "バイリンガルツールを使いたい",
+    "highBarrier": "高い言語の壁",
+    "lowComfort": "家庭で話す安心感が低い",
+    "lowAwareness": "リソース認知が低い",
+    "scale": "1-5 リッカート平均",
+    "percentHelp": "このサインに該当する匿名回答の割合です。",
+    "aggregateOnly": "集計結果のみ表示します。個別回答は表示しません。",
+    "aggregateHelper": "匿名調査回答のみ",
+    "realtime": "リアルタイム更新と15秒ごとのポーリング代替",
+    "noLanguage": "言語未選択",
+    "responsesLabel": "件の回答",
+    "errorBody": "接続を確認し、しばらくしてからもう一度お試しください。"
   }
 }

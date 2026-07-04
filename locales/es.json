@@ -207,26 +207,26 @@
       "body": "Tus respuestas anónimas ayudan a mostrar dónde se necesita lenguaje más claro y recursos."
     },
     "dashboard": {
-      "eyebrow": "Panel comunitario",
-      "title": "Los datos anónimos pueden revelar brechas de acceso.",
-      "subtitle": "Tendencias agregadas de respuestas anónimas.",
-      "body": "El panel muestra solo patrones comunitarios y no identidades.",
-      "indicatorsTitle": "Privacy-safe indicators",
-      "indicatorsIntro": "Only anonymous, aggregate survey fields are displayed. No names, emails, phone numbers, school names, or IP addresses appear here.",
-      "impactTitle": "Why This Matters in CA-45",
-      "impactIntro": "Mental-health access is shaped by language, trust, cost, family expectations, and knowing where to begin. Cầu Nối presents these issues in an educational, community-focused, nonpartisan way.",
+      "eyebrow": "Panel Comunitario",
+      "title": "Información Comunitaria Anónima",
+      "subtitle": "Tendencias agregadas en vivo de respuestas anónimas de jóvenes y familias.",
+      "body": "El panel convierte respuestas anónimas del cuestionario en información comunitaria sin mostrar respuestas individuales ni datos de identificación.",
+      "indicatorsTitle": "Información Comunitaria en Vivo",
+      "indicatorsIntro": "Estos gráficos se actualizan desde Supabase a medida que se envían respuestas anónimas. El panel solo muestra totales, promedios y porcentajes.",
+      "impactTitle": "Por Qué Esto Importa en CA-45",
+      "impactIntro": "El acceso a la salud mental depende del idioma, la confianza, el costo, las expectativas familiares y saber por dónde empezar. Cầu Nối presenta estos temas de forma educativa, comunitaria y no partidista.",
       "cards": [
         [
-          "Mental-health access barriers",
-          "Immigrant families may face stigma, cost concerns, transportation limits, unfamiliar health systems, uncertainty about confidentiality, and pressure to keep struggles private at home."
+          "Barreras para familias inmigrantes",
+          "Los jóvenes pueden enfrentar preocupaciones de costo, transporte, sistemas confusos, privacidad o no saber cómo pedir ayuda. Una guía clara de recursos puede hacer que el primer paso sea menos abrumador."
         ],
         [
-          "Language and stigma challenges",
-          "Multilingual resources help youth explain emotions more clearly and help caregivers understand support options without relying on a child to translate sensitive health information."
+          "Idioma y estigma",
+          "Algunas familias no comparten el mismo vocabulario de salud mental entre generaciones. Las explicaciones bilingües pueden reducir la vergüenza, apoyar la comunicación familiar y ayudar a los jóvenes a expresar lo que necesitan."
         ],
         [
-          "Culturally responsive care and anonymous data",
-          "Care works better when it respects language, family roles, privacy, and lived experience. Anonymous survey responses help identify access gaps while avoiding identifying information."
+          "Atención culturalmente sensible",
+          "La atención funciona mejor cuando respeta el idioma, los roles familiares, la privacidad y la experiencia vivida. Las respuestas anónimas ayudan a identificar brechas de acceso sin información identificable."
         ]
       ]
     },
@@ -555,5 +555,33 @@
       }
     },
     "submitFailed": "No se pudo enviar el cuestionario."
+  },
+  "dashboard": {
+    "loading": "Cargando información comunitaria…",
+    "errorTitle": "No se pueden cargar los datos del panel.",
+    "emptyTitle": "Aún no hay respuestas.",
+    "emptyBody": "Cuando se envíen respuestas anónimas del cuestionario, aquí aparecerán tendencias comunitarias agregadas. No se muestran nombres, correos electrónicos, teléfonos, nombres de escuelas, direcciones IP ni respuestas individuales.",
+    "live": "Datos anónimos de encuesta en vivo",
+    "total": "Total de respuestas",
+    "averages": "Promedios comunitarios",
+    "breakdowns": "Desgloses porcentuales",
+    "languageBreakdown": "Desglose de idioma preferido",
+    "insights": "Tendencias de acceso",
+    "comfort": "Comodidad para hablar en casa",
+    "help": "Sabe dónde obtener ayuda",
+    "barrier": "Resultados de barreras de idioma",
+    "stigma": "Puntaje promedio de estigma",
+    "bilingual": "Usaría una herramienta bilingüe",
+    "highBarrier": "Alta barrera de idioma",
+    "lowComfort": "Baja comodidad para hablar en casa",
+    "lowAwareness": "Bajo conocimiento de recursos",
+    "scale": "Promedio Likert de 1 a 5",
+    "percentHelp": "Porcentaje de respuestas anónimas que cumplen esta señal.",
+    "aggregateOnly": "Solo resultados agregados. Nunca se muestran respuestas individuales.",
+    "aggregateHelper": "Solo respuestas anónimas de encuesta",
+    "realtime": "Actualizaciones en tiempo real con respaldo cada 15 segundos",
+    "noLanguage": "No se seleccionó idioma",
+    "responsesLabel": "respuestas",
+    "errorBody": "Revisa la conexión e inténtalo de nuevo en unos momentos."
   }
 }
