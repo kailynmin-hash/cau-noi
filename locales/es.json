@@ -24,7 +24,7 @@
     "resources": "Recursos",
     "conversation": "Conversación",
     "quiz": "Cuestionario",
-    "dashboard": "Panel",
+    "dashboard": "Panel Comunitario",
     "map": "Mapa",
     "about": "Acerca de"
   },
@@ -207,12 +207,12 @@
       "body": "Tus respuestas anónimas ayudan a mostrar dónde se necesita lenguaje más claro y recursos."
     },
     "dashboard": {
-      "eyebrow": "Panel Comunitario",
-      "title": "Información Comunitaria Anónima",
+      "eyebrow": "Información Comunitaria en Vivo",
+      "title": "Panel Comunitario",
       "subtitle": "Tendencias agregadas en vivo de respuestas anónimas de jóvenes y familias.",
-      "body": "El panel convierte respuestas anónimas del cuestionario en información comunitaria sin mostrar respuestas individuales ni datos de identificación.",
-      "indicatorsTitle": "Información Comunitaria en Vivo",
-      "indicatorsIntro": "Estos gráficos se actualizan desde Supabase a medida que se envían respuestas anónimas. El panel solo muestra totales, promedios y porcentajes.",
+      "body": "El Panel Comunitario convierte respuestas anónimas del cuestionario en información comunitaria sin mostrar respuestas individuales ni datos de identificación.",
+      "indicatorsTitle": "Analíticas del Panel Comunitario",
+      "indicatorsIntro": "Estos gráficos se actualizan desde Supabase a medida que se envían respuestas anónimas. El Panel Comunitario solo muestra totales, promedios y porcentajes.",
       "impactTitle": "Por Qué Esto Importa en CA-45",
       "impactIntro": "El acceso a la salud mental depende del idioma, la confianza, el costo, las expectativas familiares y saber por dónde empezar. Cầu Nối presenta estos temas de forma educativa, comunitaria y no partidista.",
       "cards": [

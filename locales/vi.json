@@ -24,7 +24,7 @@
     "resources": "Nguồn hỗ trợ",
     "conversation": "Trò chuyện",
     "quiz": "Khảo sát",
-    "dashboard": "Cộng đồng",
+    "dashboard": "Bảng Cộng Đồng",
     "map": "Bản đồ",
     "about": "Giới thiệu"
   },
@@ -207,12 +207,12 @@
       "body": "Câu trả lời ẩn danh giúp cộng đồng thấy nơi thanh thiếu niên cần ngôn ngữ rõ hơn, công cụ trò chuyện gia đình, hoặc hiểu biết về nguồn hỗ trợ."
     },
     "dashboard": {
-      "eyebrow": "Bảng Thông Tin Cộng Đồng",
-      "title": "Thông Tin Ẩn Danh Của Cộng Đồng",
+      "eyebrow": "Thông Tin Cộng Đồng Trực Tiếp",
+      "title": "Bảng Cộng Đồng",
       "subtitle": "Xu hướng tổng hợp trực tiếp từ phản hồi ẩn danh của thanh thiếu niên và gia đình.",
-      "body": "Bảng thông tin chuyển các phản hồi khảo sát ẩn danh thành góc nhìn cấp cộng đồng mà không hiển thị câu trả lời cá nhân hoặc thông tin nhận dạng.",
-      "indicatorsTitle": "Thông Tin Cộng Đồng Trực Tiếp",
-      "indicatorsIntro": "Các biểu đồ này cập nhật từ Supabase khi có phản hồi khảo sát ẩn danh mới. Bảng chỉ hiển thị tổng số, điểm trung bình, và tỷ lệ phần trăm.",
+      "body": "Bảng Cộng Đồng chuyển các phản hồi khảo sát ẩn danh thành góc nhìn cấp cộng đồng mà không hiển thị câu trả lời cá nhân hoặc thông tin nhận dạng.",
+      "indicatorsTitle": "Phân Tích Bảng Cộng Đồng",
+      "indicatorsIntro": "Các biểu đồ này cập nhật từ Supabase khi có phản hồi khảo sát ẩn danh mới. Bảng Cộng Đồng chỉ hiển thị tổng số, điểm trung bình, và tỷ lệ phần trăm.",
       "impactTitle": "Vì Sao Điều Này Quan Trọng ở CA-45",
       "impactIntro": "Việc tiếp cận chăm sóc sức khỏe tinh thần chịu ảnh hưởng bởi ngôn ngữ, niềm tin, chi phí, kỳ vọng gia đình, và việc biết bắt đầu từ đâu. Cầu Nối trình bày các vấn đề này theo hướng giáo dục, vì cộng đồng, và không thiên về chính trị.",
       "cards": [

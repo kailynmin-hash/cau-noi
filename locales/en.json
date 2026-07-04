@@ -24,7 +24,7 @@
     "resources": "Resources",
     "conversation": "Conversation",
     "quiz": "Quiz",
-    "dashboard": "Dashboard",
+    "dashboard": "Community Dashboard",
     "map": "Map",
     "about": "About"
   },
@@ -207,12 +207,12 @@
       "body": "Your anonymous answers help show where youth may need clearer language, family conversation tools, or resource awareness."
     },
     "dashboard": {
-      "eyebrow": "Community Dashboard",
-      "title": "Anonymous Community Insights",
+      "eyebrow": "Live Community Insights",
+      "title": "Community Dashboard",
       "subtitle": "Live aggregate trends from anonymous youth and family survey responses.",
-      "body": "The dashboard turns anonymous quiz responses into community-level insight without showing individual answers or identifying information.",
-      "indicatorsTitle": "Live Community Insights",
-      "indicatorsIntro": "These charts update from Supabase as anonymous survey responses are submitted. The dashboard displays totals, averages, and percentage breakdowns only.",
+      "body": "The Community Dashboard turns anonymous quiz responses into community-level insight without showing individual answers or identifying information.",
+      "indicatorsTitle": "Community Dashboard Analytics",
+      "indicatorsIntro": "These charts update from Supabase as anonymous survey responses are submitted. The Community Dashboard displays totals, averages, and percentage breakdowns only.",
       "impactTitle": "Why This Matters in CA-45",
       "impactIntro": "Mental-health access is shaped by language, trust, cost, family expectations, and knowing where to begin. Cầu Nối presents these issues in an educational, community-focused, nonpartisan way.",
       "cards": [
