@@ -607,6 +607,17 @@
     "resourcesByCity": "도시별 리소스 커버리지",
     "resourcesByFormat": "접근 형식별 리소스",
     "coverageMap": "CA-45 리소스 커버리지 지도",
+    "coverageTitle": "CA-45 커버리지",
+    "resourcesLabel": "리소스",
+    "citiesLabel": "포함된 도시",
+    "languagesLabel": "언어",
+    "fewResources": "리소스 적음",
+    "manyResources": "리소스 많음",
+    "supportAvailable": "정신건강 지원 가능",
+    "supportedLanguages": "지원 언어",
+    "topCategories": "주요 범주",
+    "selectCity": "도시를 선택해 세부 정보를 보세요.",
+    "legend": "범례",
     "surveyTrend": "시간별 설문 제출"
   },
   "dashboardPro": {

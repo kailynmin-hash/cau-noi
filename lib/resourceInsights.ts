@@ -5,6 +5,13 @@ export type ChartDatum = {
   value: number;
 };
 
+export type CityCoverageDatum = {
+  city: string;
+  count: number;
+  languages: string[];
+  categories: ChartDatum[];
+};
+
 const ca45FocusCities = [
   "Garden Grove",
   "Westminster",
@@ -24,10 +31,16 @@ export function getResourceInsightData(source: Resource[] = resources) {
   const normalizedCities = new Set(source.flatMap((resource) => splitCities(resource.city)));
   const languages = new Set(source.flatMap((resource) => resource.languages));
   const categories = new Set(source.map((resource) => resource.resourceType));
-  const cityCoverage = ca45FocusCities.map((city) => ({
-    city,
-    count: source.filter((resource) => splitCities(resource.city).includes(city) || resource.city.includes(city)).length,
-  }));
+  const cityCoverage: CityCoverageDatum[] = ca45FocusCities.map((city) => {
+    const cityResources = source.filter((resource) => resourceMatchesCity(resource, city));
+
+    return {
+      city,
+      count: cityResources.length,
+      languages: Array.from(new Set(cityResources.flatMap((resource) => resource.languages))).sort((a, b) => a.localeCompare(b)),
+      categories: countBy(cityResources, (resource) => resource.resourceType).slice(0, 4),
+    };
+  });
 
   return {
     totalResources: source.length,
@@ -54,6 +67,11 @@ function countBy<T>(items: T[], getKey: (item: T) => string): ChartDatum[] {
   return Object.entries(counts)
     .map(([name, value]) => ({ name, value }))
     .sort((a, b) => b.value - a.value || a.name.localeCompare(b.name));
+}
+
+function resourceMatchesCity(resource: Resource, city: string) {
+  const resourceCities = splitCities(resource.city);
+  return resourceCities.includes(city) || resource.city.includes(city);
 }
 
 function splitCities(city: string) {

@@ -607,6 +607,17 @@
     "resourcesByCity": "Bao phủ nguồn hỗ trợ theo thành phố",
     "resourcesByFormat": "Nguồn hỗ trợ theo hình thức tiếp cận",
     "coverageMap": "Bản đồ bao phủ nguồn hỗ trợ CA-45",
+    "coverageTitle": "Mức độ bao phủ CA-45",
+    "resourcesLabel": "Nguồn hỗ trợ",
+    "citiesLabel": "Thành phố được bao phủ",
+    "languagesLabel": "Ngôn ngữ",
+    "fewResources": "Ít nguồn hỗ trợ",
+    "manyResources": "Nhiều nguồn hỗ trợ",
+    "supportAvailable": "Có hỗ trợ sức khỏe tâm thần",
+    "supportedLanguages": "Ngôn ngữ hỗ trợ",
+    "topCategories": "Nhóm hỗ trợ nổi bật",
+    "selectCity": "Chọn một thành phố để xem chi tiết.",
+    "legend": "Chú giải",
     "surveyTrend": "Lượt gửi khảo sát theo thời gian"
   },
   "dashboardPro": {

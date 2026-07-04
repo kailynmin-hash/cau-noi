@@ -98,6 +98,16 @@ export function DashboardView() {
     coverageTitle: t("dashboardPro.coverageTitle"),
     coverageSubtitle: t("dashboardPro.coverageSubtitle"),
     coverageExplain: t("dashboardPro.coverageExplain"),
+    resourcesLabel: t("visuals.resourcesLabel"),
+    citiesLabel: t("visuals.citiesLabel"),
+    languagesLabel: t("visuals.languagesLabel"),
+    fewResources: t("visuals.fewResources"),
+    manyResources: t("visuals.manyResources"),
+    supportAvailable: t("visuals.supportAvailable"),
+    supportedLanguages: t("visuals.supportedLanguages"),
+    topCategories: t("visuals.topCategories"),
+    selectCity: t("visuals.selectCity"),
+    legend: t("visuals.legend"),
     mostSupportedLanguage: t("dashboardPro.mostSupportedLanguage"),
     mostSupportedLanguageBody: t("dashboardPro.mostSupportedLanguageBody"),
     highestConcentration: t("dashboardPro.highestConcentration"),
@@ -332,7 +342,28 @@ export function DashboardView() {
             { label: text.totalResources, value: String(resourceInsights.totalResources), helper: text.sourceResources },
           ]}
         >
-          <ResourceCoverageMap data={resourceInsights.cityCoverage} ariaLabel={text.coverageTitle} />
+          <ResourceCoverageMap
+            data={resourceInsights.cityCoverage}
+            ariaLabel={text.coverageTitle}
+            summary={{
+              totalResources: resourceInsights.totalResources,
+              citiesCovered: resourceInsights.focusCitiesCovered,
+              languagesSupported: resourceInsights.languagesSupported,
+            }}
+            labels={{
+              title: text.coverageTitle,
+              resources: text.resourcesLabel,
+              cities: text.citiesLabel,
+              languages: text.languagesLabel,
+              fewResources: text.fewResources,
+              manyResources: text.manyResources,
+              supportAvailable: text.supportAvailable,
+              supportedLanguages: text.supportedLanguages,
+              topCategories: text.topCategories,
+              selectCity: text.selectCity,
+              legend: text.legend,
+            }}
+          />
         </DashboardChartPanel>
 
         <DashboardChartPanel

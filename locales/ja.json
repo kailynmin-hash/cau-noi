@@ -607,6 +607,17 @@
     "resourcesByCity": "都市別リソースカバレッジ",
     "resourcesByFormat": "アクセス形式別リソース",
     "coverageMap": "CA-45 リソースカバレッジマップ",
+    "coverageTitle": "CA-45 カバレッジ",
+    "resourcesLabel": "リソース",
+    "citiesLabel": "対象都市",
+    "languagesLabel": "言語",
+    "fewResources": "少ないリソース",
+    "manyResources": "多いリソース",
+    "supportAvailable": "メンタルヘルス支援あり",
+    "supportedLanguages": "対応言語",
+    "topCategories": "主なカテゴリ",
+    "selectCity": "都市を選択して詳細を表示します。",
+    "legend": "凡例",
     "surveyTrend": "調査送信の推移"
   },
   "dashboardPro": {

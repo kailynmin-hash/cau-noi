@@ -607,6 +607,17 @@
     "resourcesByCity": "Cobertura por ciudad",
     "resourcesByFormat": "Recursos por formato de acceso",
     "coverageMap": "Mapa de cobertura de recursos de CA-45",
+    "coverageTitle": "Cobertura de CA-45",
+    "resourcesLabel": "Recursos",
+    "citiesLabel": "Ciudades cubiertas",
+    "languagesLabel": "Idiomas",
+    "fewResources": "Pocos recursos",
+    "manyResources": "Muchos recursos",
+    "supportAvailable": "Apoyo de salud mental disponible",
+    "supportedLanguages": "Idiomas disponibles",
+    "topCategories": "Categorías principales",
+    "selectCity": "Selecciona una ciudad para ver detalles.",
+    "legend": "Leyenda",
     "surveyTrend": "Envíos de encuestas con el tiempo"
   },
   "dashboardPro": {

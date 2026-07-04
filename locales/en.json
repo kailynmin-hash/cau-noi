@@ -607,6 +607,17 @@
     "resourcesByCity": "Resource coverage by city",
     "resourcesByFormat": "Resources by access format",
     "coverageMap": "CA-45 resource coverage map",
+    "coverageTitle": "CA-45 Coverage",
+    "resourcesLabel": "Resources",
+    "citiesLabel": "Cities covered",
+    "languagesLabel": "Languages",
+    "fewResources": "Few resources",
+    "manyResources": "Many resources",
+    "supportAvailable": "Mental Health Support Available",
+    "supportedLanguages": "Supported languages",
+    "topCategories": "Top categories",
+    "selectCity": "Select a city to view coverage details.",
+    "legend": "Legend",
     "surveyTrend": "Survey submissions over time"
   },
   "dashboardPro": {

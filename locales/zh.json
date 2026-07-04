@@ -607,6 +607,17 @@
     "resourcesByCity": "按城市划分的资源覆盖",
     "resourcesByFormat": "按访问形式划分的资源",
     "coverageMap": "CA-45 资源覆盖地图",
+    "coverageTitle": "CA-45 覆盖情况",
+    "resourcesLabel": "资源",
+    "citiesLabel": "覆盖城市",
+    "languagesLabel": "语言",
+    "fewResources": "资源较少",
+    "manyResources": "资源较多",
+    "supportAvailable": "提供心理健康支持",
+    "supportedLanguages": "支持语言",
+    "topCategories": "主要类别",
+    "selectCity": "选择一个城市查看覆盖详情。",
+    "legend": "图例",
     "surveyTrend": "调查提交趋势"
   },
   "dashboardPro": {

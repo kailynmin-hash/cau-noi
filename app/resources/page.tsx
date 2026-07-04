@@ -29,7 +29,28 @@ export default function ResourceFinderPage() {
           <StatCard label={t("visuals.categoriesAvailable")} value={insights.categoriesAvailable} helper={t("visuals.categoriesAvailableHelp")} />
         </div>
         <div className="mt-6 grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
-          <ResourceCoverageMap data={insights.cityCoverage} ariaLabel={t("visuals.coverageMap")} />
+          <ResourceCoverageMap
+            data={insights.cityCoverage}
+            ariaLabel={t("visuals.coverageMap")}
+            summary={{
+              totalResources: insights.totalResources,
+              citiesCovered: insights.focusCitiesCovered,
+              languagesSupported: insights.languagesSupported,
+            }}
+            labels={{
+              title: t("visuals.coverageTitle"),
+              resources: t("visuals.resourcesLabel"),
+              cities: t("visuals.citiesLabel"),
+              languages: t("visuals.languagesLabel"),
+              fewResources: t("visuals.fewResources"),
+              manyResources: t("visuals.manyResources"),
+              supportAvailable: t("visuals.supportAvailable"),
+              supportedLanguages: t("visuals.supportedLanguages"),
+              topCategories: t("visuals.topCategories"),
+              selectCity: t("visuals.selectCity"),
+              legend: t("visuals.legend"),
+            }}
+          />
           <div className="grid gap-4">
             <MiniBarChart data={insights.resourcesByCity} ariaLabel={t("visuals.resourcesByCity")} />
             <LanguageAccessChart data={insights.resourcesByLanguage} ariaLabel={t("visuals.languageAccess")} />
