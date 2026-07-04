@@ -469,5 +469,91 @@
       "The multilingual parts make it easier to explain mental health without making it feel like blame.",
       "Seeing resources and conversation practice in one place makes asking for help feel less overwhelming."
     ]
+  },
+  "quiz": {
+    "anonymousTitle": "Anonymous by design",
+    "anonymousBody": "This quiz does not ask for names, emails, phone numbers, school names, addresses, or other identifying details. The app inserts only anonymous survey fields into Supabase and does not store IP addresses in the survey table.",
+    "ageGroup": "Age group",
+    "selectAge": "Select an age group",
+    "preferredLanguage": "Preferred language",
+    "selectLanguage": "Select a language",
+    "question": "Question",
+    "answered": "Likert questions answered",
+    "stigmaScore": "stigma score",
+    "reset": "Reset",
+    "submit": "Submit anonymously",
+    "submitting": "Submitting...",
+    "thankYou": "Thank you",
+    "thankYouBody": "Thank you — your anonymous response was saved. No names, emails, phone numbers, school names, or IP addresses were stored in the survey response.",
+    "errorTitle": "Submission was not saved",
+    "errorBody": "We couldn't save your response. Please try again.",
+    "mythFact": "Myth vs. fact",
+    "mythFactIntro": "Use these explanations as conversation starters. They are not a diagnosis or medical advice.",
+    "myth": "Myth",
+    "fact": "Fact",
+    "recTitle": "Personalized next steps",
+    "recIntro": "Based on your anonymous answers, Cầu Nối suggests a few practical places to start.",
+    "recommendations": {
+      "education": [
+        "Learn about stigma",
+        "Your stigma score was elevated. Start with myth-vs-fact education and stories that frame help-seeking as strength."
+      ],
+      "language": [
+        "Prioritize bilingual resources",
+        "Language barriers showed up strongly. Look for bilingual or interpreter-supported options first."
+      ],
+      "family": [
+        "Practice a family conversation",
+        "Family communication felt difficult. Use the conversation helper to prepare a respectful first sentence."
+      ],
+      "general": [
+        "Keep building your support map",
+        "Your answers show several strengths. Save one resource and one trusted adult before stress gets bigger."
+      ]
+    },
+    "likert": [
+      "Strongly disagree",
+      "Disagree",
+      "Not sure",
+      "Agree",
+      "Strongly agree"
+    ],
+    "ages": [
+      "Under 13",
+      "13-15",
+      "16-18",
+      "19-24",
+      "Parent / caregiver",
+      "Prefer not to say"
+    ],
+    "directQuestions": {
+      "comfort_talking_home": "I feel comfortable talking about mental health at home.",
+      "knows_where_to_get_help": "I know where to get help if I or a friend needs mental-health support.",
+      "language_barrier": "Language makes it harder for my family to understand or access mental-health support.",
+      "would_use_bilingual_tool": "I would use a bilingual tool to prepare for a mental-health conversation."
+    },
+    "stigmaQuestions": {
+      "counselingWeak": {
+        "statement": "A student who needs counseling is probably weak.",
+        "myth": "Needing counseling means someone is weak.",
+        "fact": "Counseling is a support tool, like tutoring for emotional skills. Asking early often prevents bigger crises."
+      },
+      "familyShame": {
+        "statement": "Talking about mental health can bring shame to a family.",
+        "myth": "Mental-health conversations are shameful.",
+        "fact": "Private, respectful conversations can protect family wellbeing and help someone get support before problems grow."
+      },
+      "suicideDirect": {
+        "statement": "If someone mentions suicide, it is better not to ask about it directly.",
+        "myth": "Asking about suicide makes things worse.",
+        "fact": "Asking directly and connecting someone to immediate support can reduce danger. In the U.S., call or text 988."
+      },
+      "therapySevere": {
+        "statement": "Therapy is only for people with severe mental illness.",
+        "myth": "Therapy is only for extreme situations.",
+        "fact": "Therapy can help with stress, anxiety, grief, family conflict, identity questions, sleep, and coping skills."
+      }
+    },
+    "submitFailed": "Quiz submission failed."
   }
 }

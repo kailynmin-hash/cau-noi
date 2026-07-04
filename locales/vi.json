@@ -201,10 +201,10 @@
       "body": "Choose a scenario and practice respectful language that reduces blame, lowers stigma, and helps everyone focus on support."
     },
     "quiz": {
-      "eyebrow": "Anonymous Stigma Quiz",
-      "title": "Reflect on mental-health stigma without sharing your identity.",
-      "subtitle": "Eight quick questions, no names, no emails, no school names.",
-      "body": "Your anonymous answers help show where youth may need clearer language, family conversation tools, or resource awareness."
+      "eyebrow": "Khảo sát ẩn danh về định kiến",
+      "title": "Suy ngẫm về định kiến sức khỏe tinh thần mà không chia sẻ danh tính.",
+      "subtitle": "Tám câu hỏi ngắn, không hỏi tên, email hoặc tên trường.",
+      "body": "Câu trả lời ẩn danh giúp cộng đồng thấy nơi thanh thiếu niên cần ngôn ngữ rõ hơn, công cụ trò chuyện gia đình, hoặc hiểu biết về nguồn hỗ trợ."
     },
     "dashboard": {
       "eyebrow": "Community Dashboard",
@@ -469,5 +469,91 @@
       "Phần đa ngôn ngữ giúp giải thích sức khỏe tinh thần dễ hơn mà không giống như đang trách ai.",
       "Có nguồn hỗ trợ và phần tập trò chuyện cùng một nơi làm việc xin giúp đỡ bớt quá sức."
     ]
+  },
+  "quiz": {
+    "anonymousTitle": "Thiết kế ẩn danh",
+    "anonymousBody": "Khảo sát này không hỏi tên, email, số điện thoại, tên trường, địa chỉ, hoặc thông tin định danh khác. Ứng dụng chỉ gửi các trường khảo sát ẩn danh vào Supabase và không lưu địa chỉ IP trong bảng khảo sát.",
+    "ageGroup": "Nhóm tuổi",
+    "selectAge": "Chọn nhóm tuổi",
+    "preferredLanguage": "Ngôn ngữ ưu tiên",
+    "selectLanguage": "Chọn ngôn ngữ",
+    "question": "Câu",
+    "answered": "câu Likert đã trả lời",
+    "stigmaScore": "điểm định kiến",
+    "reset": "Làm lại",
+    "submit": "Gửi ẩn danh",
+    "submitting": "Đang gửi...",
+    "thankYou": "Cảm ơn bạn",
+    "thankYouBody": "Cảm ơn bạn — câu trả lời ẩn danh của bạn đã được lưu. Không có tên, email, số điện thoại, tên trường, hoặc địa chỉ IP nào được lưu trong phản hồi khảo sát.",
+    "errorTitle": "Chưa lưu được phản hồi",
+    "errorBody": "Chúng tôi chưa lưu được câu trả lời của bạn. Vui lòng thử lại.",
+    "mythFact": "Hiểu lầm và sự thật",
+    "mythFactIntro": "Bạn có thể dùng phần giải thích này để bắt đầu trò chuyện. Đây không phải chẩn đoán hoặc lời khuyên y tế.",
+    "myth": "Hiểu lầm",
+    "fact": "Sự thật",
+    "recTitle": "Bước tiếp theo dành cho bạn",
+    "recIntro": "Dựa trên câu trả lời ẩn danh của bạn, Cầu Nối gợi ý một vài nơi thực tế để bắt đầu.",
+    "recommendations": {
+      "education": [
+        "Tìm hiểu về định kiến",
+        "Điểm định kiến của bạn khá cao. Hãy bắt đầu với phần hiểu lầm và sự thật để nhìn việc tìm hỗ trợ như một sự mạnh mẽ."
+      ],
+      "language": [
+        "Ưu tiên nguồn hỗ trợ song ngữ",
+        "Rào cản ngôn ngữ xuất hiện rõ. Hãy tìm lựa chọn song ngữ hoặc có hỗ trợ thông dịch trước."
+      ],
+      "family": [
+        "Tập trò chuyện với gia đình",
+        "Việc giao tiếp trong gia đình có vẻ khó. Hãy dùng công cụ trò chuyện để chuẩn bị một câu mở đầu tôn trọng."
+      ],
+      "general": [
+        "Tiếp tục xây dựng bản đồ hỗ trợ",
+        "Câu trả lời của bạn cho thấy nhiều điểm mạnh. Hãy lưu một nguồn hỗ trợ và một người lớn đáng tin cậy trước khi căng thẳng lớn hơn."
+      ]
+    },
+    "likert": [
+      "Rất không đồng ý",
+      "Không đồng ý",
+      "Chưa chắc",
+      "Đồng ý",
+      "Rất đồng ý"
+    ],
+    "ages": [
+      "Dưới 13",
+      "13-15",
+      "16-18",
+      "19-24",
+      "Cha mẹ / người chăm sóc",
+      "Không muốn trả lời"
+    ],
+    "directQuestions": {
+      "comfort_talking_home": "Tôi cảm thấy thoải mái khi nói về sức khỏe tinh thần ở nhà.",
+      "knows_where_to_get_help": "Tôi biết có thể tìm sự giúp đỡ ở đâu nếu tôi hoặc một người bạn cần hỗ trợ sức khỏe tinh thần.",
+      "language_barrier": "Rào cản ngôn ngữ khiến gia đình tôi khó hiểu hoặc khó tiếp cận hỗ trợ sức khỏe tinh thần hơn.",
+      "would_use_bilingual_tool": "Tôi sẽ dùng một công cụ song ngữ để chuẩn bị cho cuộc trò chuyện về sức khỏe tinh thần."
+    },
+    "stigmaQuestions": {
+      "counselingWeak": {
+        "statement": "Một học sinh cần tư vấn tâm lý có lẽ là yếu đuối.",
+        "myth": "Cần tư vấn nghĩa là yếu đuối.",
+        "fact": "Tư vấn là một hình thức hỗ trợ, giống như được hướng dẫn thêm về kỹ năng cảm xúc. Tìm giúp đỡ sớm thường giúp tránh khủng hoảng lớn hơn."
+      },
+      "familyShame": {
+        "statement": "Nói về sức khỏe tinh thần có thể làm gia đình mất mặt.",
+        "myth": "Nói về sức khỏe tinh thần là điều đáng xấu hổ.",
+        "fact": "Những cuộc trò chuyện riêng tư và tôn trọng có thể bảo vệ sức khỏe của gia đình và giúp một người nhận hỗ trợ trước khi vấn đề nặng hơn."
+      },
+      "suicideDirect": {
+        "statement": "Nếu ai đó nhắc đến tự tử, tốt hơn là không hỏi trực tiếp.",
+        "myth": "Hỏi về tự tử sẽ làm tình hình tệ hơn.",
+        "fact": "Hỏi trực tiếp và kết nối người đó với hỗ trợ khẩn cấp có thể giảm nguy hiểm. Tại Hoa Kỳ, hãy gọi hoặc nhắn tin 988."
+      },
+      "therapySevere": {
+        "statement": "Trị liệu chỉ dành cho người bị bệnh tâm thần rất nặng.",
+        "myth": "Trị liệu chỉ dành cho tình huống rất nghiêm trọng.",
+        "fact": "Trị liệu có thể giúp khi căng thẳng, lo âu, mất mát, mâu thuẫn gia đình, thắc mắc về bản thân, giấc ngủ, và kỹ năng đối phó."
+      }
+    },
+    "submitFailed": "Không gửi được câu trả lời khảo sát."
   }
 }

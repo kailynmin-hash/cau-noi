@@ -104,6 +104,6 @@ function readPath(source: unknown, path: string): unknown {
 }
 
 function warnMissing(language: LanguageCode, key: string) {
-  if (language === "en" || typeof window === "undefined") return;
+  if (language === "en" || typeof window === "undefined" || process.env.NODE_ENV === "production") return;
   console.warn(`[i18n] Missing translation for "${key}" in "${language}". Falling back to English.`);
 }

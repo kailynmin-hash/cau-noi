@@ -469,5 +469,91 @@
       "Las partes multilingües facilitan explicar salud mental sin culpa.",
       "Ver recursos y práctica de conversación en un solo lugar hace que pedir ayuda sea menos abrumador."
     ]
+  },
+  "quiz": {
+    "anonymousTitle": "Anónimo por diseño",
+    "anonymousBody": "Este cuestionario no pide nombres, correos, teléfonos, escuelas, direcciones ni datos identificables. La app solo guarda campos anónimos de encuesta.",
+    "ageGroup": "Grupo de edad",
+    "selectAge": "Selecciona un grupo de edad",
+    "preferredLanguage": "Idioma preferido",
+    "selectLanguage": "Selecciona un idioma",
+    "question": "Pregunta",
+    "answered": "preguntas Likert respondidas",
+    "stigmaScore": "puntaje de estigma",
+    "reset": "Reiniciar",
+    "submit": "Enviar anónimamente",
+    "submitting": "Enviando...",
+    "thankYou": "Gracias",
+    "thankYouBody": "Gracias — tu respuesta anónima fue guardada. No se guardaron nombres, correos, teléfonos, escuelas ni direcciones IP.",
+    "errorTitle": "No se guardó el envío",
+    "errorBody": "No pudimos guardar tu respuesta. Inténtalo de nuevo.",
+    "mythFact": "Mito vs. realidad",
+    "mythFactIntro": "Usa estas explicaciones para iniciar conversaciones. No son diagnóstico ni consejo médico.",
+    "myth": "Mito",
+    "fact": "Realidad",
+    "recTitle": "Próximos pasos personalizados",
+    "recIntro": "Según tus respuestas anónimas, Cầu Nối sugiere algunos lugares prácticos para empezar.",
+    "recommendations": {
+      "education": [
+        "Aprender sobre el estigma",
+        "Tu puntaje de estigma fue elevado. Empieza con mitos y realidades, y con historias que muestran pedir ayuda como una fortaleza."
+      ],
+      "language": [
+        "Priorizar recursos bilingües",
+        "Las barreras de idioma aparecieron con fuerza. Busca primero opciones bilingües o con intérpretes."
+      ],
+      "family": [
+        "Practicar una conversación familiar",
+        "La comunicación familiar se sintió difícil. Usa la herramienta de conversación para preparar una primera frase respetuosa."
+      ],
+      "general": [
+        "Seguir construyendo tu mapa de apoyo",
+        "Tus respuestas muestran varias fortalezas. Guarda un recurso y un adulto de confianza antes de que el estrés crezca."
+      ]
+    },
+    "likert": [
+      "Muy en desacuerdo",
+      "En desacuerdo",
+      "No estoy seguro/a",
+      "De acuerdo",
+      "Muy de acuerdo"
+    ],
+    "ages": [
+      "Menor de 13",
+      "13-15",
+      "16-18",
+      "19-24",
+      "Padre/madre o cuidador",
+      "Prefiero no decir"
+    ],
+    "directQuestions": {
+      "comfort_talking_home": "Me siento cómodo/a hablando sobre salud mental en casa.",
+      "knows_where_to_get_help": "Sé dónde buscar ayuda si yo o un amigo necesitamos apoyo de salud mental.",
+      "language_barrier": "El idioma hace que sea más difícil para mi familia entender o acceder al apoyo de salud mental.",
+      "would_use_bilingual_tool": "Usaría una herramienta bilingüe para prepararme para una conversación sobre salud mental."
+    },
+    "stigmaQuestions": {
+      "counselingWeak": {
+        "statement": "Un estudiante que necesita consejería probablemente es débil.",
+        "myth": "Necesitar consejería significa que alguien es débil.",
+        "fact": "La consejería es una herramienta de apoyo, como tutoría para habilidades emocionales. Pedir ayuda temprano suele prevenir crisis mayores."
+      },
+      "familyShame": {
+        "statement": "Hablar de salud mental puede traer vergüenza a una familia.",
+        "myth": "Las conversaciones sobre salud mental son vergonzosas.",
+        "fact": "Las conversaciones privadas y respetuosas pueden proteger el bienestar familiar y ayudar a una persona antes de que los problemas crezcan."
+      },
+      "suicideDirect": {
+        "statement": "Si alguien menciona el suicidio, es mejor no preguntarlo directamente.",
+        "myth": "Preguntar sobre suicidio empeora las cosas.",
+        "fact": "Preguntar directamente y conectar a alguien con apoyo inmediato puede reducir el peligro. En EE. UU., llama o envía un texto al 988."
+      },
+      "therapySevere": {
+        "statement": "La terapia es solo para personas con enfermedades mentales graves.",
+        "myth": "La terapia es solo para situaciones extremas.",
+        "fact": "La terapia puede ayudar con estrés, ansiedad, duelo, conflicto familiar, identidad, sueño y habilidades para sobrellevar."
+      }
+    },
+    "submitFailed": "No se pudo enviar el cuestionario."
   }
 }

@@ -8,160 +8,64 @@ import { incrementImpact } from "@/lib/impact";
 import { quizPreferredLanguageOptions } from "@/lib/languages";
 import { type SurveyResponse } from "@/lib/supabase";
 
-const quizCopy = {
-  en: {
-    anonymousTitle: "Anonymous by design",
-    anonymousBody:
-      "This quiz does not ask for names, emails, phone numbers, school names, addresses, or other identifying details. The app inserts only anonymous survey fields into Supabase and does not store IP addresses in the survey table.",
-    ageGroup: "Age group",
-    selectAge: "Select an age group",
-    preferredLanguage: "Preferred language",
-    selectLanguage: "Select a language",
-    question: "Question",
-    answered: "Likert questions answered",
-    stigmaScore: "stigma score",
-    reset: "Reset",
-    submit: "Submit anonymously",
-    submitting: "Submitting...",
-    thankYou: "Thank you",
-    thankYouBody:
-      "Thank you — your anonymous response was saved. No names, emails, phone numbers, school names, or IP addresses were stored in the survey response.",
-    errorTitle: "Submission was not saved",
-    errorBody: "We couldn't save your response. Please try again.",
-    storageNotConfigured: "Quiz storage is not configured yet.",
-    mythFact: "Myth vs. fact",
-    mythFactIntro: "Use these explanations as conversation starters. They are not a diagnosis or medical advice.",
-    myth: "Myth",
-    fact: "Fact",
-    recTitle: "Personalized next steps",
-    recIntro: "Based on your anonymous answers, Cầu Nối suggests a few practical places to start.",
-    recEducation: ["Learn about stigma", "Your stigma score was elevated. Start with myth-vs-fact education and stories that frame help-seeking as strength."],
-    recLanguage: ["Prioritize bilingual resources", "Language barriers showed up strongly. Look for Vietnamese or interpreter-supported options first."],
-    recFamily: ["Practice a family conversation", "Family communication felt difficult. Use the conversation helper to prepare a respectful first sentence."],
-    recGeneral: ["Keep building your support map", "Your answers show several strengths. Save one resource and one trusted adult before stress gets bigger."],
-    likert: ["Strongly disagree", "Disagree", "Not sure", "Agree", "Strongly agree"],
-    ages: ["Under 13", "13-15", "16-18", "19-24", "Parent / caregiver", "Prefer not to say"],
-  },
-  vi: {
-    anonymousTitle: "Thiết kế ẩn danh",
-    anonymousBody:
-      "Khảo sát này không hỏi tên, email, số điện thoại, tên trường, địa chỉ, hoặc thông tin định danh khác. Ứng dụng chỉ gửi các trường khảo sát ẩn danh vào Supabase và không lưu địa chỉ IP trong bảng khảo sát.",
-    ageGroup: "Nhóm tuổi",
-    selectAge: "Chọn nhóm tuổi",
-    preferredLanguage: "Ngôn ngữ ưu tiên",
-    selectLanguage: "Chọn ngôn ngữ",
-    question: "Câu",
-    answered: "câu Likert đã trả lời",
-    stigmaScore: "điểm định kiến",
-    reset: "Làm lại",
-    submit: "Gửi ẩn danh",
-    submitting: "Đang gửi...",
-    thankYou: "Cảm ơn bạn",
-    thankYouBody:
-      "Cảm ơn bạn — câu trả lời ẩn danh của bạn đã được lưu. Không có tên, email, số điện thoại, tên trường, hoặc địa chỉ IP nào được lưu trong phản hồi khảo sát.",
-    errorTitle: "Chưa lưu được phản hồi",
-    errorBody: "Chúng tôi chưa lưu được câu trả lời của bạn. Vui lòng thử lại.",
-    storageNotConfigured: "Chưa cấu hình nơi lưu câu trả lời cho quiz.",
-    mythFact: "Hiểu lầm và sự thật",
-    mythFactIntro: "Bạn có thể dùng phần giải thích này để bắt đầu trò chuyện. Đây không phải chẩn đoán hoặc lời khuyên y tế.",
-    myth: "Hiểu lầm",
-    fact: "Sự thật",
-    recTitle: "Bước tiếp theo dành cho bạn",
-    recIntro: "Dựa trên câu trả lời ẩn danh của bạn, Cầu Nối gợi ý một vài nơi thực tế để bắt đầu.",
-    recEducation: ["Tìm hiểu về định kiến", "Điểm định kiến của bạn khá cao. Hãy bắt đầu với phần hiểu lầm và sự thật để nhìn việc tìm hỗ trợ như một sự mạnh mẽ."],
-    recLanguage: ["Ưu tiên nguồn hỗ trợ song ngữ", "Rào cản ngôn ngữ xuất hiện rõ. Hãy tìm lựa chọn có tiếng Việt hoặc hỗ trợ thông dịch trước."],
-    recFamily: ["Tập trò chuyện với gia đình", "Việc giao tiếp trong gia đình có vẻ khó. Hãy dùng công cụ trò chuyện để chuẩn bị một câu mở đầu tôn trọng."],
-    recGeneral: ["Tiếp tục xây dựng bản đồ hỗ trợ", "Câu trả lời của bạn cho thấy nhiều điểm mạnh. Hãy lưu một nguồn hỗ trợ và một người lớn đáng tin cậy trước khi căng thẳng lớn hơn."],
-    likert: ["Rất không đồng ý", "Không đồng ý", "Chưa chắc", "Đồng ý", "Rất đồng ý"],
-    ages: ["Dưới 13", "13-15", "16-18", "19-24", "Cha mẹ / người chăm sóc", "Không muốn trả lời"],
-  },
-} as const;
-
 const directQuestions = [
   {
     key: "comfort_talking_home",
-    statement: {
-      en: "I feel comfortable talking about mental health at home.",
-      vi: "Tôi cảm thấy thoải mái khi nói về sức khỏe tinh thần ở nhà.",
-    },
   },
   {
     key: "knows_where_to_get_help",
-    statement: {
-      en: "I know where to get help if I or a friend needs mental-health support.",
-      vi: "Tôi biết có thể tìm sự giúp đỡ ở đâu nếu tôi hoặc một người bạn cần hỗ trợ sức khỏe tinh thần.",
-    },
   },
   {
     key: "language_barrier",
-    statement: {
-      en: "Language makes it harder for my family to understand or access mental-health support.",
-      vi: "Rào cản ngôn ngữ khiến gia đình tôi khó hiểu hoặc khó tiếp cận hỗ trợ sức khỏe tinh thần hơn.",
-    },
   },
   {
     key: "would_use_bilingual_tool",
-    statement: {
-      en: "I would use a bilingual tool to prepare for a mental-health conversation.",
-      vi: "Tôi sẽ dùng một công cụ song ngữ để chuẩn bị cho cuộc trò chuyện về sức khỏe tinh thần.",
-    },
   },
 ] as const;
 
 const stigmaQuestions = [
-  {
-    statement: {
-      en: "A student who needs counseling is probably weak.",
-      vi: "Một học sinh cần tư vấn tâm lý có lẽ là yếu đuối.",
-    },
-    myth: { en: "Needing counseling means someone is weak.", vi: "Cần tư vấn nghĩa là yếu đuối." },
-    fact: {
-      en: "Counseling is a support tool, like tutoring for emotional skills. Asking early often prevents bigger crises.",
-      vi: "Tư vấn là một hình thức hỗ trợ, giống như được hướng dẫn thêm về kỹ năng cảm xúc. Tìm giúp đỡ sớm thường giúp tránh khủng hoảng lớn hơn.",
-    },
-  },
-  {
-    statement: {
-      en: "Talking about mental health can bring shame to a family.",
-      vi: "Nói về sức khỏe tinh thần có thể làm gia đình mất mặt.",
-    },
-    myth: { en: "Mental-health conversations are shameful.", vi: "Nói về sức khỏe tinh thần là điều đáng xấu hổ." },
-    fact: {
-      en: "Private, respectful conversations can protect family wellbeing and help someone get support before problems grow.",
-      vi: "Những cuộc trò chuyện riêng tư và tôn trọng có thể bảo vệ sức khỏe của gia đình và giúp một người nhận hỗ trợ trước khi vấn đề nặng hơn.",
-    },
-  },
-  {
-    statement: {
-      en: "If someone mentions suicide, it is better not to ask about it directly.",
-      vi: "Nếu ai đó nhắc đến tự tử, tốt hơn là không hỏi trực tiếp.",
-    },
-    myth: { en: "Asking about suicide makes things worse.", vi: "Hỏi về tự tử sẽ làm tình hình tệ hơn." },
-    fact: {
-      en: "Asking directly and connecting someone to immediate support can reduce danger. In the U.S., call or text 988.",
-      vi: "Hỏi trực tiếp và kết nối người đó với hỗ trợ khẩn cấp có thể giảm nguy hiểm. Tại Hoa Kỳ, hãy gọi hoặc nhắn tin 988.",
-    },
-  },
-  {
-    statement: {
-      en: "Therapy is only for people with severe mental illness.",
-      vi: "Trị liệu chỉ dành cho người bị bệnh tâm thần rất nặng.",
-    },
-    myth: { en: "Therapy is only for extreme situations.", vi: "Trị liệu chỉ dành cho tình huống rất nghiêm trọng." },
-    fact: {
-      en: "Therapy can help with stress, anxiety, grief, family conflict, identity questions, sleep, and coping skills.",
-      vi: "Trị liệu có thể giúp khi căng thẳng, lo âu, mất mát, mâu thuẫn gia đình, thắc mắc về bản thân, giấc ngủ, và kỹ năng đối phó.",
-    },
-  },
-];
+  "counselingWeak",
+  "familyShame",
+  "suicideDirect",
+  "therapySevere",
+] as const;
 
 type DirectQuestionKey = (typeof directQuestions)[number]["key"];
 type DirectAnswers = Partial<Record<DirectQuestionKey, number>>;
 
 export function StigmaQuiz() {
-  const { language: appLanguage } = useLanguage();
-  const copy = quizCopy[appLanguage as keyof typeof quizCopy] ?? quizCopy.en;
-  const quizLanguage = appLanguage === "vi" ? "vi" : "en";
+  const { t, tv } = useLanguage();
+  const copy = {
+    anonymousTitle: t("quiz.anonymousTitle"),
+    anonymousBody: t("quiz.anonymousBody"),
+    ageGroup: t("quiz.ageGroup"),
+    selectAge: t("quiz.selectAge"),
+    preferredLanguage: t("quiz.preferredLanguage"),
+    selectLanguage: t("quiz.selectLanguage"),
+    question: t("quiz.question"),
+    answered: t("quiz.answered"),
+    stigmaScore: t("quiz.stigmaScore"),
+    reset: t("quiz.reset"),
+    submit: t("quiz.submit"),
+    submitting: t("quiz.submitting"),
+    thankYou: t("quiz.thankYou"),
+    thankYouBody: t("quiz.thankYouBody"),
+    errorTitle: t("quiz.errorTitle"),
+    errorBody: t("quiz.errorBody"),
+    submitFailed: t("quiz.submitFailed"),
+    mythFact: t("quiz.mythFact"),
+    mythFactIntro: t("quiz.mythFactIntro"),
+    myth: t("quiz.myth"),
+    fact: t("quiz.fact"),
+    recTitle: t("quiz.recTitle"),
+    recIntro: t("quiz.recIntro"),
+    recEducation: tv("quiz.recommendations.education", [] as string[]),
+    recLanguage: tv("quiz.recommendations.language", [] as string[]),
+    recFamily: tv("quiz.recommendations.family", [] as string[]),
+    recGeneral: tv("quiz.recommendations.general", [] as string[]),
+    likert: tv("quiz.likert", [] as string[]),
+    ages: tv("quiz.ages", [] as string[]),
+  };
   const [ageGroup, setAgeGroup] = useState("");
   const [surveyLanguage, setSurveyLanguage] = useState("");
   const [directAnswers, setDirectAnswers] = useState<DirectAnswers>({});
@@ -232,7 +136,7 @@ export function StigmaQuiz() {
           debugDetails: resultPayload?.debugDetails,
         };
         setDebugOutput(failedPostDebug);
-        throw new Error(typeof resultPayload?.error === "string" ? resultPayload.error : "Quiz submission failed.");
+        throw new Error(typeof resultPayload?.error === "string" ? resultPayload.error : copy.submitFailed);
       }
     } catch (submitError) {
       const fallbackDebug = {
@@ -295,7 +199,7 @@ export function StigmaQuiz() {
           number={index + 1}
           questionLabel={copy.question}
           options={copy.likert}
-          statement={item.statement[quizLanguage]}
+          statement={t(`quiz.directQuestions.${item.key}`)}
           value={directAnswers[item.key]}
           onChange={(value) => setDirectAnswers((current) => ({ ...current, [item.key]: value }))}
         />
@@ -303,11 +207,11 @@ export function StigmaQuiz() {
 
       {stigmaQuestions.map((item, index) => (
         <LikertFieldset
-          key={item.statement.en}
+          key={item}
           number={directQuestions.length + index + 1}
           questionLabel={copy.question}
           options={copy.likert}
-          statement={item.statement[quizLanguage]}
+          statement={t(`quiz.stigmaQuestions.${item}.statement`)}
           value={stigmaAnswers[index]}
           onChange={(value) => setStigmaAnswers((current) => ({ ...current, [index]: value }))}
         />
@@ -396,11 +300,11 @@ export function StigmaQuiz() {
           </div>
           <div className="grid gap-4 md:grid-cols-2">
             {stigmaQuestions.map((item) => (
-              <article key={item.myth.en} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+              <article key={item} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-rose-700">{copy.myth}</p>
-                <h3 className="mt-2 font-semibold text-slate-950">{item.myth[quizLanguage]}</h3>
+                <h3 className="mt-2 font-semibold text-slate-950">{t(`quiz.stigmaQuestions.${item}.myth`)}</h3>
                 <p className="mt-4 text-sm font-semibold uppercase tracking-[0.18em] text-teal-700">{copy.fact}</p>
-                <p className="mt-2 leading-7 text-slate-700">{item.fact[quizLanguage]}</p>
+                <p className="mt-2 leading-7 text-slate-700">{t(`quiz.stigmaQuestions.${item}.fact`)}</p>
               </article>
             ))}
           </div>
@@ -419,7 +323,12 @@ function getRecommendations({
   stigmaScore: number | null;
   languageBarrier: number;
   comfortTalkingHome: number;
-  copy: typeof quizCopy.en | typeof quizCopy.vi;
+  copy: {
+    recEducation: string[];
+    recLanguage: string[];
+    recFamily: string[];
+    recGeneral: string[];
+  };
 }) {
   const recommendations: { title: string; body: string; href: string; icon: typeof BookOpen }[] = [];
 
