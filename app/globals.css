@@ -10,6 +10,18 @@
   --border-soft: rgba(15, 76, 72, 0.12);
 }
 
+html[data-text-size="small"] {
+  font-size: 15px !important;
+}
+
+html[data-text-size="large"] {
+  font-size: 18px !important;
+}
+
+html[data-text-size="extra-large"] {
+  font-size: 20px !important;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -39,6 +51,67 @@ body {
     "calt" 1;
 }
 
+html.a11y-dyslexia-font,
+html.a11y-dyslexia-font body,
+html.a11y-dyslexia-font :where(p, a, button, input, select, textarea, label, summary, span, h1, h2, h3, h4, h5, h6, li, dt, dd) {
+  font-family:
+    "Atkinson Hyperlegible",
+    "Verdana",
+    "Tahoma",
+    "Noto Sans",
+    "Noto Sans CJK SC",
+    "Noto Sans CJK JP",
+    "Noto Sans KR",
+    Arial,
+    Helvetica,
+    sans-serif !important;
+}
+
+html.a11y-dyslexia-font body {
+  letter-spacing: 0.01em;
+  line-height: 1.65;
+  word-spacing: 0.04em;
+}
+
+html.a11y-high-contrast {
+  --background: #ffffff;
+  --foreground: #020617;
+  --surface: #ffffff;
+  --surface-soft: #f8fafc;
+  --ring: #0f172a;
+  --border-soft: rgba(2, 6, 23, 0.28);
+}
+
+html.a11y-high-contrast body {
+  background: #ffffff;
+  color: #020617;
+}
+
+html.a11y-high-contrast :where(header, footer, section, article, aside, form, label, details, .bg-white, .bg-\[\#f8fbf8\], .bg-\[\#eef7f1\], .bg-\[\#f3f8f5\]) {
+  border-color: #334155 !important;
+}
+
+html.a11y-high-contrast :where(article, .rounded-lg, .rounded-md, input, select, textarea) {
+  box-shadow: none !important;
+}
+
+html.a11y-high-contrast :where(a) {
+  color: #0f3f8f;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+html.a11y-high-contrast :where(button, a, summary, input, select, textarea):focus-visible {
+  outline: 4px solid #f59e0b;
+  outline-offset: 4px;
+}
+
+html.a11y-high-contrast :where(input, select, textarea) {
+  border: 2px solid #0f172a !important;
+  background: #ffffff !important;
+  color: #020617 !important;
+}
+
 button,
 a,
 summary,
@@ -53,6 +126,11 @@ select {
 }
 
 :where(a, button, summary, input, select):focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--ring) 78%, white);
+  outline-offset: 3px;
+}
+
+:where(textarea):focus-visible {
   outline: 3px solid color-mix(in srgb, var(--ring) 78%, white);
   outline-offset: 3px;
 }
@@ -205,4 +283,14 @@ article.rounded-lg:hover {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
   }
+}
+
+html.a11y-reduce-motion,
+html.a11y-reduce-motion *,
+html.a11y-reduce-motion *::before,
+html.a11y-reduce-motion *::after {
+  scroll-behavior: auto !important;
+  transition-duration: 0.01ms !important;
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
 }

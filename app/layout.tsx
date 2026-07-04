@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { AccessibilityProvider } from "@/components/AccessibilityProvider";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { SkipLink } from "@/components/SkipLink";
 import { siteOrigin } from "@/lib/site";
 import "./globals.css";
 
@@ -53,11 +55,16 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full bg-[#f8fbf8] text-slate-900">
         <LanguageProvider>
-          <div className="flex min-h-screen flex-col">
-            <SiteHeader />
-            <main className="flex-1">{children}</main>
-            <SiteFooter />
-          </div>
+          <AccessibilityProvider>
+            <SkipLink />
+            <div className="flex min-h-screen flex-col">
+              <SiteHeader />
+              <main id="main-content" className="flex-1" tabIndex={-1}>
+                {children}
+              </main>
+              <SiteFooter />
+            </div>
+          </AccessibilityProvider>
         </LanguageProvider>
       </body>
     </html>

@@ -18,6 +18,7 @@ import {
   YAxis,
 } from "recharts";
 import { Info, MapPin } from "lucide-react";
+import { useAccessibility } from "@/components/AccessibilityProvider";
 import type { ChartDatum, CityCoverageDatum } from "@/lib/resourceInsights";
 
 const palette = ["#0f766e", "#14b8a6", "#38bdf8", "#f43f5e", "#f59e0b", "#8b5cf6", "#22c55e", "#64748b"];
@@ -79,6 +80,7 @@ export function InsightCard({ title, body, sourceName, sourceUrl }: { title: str
 }
 
 export function MiniBarChart({ data, ariaLabel, framed = true }: { data: ChartDatum[]; ariaLabel: string; framed?: boolean }) {
+  const { settings } = useAccessibility();
   const chartData = data.slice(0, 8);
   return (
     <ChartFrame ariaLabel={ariaLabel} framed={framed}>
@@ -88,7 +90,7 @@ export function MiniBarChart({ data, ariaLabel, framed = true }: { data: ChartDa
           <XAxis type="number" hide />
           <YAxis type="category" dataKey="name" width={112} tick={{ fontSize: 12, fill: "#334155" }} />
           <Tooltip cursor={{ fill: "#f0fdfa" }} contentStyle={{ borderRadius: 8, borderColor: "#99f6e4" }} />
-          <Bar dataKey="value" radius={[0, 8, 8, 0]} fill="#0f766e" />
+          <Bar dataKey="value" radius={[0, 8, 8, 0]} fill="#0f766e" isAnimationActive={!settings.reduceMotion} />
         </BarChart>
       </ResponsiveContainer>
     </ChartFrame>
@@ -96,6 +98,7 @@ export function MiniBarChart({ data, ariaLabel, framed = true }: { data: ChartDa
 }
 
 export function LanguageAccessChart({ data, ariaLabel, framed = true }: { data: ChartDatum[]; ariaLabel: string; framed?: boolean }) {
+  const { settings } = useAccessibility();
   const chartData = data.slice(0, 8);
   return (
     <ChartFrame ariaLabel={ariaLabel} framed={framed}>
@@ -111,7 +114,7 @@ export function LanguageAccessChart({ data, ariaLabel, framed = true }: { data: 
           <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#334155" }} />
           <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "#334155" }} />
           <Tooltip contentStyle={{ borderRadius: 8, borderColor: "#99f6e4" }} />
-          <Area type="monotone" dataKey="value" stroke="#0f766e" strokeWidth={3} fill="url(#languageAccess)" />
+          <Area type="monotone" dataKey="value" stroke="#0f766e" strokeWidth={3} fill="url(#languageAccess)" isAnimationActive={!settings.reduceMotion} />
         </AreaChart>
       </ResponsiveContainer>
     </ChartFrame>
@@ -119,13 +122,14 @@ export function LanguageAccessChart({ data, ariaLabel, framed = true }: { data: 
 }
 
 export function ResourceCategoryChart({ data, ariaLabel, framed = true }: { data: ChartDatum[]; ariaLabel: string; framed?: boolean }) {
+  const { settings } = useAccessibility();
   const chartData = data.slice(0, 8);
   return (
     <ChartFrame ariaLabel={ariaLabel} framed={framed}>
       <ResponsiveContainer width="100%" height={260}>
         <PieChart>
           <Tooltip contentStyle={{ borderRadius: 8, borderColor: "#99f6e4" }} />
-          <Pie data={chartData} dataKey="value" nameKey="name" innerRadius={54} outerRadius={92} paddingAngle={3}>
+          <Pie data={chartData} dataKey="value" nameKey="name" innerRadius={54} outerRadius={92} paddingAngle={3} isAnimationActive={!settings.reduceMotion}>
             {chartData.map((entry, index) => (
               <Cell key={entry.name} fill={palette[index % palette.length]} />
             ))}
@@ -137,6 +141,7 @@ export function ResourceCategoryChart({ data, ariaLabel, framed = true }: { data
 }
 
 export function TrendLineChart({ data, ariaLabel, framed = true }: { data: ChartDatum[]; ariaLabel: string; framed?: boolean }) {
+  const { settings } = useAccessibility();
   return (
     <ChartFrame ariaLabel={ariaLabel} framed={framed}>
       <ResponsiveContainer width="100%" height={260}>
@@ -145,7 +150,7 @@ export function TrendLineChart({ data, ariaLabel, framed = true }: { data: Chart
           <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#334155" }} />
           <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "#334155" }} />
           <Tooltip contentStyle={{ borderRadius: 8, borderColor: "#99f6e4" }} />
-          <Line type="monotone" dataKey="value" stroke="#0f766e" strokeWidth={3} dot={{ r: 4, fill: "#0f766e" }} activeDot={{ r: 7 }} />
+          <Line type="monotone" dataKey="value" stroke="#0f766e" strokeWidth={3} dot={{ r: 4, fill: "#0f766e" }} activeDot={{ r: 7 }} isAnimationActive={!settings.reduceMotion} />
         </LineChart>
       </ResponsiveContainer>
     </ChartFrame>

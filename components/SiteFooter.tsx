@@ -56,6 +56,9 @@ export function SiteFooter() {
           <Link href="/quiz" className="rounded-md px-1 font-medium text-teal-800 hover:text-teal-950">
             {t("footer.quiz")}
           </Link>
+          <Link href="/accessibility" className="rounded-md px-1 font-medium text-teal-800 hover:text-teal-950">
+            {t("footer.accessibility")}
+          </Link>
         </div>
       </div>
     </footer>
