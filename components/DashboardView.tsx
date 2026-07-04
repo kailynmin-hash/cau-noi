@@ -21,13 +21,16 @@ type DashboardDebug = {
   hasSupabaseUrl: boolean;
   hasSupabaseAnonKey: boolean;
   tableName: "survey_responses";
+  selectQuery: string;
   rowsFetched: number;
+  countReturned: number | null;
+  returnedDataLength: number;
+  firstRowKeys: string[];
   rawSupabaseError: string | null;
 };
 
-const selectFields =
-  "created_at, age_group, language, comfort_talking_home, knows_where_to_get_help, language_barrier, stigma_score, would_use_bilingual_tool";
 const tableName = "survey_responses" as const;
+const selectQuery = `supabase.from("${tableName}").select("*", { count: "exact" })`;
 
 export function DashboardView() {
   const { t } = useLanguage();
@@ -66,20 +69,38 @@ export function DashboardView() {
     hasSupabaseUrl: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
     hasSupabaseAnonKey: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
     tableName,
+    selectQuery,
     rowsFetched: 0,
+    countReturned: null,
+    returnedDataLength: 0,
+    firstRowKeys: [],
     rawSupabaseError: null,
   });
 
   const loadResponses = useCallback(async () => {
-    const { data, error: readError } = await supabase.from(tableName).select(selectFields).order("created_at", { ascending: true });
+    const { data, error: readError, count } = await supabase.from(tableName).select("*", { count: "exact" });
     const rowsFetched = data?.length ?? 0;
+    const firstRow = Array.isArray(data) && data.length > 0 ? data[0] : null;
+    const firstRowKeys = firstRow && typeof firstRow === "object" ? Object.keys(firstRow) : [];
 
     setDebug({
       hasSupabaseUrl: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
       hasSupabaseAnonKey: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
       tableName,
+      selectQuery,
       rowsFetched,
+      countReturned: count,
+      returnedDataLength: rowsFetched,
+      firstRowKeys,
       rawSupabaseError: readError ? JSON.stringify(readError, null, 2) : null,
+    });
+
+    console.info("dashboard survey_responses select", {
+      query: selectQuery,
+      rowsFetched,
+      countReturned: count,
+      firstRowKeys,
+      error: readError,
     });
 
     if (readError) {
@@ -371,14 +392,18 @@ function DashboardDebugPanel({ debug }: { debug: DashboardDebug }) {
     ["hasSupabaseUrl", String(debug.hasSupabaseUrl)],
     ["hasSupabaseAnonKey", String(debug.hasSupabaseAnonKey)],
     ["tableName", debug.tableName],
+    ["selectQuery", debug.selectQuery],
     ["rowsFetched", String(debug.rowsFetched)],
+    ["countReturned", String(debug.countReturned)],
+    ["returnedDataLength", String(debug.returnedDataLength)],
+    ["firstRowKeys", debug.firstRowKeys.join(", ") || "[]"],
     ["rawSupabaseError", debug.rawSupabaseError ?? "null"],
   ];
 
   return (
     <section className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-950 shadow-sm">
       <h2 className="font-semibold">Temporary Dashboard Debug</h2>
-      <dl className="mt-3 grid gap-2 text-xs sm:grid-cols-2 lg:grid-cols-5">
+      <dl className="mt-3 grid gap-2 text-xs sm:grid-cols-2 lg:grid-cols-3">
         {rows.map(([label, value]) => (
           <div key={label} className="min-w-0 rounded-md bg-white/70 p-3">
             <dt className="font-semibold">{label}</dt>
