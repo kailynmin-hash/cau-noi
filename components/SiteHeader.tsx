@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Globe2, Menu, Waypoints } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { navItems } from "@/lib/content";
-import { languageNames, languages, type LanguageCode } from "@/lib/i18n";
+import { supportedLanguages, type LanguageCode } from "@/lib/languages";
 
 export function SiteHeader() {
   const { language, setLanguage, t } = useLanguage();
@@ -84,9 +84,9 @@ function LanguageSelector({
         className="min-h-9 max-w-[12rem] rounded bg-white px-2 text-sm font-semibold text-slate-800 outline-none focus:ring-4 focus:ring-teal-100 sm:max-w-none"
         aria-label={label}
       >
-        {languages.map((option) => (
-          <option key={option} value={option}>
-            {languageNames[option]}
+        {supportedLanguages.map((option) => (
+          <option key={option.code} value={option.code}>
+            {option.label}
           </option>
         ))}
       </select>

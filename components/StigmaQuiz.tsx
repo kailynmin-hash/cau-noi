@@ -5,6 +5,7 @@ import Link from "next/link";
 import { AlertCircle, BookOpen, CheckCircle2, HelpCircle, Languages, LockKeyhole, MessageCircleHeart, RotateCcw, Save } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { incrementImpact } from "@/lib/impact";
+import { quizPreferredLanguageOptions } from "@/lib/languages";
 import { type SurveyResponse } from "@/lib/supabase";
 
 const quizCopy = {
@@ -40,7 +41,6 @@ const quizCopy = {
     recGeneral: ["Keep building your support map", "Your answers show several strengths. Save one resource and one trusted adult before stress gets bigger."],
     likert: ["Strongly disagree", "Disagree", "Not sure", "Agree", "Strongly agree"],
     ages: ["Under 13", "13-15", "16-18", "19-24", "Parent / caregiver", "Prefer not to say"],
-    languages: ["English", "Vietnamese", "English and Vietnamese", "Another language", "Prefer not to say"],
   },
   vi: {
     anonymousTitle: "Thiết kế ẩn danh",
@@ -74,7 +74,6 @@ const quizCopy = {
     recGeneral: ["Tiếp tục xây dựng bản đồ hỗ trợ", "Câu trả lời của bạn cho thấy nhiều điểm mạnh. Hãy lưu một nguồn hỗ trợ và một người lớn đáng tin cậy trước khi căng thẳng lớn hơn."],
     likert: ["Rất không đồng ý", "Không đồng ý", "Chưa chắc", "Đồng ý", "Rất đồng ý"],
     ages: ["Dưới 13", "13-15", "16-18", "19-24", "Cha mẹ / người chăm sóc", "Không muốn trả lời"],
-    languages: ["Tiếng Anh", "Tiếng Việt", "Tiếng Anh và tiếng Việt", "Ngôn ngữ khác", "Không muốn trả lời"],
   },
 } as const;
 
@@ -285,7 +284,7 @@ export function StigmaQuiz() {
           label={copy.preferredLanguage}
           value={surveyLanguage}
           placeholder={copy.selectLanguage}
-          options={copy.languages}
+          options={quizPreferredLanguageOptions}
           onChange={setSurveyLanguage}
         />
       </section>
@@ -450,7 +449,7 @@ function SelectField({
   label: string;
   value: string;
   placeholder: string;
-  options: readonly string[];
+  options: readonly (string | { value: string; label: string })[];
   onChange: (value: string) => void;
 }) {
   return (
@@ -464,8 +463,8 @@ function SelectField({
       >
         <option value="">{placeholder}</option>
         {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
+          <option key={typeof option === "string" ? option : option.value} value={typeof option === "string" ? option : option.value}>
+            {typeof option === "string" ? option : option.label}
           </option>
         ))}
       </select>

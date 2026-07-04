@@ -4,9 +4,9 @@ import ja from "@/locales/ja.json";
 import ko from "@/locales/ko.json";
 import vi from "@/locales/vi.json";
 import zh from "@/locales/zh.json";
+import { languageNames, languages, type LanguageCode } from "@/lib/languages";
 
-export const languages = ["en", "vi", "es", "ko", "zh", "ja"] as const;
-export type LanguageCode = (typeof languages)[number];
+export { languageNames, languages, type LanguageCode };
 
 export const dictionaries = {
   en,
@@ -14,10 +14,9 @@ export const dictionaries = {
   es,
   ko,
   zh,
+  "zh-Hant": zh,
   ja,
 } as const;
-
-export const languageNames: Record<LanguageCode, string> = en.languageNames;
 
 export function isLanguageCode(value: string | null): value is LanguageCode {
   return !!value && languages.includes(value as LanguageCode);
