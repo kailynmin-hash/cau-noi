@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
 export type SurveyResponse = {
+  created_at?: string;
   age_group: string;
   language: string;
   comfort_talking_home: number;

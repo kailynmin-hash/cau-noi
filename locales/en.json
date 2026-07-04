@@ -559,7 +559,7 @@
   "dashboard": {
     "loading": "Loading community insights…",
     "errorTitle": "Unable to load dashboard data.",
-    "emptyTitle": "No responses yet.",
+    "emptyTitle": "No survey responses yet.",
     "emptyBody": "When anonymous quiz responses are submitted, aggregate community trends will appear here. No names, emails, phone numbers, school names, IP addresses, or individual rows are shown.",
     "live": "Live anonymous survey data",
     "total": "Total responses",
@@ -579,7 +579,7 @@
     "percentHelp": "Percent of anonymous responses meeting this signal.",
     "aggregateOnly": "Aggregate results only. Individual responses are never displayed.",
     "aggregateHelper": "Anonymous survey responses only",
-    "realtime": "Realtime updates with 15-second polling fallback",
+    "realtime": "Realtime updates with 10-second polling fallback",
     "noLanguage": "No language selected",
     "responsesLabel": "responses",
     "errorBody": "Please check the connection and try again shortly."

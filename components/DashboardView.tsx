@@ -17,9 +17,17 @@ import { useLanguage } from "@/components/LanguageProvider";
 import { supabase, type SurveyResponse } from "@/lib/supabase";
 
 type DashboardStatus = "loading" | "ready" | "empty" | "error";
+type DashboardDebug = {
+  hasSupabaseUrl: boolean;
+  hasSupabaseAnonKey: boolean;
+  tableName: "survey_responses";
+  rowsFetched: number;
+  rawSupabaseError: string | null;
+};
 
 const selectFields =
-  "age_group, language, comfort_talking_home, knows_where_to_get_help, language_barrier, stigma_score, would_use_bilingual_tool";
+  "created_at, age_group, language, comfort_talking_home, knows_where_to_get_help, language_barrier, stigma_score, would_use_bilingual_tool";
+const tableName = "survey_responses" as const;
 
 export function DashboardView() {
   const { t } = useLanguage();
@@ -54,9 +62,26 @@ export function DashboardView() {
   const [responses, setResponses] = useState<SurveyResponse[]>([]);
   const [status, setStatus] = useState<DashboardStatus>("loading");
   const [error, setError] = useState("");
+  const [debug, setDebug] = useState<DashboardDebug>({
+    hasSupabaseUrl: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
+    hasSupabaseAnonKey: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
+    tableName,
+    rowsFetched: 0,
+    rawSupabaseError: null,
+  });
 
   const loadResponses = useCallback(async () => {
-    const { data, error: readError } = await supabase.from("survey_responses").select(selectFields);
+    const { data, error: readError } = await supabase.from(tableName).select(selectFields).order("created_at", { ascending: true });
+    const rowsFetched = data?.length ?? 0;
+
+    setDebug({
+      hasSupabaseUrl: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
+      hasSupabaseAnonKey: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
+      tableName,
+      rowsFetched,
+      rawSupabaseError: readError ? JSON.stringify(readError, null, 2) : null,
+    });
+
     if (readError) {
       console.error("dashboard survey_responses read error", readError);
       setStatus("error");
@@ -78,7 +103,7 @@ export function DashboardView() {
       })
       .subscribe();
 
-    const interval = window.setInterval(loadResponses, 15000);
+    const interval = window.setInterval(loadResponses, 10000);
 
     return () => {
       window.clearTimeout(firstLoad);
@@ -91,32 +116,41 @@ export function DashboardView() {
 
   if (status === "loading") {
     return (
-      <div className="rounded-lg border border-slate-200 bg-white p-8 text-center shadow-sm">
-        <Loader2 className="mx-auto animate-spin text-teal-700" size={30} aria-hidden="true" />
-        <p className="mt-3 font-semibold text-slate-950">{text.loading}</p>
+      <div className="grid gap-4">
+        <div className="rounded-lg border border-slate-200 bg-white p-8 text-center shadow-sm">
+          <Loader2 className="mx-auto animate-spin text-teal-700" size={30} aria-hidden="true" />
+          <p className="mt-3 font-semibold text-slate-950">{text.loading}</p>
+        </div>
+        <DashboardDebugPanel debug={debug} />
       </div>
     );
   }
 
   if (status === "error") {
     return (
-      <div className="rounded-lg border border-rose-200 bg-rose-50 p-5 text-rose-950">
-        <p className="flex items-center gap-2 font-semibold">
-          <AlertCircle size={18} aria-hidden="true" />
-          {text.errorTitle}
-        </p>
-        <p className="mt-2 text-sm leading-6">{text.errorBody}</p>
-        {process.env.NODE_ENV === "development" ? <p className="mt-2 text-xs leading-5 opacity-80">{error}</p> : null}
+      <div className="grid gap-4">
+        <div className="rounded-lg border border-rose-200 bg-rose-50 p-5 text-rose-950">
+          <p className="flex items-center gap-2 font-semibold">
+            <AlertCircle size={18} aria-hidden="true" />
+            {text.errorTitle}
+          </p>
+          <p className="mt-2 text-sm leading-6">{text.errorBody}</p>
+          <p className="mt-2 text-xs leading-5 opacity-80">{error}</p>
+        </div>
+        <DashboardDebugPanel debug={debug} />
       </div>
     );
   }
 
   if (status === "empty") {
     return (
-      <div className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center shadow-sm">
-        <Users className="mx-auto text-teal-700" size={34} aria-hidden="true" />
-        <h2 className="mt-4 text-2xl font-semibold text-slate-950">{text.emptyTitle}</h2>
-        <p className="mx-auto mt-2 max-w-xl leading-7 text-slate-600">{text.emptyBody}</p>
+      <div className="grid gap-4">
+        <div className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center shadow-sm">
+          <Users className="mx-auto text-teal-700" size={34} aria-hidden="true" />
+          <h2 className="mt-4 text-2xl font-semibold text-slate-950">{text.emptyTitle}</h2>
+          <p className="mx-auto mt-2 max-w-xl leading-7 text-slate-600">{text.emptyBody}</p>
+        </div>
+        <DashboardDebugPanel debug={debug} />
       </div>
     );
   }
@@ -144,6 +178,7 @@ export function DashboardView() {
         </p>
         <p className="text-sm">{text.realtime}</p>
       </div>
+      <DashboardDebugPanel debug={debug} />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <SummaryCard icon={Users} label={text.total} value={String(aggregates.responseCount)} helper={text.aggregateHelper} />
@@ -192,7 +227,7 @@ export function DashboardView() {
           <p className="mt-1 text-sm text-slate-600">{text.aggregateOnly}</p>
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
             {scoreRows.map((row, index) => (
-              <MiniTrend key={row.label} label={row.label} value={row.value} index={index} />
+              <MiniTrend key={row.label} label={row.label} values={aggregates.trends[index]} />
             ))}
           </div>
         </article>
@@ -230,6 +265,12 @@ function getAggregates(responses: SurveyResponse[]) {
     highLanguageBarrierPercent: percent((response) => Number(response.language_barrier) >= 4),
     lowComfortPercent: percent((response) => Number(response.comfort_talking_home) <= 2),
     lowAwarenessPercent: percent((response) => Number(response.knows_where_to_get_help) <= 2),
+    trends: [
+      trendValues(responses, "comfort_talking_home"),
+      trendValues(responses, "knows_where_to_get_help"),
+      trendValues(responses, "language_barrier"),
+      trendValues(responses, "stigma_score"),
+    ],
     languageBreakdown: Object.entries(languageCounts)
       .map(([language, count]) => ({
         language,
@@ -238,6 +279,16 @@ function getAggregates(responses: SurveyResponse[]) {
       }))
       .sort((a, b) => b.count - a.count || a.language.localeCompare(b.language)),
   };
+}
+
+function trendValues(
+  responses: SurveyResponse[],
+  key: keyof Pick<SurveyResponse, "comfort_talking_home" | "knows_where_to_get_help" | "language_barrier" | "stigma_score">,
+) {
+  return responses
+    .map((response) => Number(response[key] ?? 0))
+    .filter((value) => Number.isFinite(value))
+    .slice(-6);
 }
 
 function SummaryCard({ icon: Icon, label, value, helper }: { icon: LucideIcon; label: string; value: string; helper: string }) {
@@ -315,10 +366,35 @@ function LanguageBreakdown({
   );
 }
 
-function MiniTrend({ label, value, index }: { label: string; value: number; index: number }) {
-  const points = [1.8, 2.3, 2.1, 2.8, 3.2, value].map((point, pointIndex) => {
-    const x = pointIndex * 20;
-    const y = 70 - point * 12 + index * 1.5;
+function DashboardDebugPanel({ debug }: { debug: DashboardDebug }) {
+  const rows = [
+    ["hasSupabaseUrl", String(debug.hasSupabaseUrl)],
+    ["hasSupabaseAnonKey", String(debug.hasSupabaseAnonKey)],
+    ["tableName", debug.tableName],
+    ["rowsFetched", String(debug.rowsFetched)],
+    ["rawSupabaseError", debug.rawSupabaseError ?? "null"],
+  ];
+
+  return (
+    <section className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-950 shadow-sm">
+      <h2 className="font-semibold">Temporary Dashboard Debug</h2>
+      <dl className="mt-3 grid gap-2 text-xs sm:grid-cols-2 lg:grid-cols-5">
+        {rows.map(([label, value]) => (
+          <div key={label} className="min-w-0 rounded-md bg-white/70 p-3">
+            <dt className="font-semibold">{label}</dt>
+            <dd className="mt-1 overflow-auto whitespace-pre-wrap break-words font-mono">{value}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  );
+}
+
+function MiniTrend({ label, values }: { label: string; values: number[] }) {
+  const displayValues = values.length === 1 ? [values[0], values[0]] : values;
+  const points = displayValues.map((point, pointIndex) => {
+    const x = displayValues.length === 1 ? 0 : (pointIndex / Math.max(1, displayValues.length - 1)) * 100;
+    const y = 70 - point * 12;
     return `${x},${Math.max(12, Math.min(68, y))}`;
   });
 

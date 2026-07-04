@@ -559,7 +559,7 @@
   "dashboard": {
     "loading": "Đang tải thông tin cộng đồng…",
     "errorTitle": "Không thể tải dữ liệu bảng thông tin.",
-    "emptyTitle": "Chưa có phản hồi.",
+    "emptyTitle": "Chưa có phản hồi khảo sát.",
     "emptyBody": "Khi có người gửi khảo sát ẩn danh, các xu hướng tổng hợp của cộng đồng sẽ hiện ở đây. Trang này không hiển thị tên, email, số điện thoại, tên trường, địa chỉ IP, hoặc từng câu trả lời riêng lẻ.",
     "live": "Dữ liệu khảo sát ẩn danh trực tiếp",
     "total": "Tổng số phản hồi",
@@ -579,7 +579,7 @@
     "percentHelp": "Tỷ lệ phản hồi ẩn danh phù hợp với tín hiệu này.",
     "aggregateOnly": "Chỉ hiển thị kết quả tổng hợp. Không bao giờ hiển thị từng phản hồi riêng lẻ.",
     "aggregateHelper": "Chỉ từ phản hồi khảo sát ẩn danh",
-    "realtime": "Cập nhật trực tiếp, dự phòng bằng cách tải lại mỗi 15 giây",
+    "realtime": "Cập nhật trực tiếp, dự phòng bằng cách tải lại mỗi 10 giây",
     "noLanguage": "Chưa chọn ngôn ngữ",
     "responsesLabel": "phản hồi",
     "errorBody": "Vui lòng kiểm tra kết nối và thử lại sau ít phút."

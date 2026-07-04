@@ -559,7 +559,7 @@
   "dashboard": {
     "loading": "正在加载社区洞察…",
     "errorTitle": "无法加载仪表板数据。",
-    "emptyTitle": "暂无回应。",
+    "emptyTitle": "暂无调查回应。",
     "emptyBody": "匿名问卷提交后，社区层面的汇总趋势会显示在这里。页面不会显示姓名、电子邮件、电话号码、学校名称、IP 地址或个人回应。",
     "live": "实时匿名调查数据",
     "total": "回应总数",
@@ -579,7 +579,7 @@
     "percentHelp": "符合此信号的匿名回应百分比。",
     "aggregateOnly": "仅显示汇总结果。绝不显示个人回应。",
     "aggregateHelper": "仅匿名调查回应",
-    "realtime": "实时更新，并以每 15 秒轮询作为备用",
+    "realtime": "实时更新，并以每 10 秒轮询作为备用",
     "noLanguage": "未选择语言",
     "responsesLabel": "份回应",
     "errorBody": "请检查连接，并稍后再试。"

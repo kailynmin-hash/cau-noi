@@ -559,7 +559,7 @@
   "dashboard": {
     "loading": "Cargando información comunitaria…",
     "errorTitle": "No se pueden cargar los datos del panel.",
-    "emptyTitle": "Aún no hay respuestas.",
+    "emptyTitle": "Aún no hay respuestas de encuesta.",
     "emptyBody": "Cuando se envíen respuestas anónimas del cuestionario, aquí aparecerán tendencias comunitarias agregadas. No se muestran nombres, correos electrónicos, teléfonos, nombres de escuelas, direcciones IP ni respuestas individuales.",
     "live": "Datos anónimos de encuesta en vivo",
     "total": "Total de respuestas",
@@ -579,7 +579,7 @@
     "percentHelp": "Porcentaje de respuestas anónimas que cumplen esta señal.",
     "aggregateOnly": "Solo resultados agregados. Nunca se muestran respuestas individuales.",
     "aggregateHelper": "Solo respuestas anónimas de encuesta",
-    "realtime": "Actualizaciones en tiempo real con respaldo cada 15 segundos",
+    "realtime": "Actualizaciones en tiempo real con respaldo cada 10 segundos",
     "noLanguage": "No se seleccionó idioma",
     "responsesLabel": "respuestas",
     "errorBody": "Revisa la conexión e inténtalo de nuevo en unos momentos."
