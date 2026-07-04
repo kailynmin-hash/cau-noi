@@ -91,6 +91,9 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         ok: false,
+        status: 503,
+        missingFields: [],
+        receivedBody: null,
         debugError: config.debug.message,
         debugDetails: configError,
       },
@@ -110,8 +113,17 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           ok: false,
+          status: 400,
           missingFields,
           receivedBody: body,
+          debugError: "Missing required quiz submission fields.",
+          debugDetails: {
+            submitPath,
+            tableName,
+            expectedColumns,
+            missingFields,
+            receivedBody: body,
+          },
         },
         { status: 400 },
       );
@@ -156,6 +168,9 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           ok: false,
+          status: 500,
+          missingFields: [],
+          receivedBody: response,
           debugError: error.message,
           debugDetails: debugError,
         },
@@ -173,6 +188,9 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         ok: false,
+        status: 500,
+        missingFields: [],
+        receivedBody: null,
         debugError: debugError.message,
         debugDetails: {
           submitPath,

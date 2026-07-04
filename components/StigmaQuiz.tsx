@@ -200,6 +200,7 @@ export function StigmaQuiz() {
     setDebugOutput(null);
 
     const submitUrl = "/api/quiz-submissions";
+    let failedPostDebug: unknown = null;
 
     try {
       console.log("quiz submit payload", payload);
@@ -222,22 +223,34 @@ export function StigmaQuiz() {
       });
 
       if (!result.ok || !resultPayload?.ok) {
-        setDebugOutput({
+        failedPostDebug = {
           responseStatus: result.status,
           responseJson: resultPayload,
+          status: resultPayload?.status,
           missingFields: resultPayload?.missingFields,
+          receivedBody: resultPayload?.receivedBody,
           debugError: resultPayload?.debugError,
           debugDetails: resultPayload?.debugDetails,
-        });
+        };
+        setDebugOutput(failedPostDebug);
         throw new Error(typeof resultPayload?.error === "string" ? resultPayload.error : "Quiz submission failed.");
       }
     } catch (submitError) {
+      const fallbackDebug = {
+        responseStatus: null,
+        responseJson: null,
+        missingFields: null,
+        receivedBody: payload,
+        debugError: submitError instanceof Error ? submitError.message : String(submitError),
+        debugDetails: submitError,
+      };
       console.error("[quiz] submission failed", {
         requestUrl: submitUrl,
         requestBody: payload,
         error: submitError,
       });
       setStatus("error");
+      setDebugOutput(failedPostDebug ?? fallbackDebug);
       setError(submitError instanceof Error ? submitError.message : copy.errorBody);
       return;
     }
@@ -370,11 +383,9 @@ export function StigmaQuiz() {
             {copy.errorTitle}
           </p>
           <p className="mt-2 text-sm leading-6">{error || copy.errorBody}</p>
-          {debugOutput ? (
-            <pre className="mt-4 max-h-80 overflow-auto rounded-md bg-white p-3 text-xs leading-5 text-slate-900">
-              {JSON.stringify(debugOutput, null, 2)}
-            </pre>
-          ) : null}
+          <pre className="mt-4 max-h-80 overflow-auto rounded-md bg-white p-3 text-xs leading-5 text-slate-900">
+            {JSON.stringify(debugOutput ?? { error: error || copy.errorBody }, null, 2)}
+          </pre>
         </section>
       )}
 
