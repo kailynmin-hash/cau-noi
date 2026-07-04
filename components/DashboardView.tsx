@@ -47,7 +47,6 @@ export function DashboardView() {
     aggregateOnly: t("dashboard.aggregateOnly"),
     aggregateHelper: t("dashboard.aggregateHelper"),
     realtime: t("dashboard.realtime"),
-    lastUpdated: t("dashboard.lastUpdated"),
     noLanguage: t("dashboard.noLanguage"),
     responsesLabel: t("dashboard.responsesLabel"),
   };
@@ -120,7 +119,7 @@ export function DashboardView() {
         <Users className="mx-auto text-teal-700" size={34} aria-hidden="true" />
         <h2 className="mt-4 text-2xl font-semibold text-slate-950">{text.emptyTitle}</h2>
         <p className="mx-auto mt-2 max-w-xl leading-7 text-slate-600">{text.emptyBody}</p>
-        <LastUpdated label={text.lastUpdated} value={lastUpdated} language={language} className="justify-center" />
+        <LoadedStatus count={responses.length} value={lastUpdated} language={language} className="justify-center" />
       </div>
     );
   }
@@ -148,7 +147,7 @@ export function DashboardView() {
         </p>
         <div className="grid gap-1 text-sm sm:text-right">
           <p>{text.realtime}</p>
-          <LastUpdated label={text.lastUpdated} value={lastUpdated} language={language} />
+          <LoadedStatus count={aggregates.responseCount} value={lastUpdated} language={language} />
         </div>
       </div>
 
@@ -282,13 +281,13 @@ function SummaryCard({ icon: Icon, label, value, helper }: { icon: LucideIcon; l
   );
 }
 
-function LastUpdated({
-  label,
+function LoadedStatus({
+  count,
   value,
   language,
   className = "",
 }: {
-  label: string;
+  count: number;
   value: Date | null;
   language: string;
   className?: string;
@@ -297,7 +296,7 @@ function LastUpdated({
 
   return (
     <p className={`flex items-center gap-1 text-xs text-teal-900/80 ${className}`}>
-      <span>{label}:</span>
+      <span>Loaded {count} survey responses · Last updated</span>
       <time dateTime={value.toISOString()}>{new Intl.DateTimeFormat(language, { dateStyle: "medium", timeStyle: "short" }).format(value)}</time>
     </p>
   );
