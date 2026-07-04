@@ -108,7 +108,11 @@ export async function POST(request: Request) {
       console.warn("[quiz-submissions] validation failed", { submitPath, missingFields });
 
       return NextResponse.json(
-        { ok: false, error: "Please complete every quiz question before submitting." },
+        {
+          ok: false,
+          error: "Missing required quiz submission fields.",
+          missingFields,
+        },
         { status: 400 },
       );
     }

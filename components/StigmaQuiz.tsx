@@ -184,7 +184,7 @@ export function StigmaQuiz() {
     event.preventDefault();
     if (!complete || stigmaScore === null) return;
 
-    const response: SurveyResponse = {
+    const payload: SurveyResponse = {
       age_group: ageGroup,
       language: surveyLanguage,
       comfort_talking_home: directAnswers.comfort_talking_home ?? 0,
@@ -200,34 +200,35 @@ export function StigmaQuiz() {
     const submitUrl = "/api/quiz-submissions";
 
     try {
+      console.log("quiz submit payload", payload);
       console.info("[quiz] submitting anonymous response", {
         requestUrl: submitUrl,
-        requestBody: response,
+        requestBody: payload,
       });
 
       const result = await fetch(submitUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(response),
+        body: JSON.stringify(payload),
       });
-      const payload = (await result.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
+      const resultPayload = (await result.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
 
       console.info("[quiz] submission response", {
         requestUrl: submitUrl,
         responseStatus: result.status,
-        responseJson: payload,
+        responseJson: resultPayload,
       });
 
-      if (!result.ok || !payload?.ok) {
+      if (!result.ok || !resultPayload?.ok) {
         if (result.status === 503) {
           setError(copy.storageNotConfigured);
         }
-        throw new Error(payload?.error ?? "Quiz submission failed.");
+        throw new Error(resultPayload?.error ?? "Quiz submission failed.");
       }
     } catch (submitError) {
       console.error("[quiz] submission failed", {
         requestUrl: submitUrl,
-        requestBody: response,
+        requestBody: payload,
         error: submitError,
       });
       setStatus("error");
