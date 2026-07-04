@@ -582,6 +582,7 @@
     "realtime": "Actualizaciones en tiempo real con respaldo cada 10 segundos",
     "noLanguage": "No se seleccionó idioma",
     "responsesLabel": "respuestas",
-    "errorBody": "Revisa la conexión e inténtalo de nuevo en unos momentos."
+    "errorBody": "Revisa la conexión e inténtalo de nuevo en unos momentos.",
+    "lastUpdated": "Última actualización"
   }
 }

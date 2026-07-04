@@ -582,6 +582,7 @@
     "realtime": "실시간 업데이트 및 10초 폴링 백업",
     "noLanguage": "언어 미선택",
     "responsesLabel": "응답",
-    "errorBody": "연결을 확인한 뒤 잠시 후 다시 시도해 주세요."
+    "errorBody": "연결을 확인한 뒤 잠시 후 다시 시도해 주세요.",
+    "lastUpdated": "마지막 업데이트"
   }
 }

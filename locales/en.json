@@ -582,6 +582,7 @@
     "realtime": "Realtime updates with 10-second polling fallback",
     "noLanguage": "No language selected",
     "responsesLabel": "responses",
-    "errorBody": "Please check the connection and try again shortly."
+    "errorBody": "Please check the connection and try again shortly.",
+    "lastUpdated": "Last updated"
   }
 }

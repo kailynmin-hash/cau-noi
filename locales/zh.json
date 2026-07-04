@@ -582,6 +582,7 @@
     "realtime": "实时更新，并以每 10 秒轮询作为备用",
     "noLanguage": "未选择语言",
     "responsesLabel": "份回应",
-    "errorBody": "请检查连接，并稍后再试。"
+    "errorBody": "请检查连接，并稍后再试。",
+    "lastUpdated": "上次更新"
   }
 }

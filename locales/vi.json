@@ -582,6 +582,7 @@
     "realtime": "Cập nhật trực tiếp, dự phòng bằng cách tải lại mỗi 10 giây",
     "noLanguage": "Chưa chọn ngôn ngữ",
     "responsesLabel": "phản hồi",
-    "errorBody": "Vui lòng kiểm tra kết nối và thử lại sau ít phút."
+    "errorBody": "Vui lòng kiểm tra kết nối và thử lại sau ít phút.",
+    "lastUpdated": "Cập nhật lần cuối"
   }
 }

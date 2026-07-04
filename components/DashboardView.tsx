@@ -21,7 +21,7 @@ type DashboardStatus = "loading" | "ready" | "empty" | "error";
 const tableName = "survey_responses" as const;
 
 export function DashboardView() {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   const text = {
     loading: t("dashboard.loading"),
     errorTitle: t("dashboard.errorTitle"),
@@ -47,12 +47,14 @@ export function DashboardView() {
     aggregateOnly: t("dashboard.aggregateOnly"),
     aggregateHelper: t("dashboard.aggregateHelper"),
     realtime: t("dashboard.realtime"),
+    lastUpdated: t("dashboard.lastUpdated"),
     noLanguage: t("dashboard.noLanguage"),
     responsesLabel: t("dashboard.responsesLabel"),
   };
   const [responses, setResponses] = useState<SurveyResponse[]>([]);
   const [status, setStatus] = useState<DashboardStatus>("loading");
   const [error, setError] = useState("");
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const loadResponses = useCallback(async () => {
     const { data, error: readError } = await supabase.from(tableName).select("*", { count: "exact" });
@@ -63,8 +65,9 @@ export function DashboardView() {
       setError(readError.message);
       return;
     }
-    const next = (data ?? []) as SurveyResponse[];
+    const next = sortResponsesByCreatedAt((data ?? []) as SurveyResponse[]);
     setResponses(next);
+    setLastUpdated(new Date());
     setStatus(next.length ? "ready" : "empty");
   }, []);
 
@@ -73,7 +76,7 @@ export function DashboardView() {
 
     const channel = supabase
       .channel("survey-responses-dashboard")
-      .on("postgres_changes", { event: "*", schema: "public", table: "survey_responses" }, () => {
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: tableName }, () => {
         loadResponses();
       })
       .subscribe();
@@ -117,6 +120,7 @@ export function DashboardView() {
         <Users className="mx-auto text-teal-700" size={34} aria-hidden="true" />
         <h2 className="mt-4 text-2xl font-semibold text-slate-950">{text.emptyTitle}</h2>
         <p className="mx-auto mt-2 max-w-xl leading-7 text-slate-600">{text.emptyBody}</p>
+        <LastUpdated label={text.lastUpdated} value={lastUpdated} language={language} className="justify-center" />
       </div>
     );
   }
@@ -142,7 +146,10 @@ export function DashboardView() {
           <Wifi size={18} aria-hidden="true" />
           {text.live}
         </p>
-        <p className="text-sm">{text.realtime}</p>
+        <div className="grid gap-1 text-sm sm:text-right">
+          <p>{text.realtime}</p>
+          <LastUpdated label={text.lastUpdated} value={lastUpdated} language={language} />
+        </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
@@ -199,6 +206,14 @@ export function DashboardView() {
       </section>
     </div>
   );
+}
+
+function sortResponsesByCreatedAt(responses: SurveyResponse[]) {
+  return [...responses].sort((a, b) => {
+    const first = a.created_at ? Date.parse(a.created_at) : 0;
+    const second = b.created_at ? Date.parse(b.created_at) : 0;
+    return first - second;
+  });
 }
 
 function getAggregates(responses: SurveyResponse[]) {
@@ -264,6 +279,27 @@ function SummaryCard({ icon: Icon, label, value, helper }: { icon: LucideIcon; l
       <h2 className="mt-1 font-semibold text-slate-800">{label}</h2>
       <p className="mt-2 text-sm leading-6 text-slate-600">{helper}</p>
     </article>
+  );
+}
+
+function LastUpdated({
+  label,
+  value,
+  language,
+  className = "",
+}: {
+  label: string;
+  value: Date | null;
+  language: string;
+  className?: string;
+}) {
+  if (!value) return null;
+
+  return (
+    <p className={`flex items-center gap-1 text-xs text-teal-900/80 ${className}`}>
+      <span>{label}:</span>
+      <time dateTime={value.toISOString()}>{new Intl.DateTimeFormat(language, { dateStyle: "medium", timeStyle: "short" }).format(value)}</time>
+    </p>
   );
 }
 
