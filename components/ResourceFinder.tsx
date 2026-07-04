@@ -50,6 +50,7 @@ export function ResourceFinder() {
           resource.resourceType,
           resource.category,
           resource.city,
+          resource.address ?? "",
           resource.description,
           resource.mode,
           resource.format,
@@ -183,7 +184,8 @@ export function ResourceFinder() {
                     </p>
                     <p className="mt-2 flex items-center gap-2 text-sm font-medium text-slate-600">
                       <MapPin size={16} aria-hidden="true" />
-                      {localized.city}
+                      {resource.address ?? localized.city}
+                      {resource.locationApproximate ? ` (${localized.city})` : ""}
                     </p>
                     <h3 className="mt-2 text-xl font-semibold text-slate-950">{localized.name}</h3>
                   </div>
@@ -196,6 +198,13 @@ export function ResourceFinder() {
 
                 <dl className="grid gap-3 text-sm text-slate-700">
                   <ResourceMeta icon={<Phone size={16} aria-hidden="true" />} label={t("resourceFinder.phone")} value={resource.phone} />
+                  {resource.address && (
+                    <ResourceMeta
+                      icon={<MapPin size={16} aria-hidden="true" />}
+                      label={t("resourceFinder.city")}
+                      value={resource.address}
+                    />
+                  )}
                   <ResourceMeta
                     icon={<Languages size={16} aria-hidden="true" />}
                     label={t("resourceFinder.languages")}

@@ -55,6 +55,8 @@ export function ResourceMap() {
     selected: t("map.selected"),
     noMatch: t("map.noMatch"),
     access: t("map.access"),
+    phone: t("resourceFinder.phone"),
+    languages: t("resourceFinder.languages"),
     zoomIn: t("map.zoomIn"),
     zoomOut: t("map.zoomOut"),
     resetView: t("map.resetView"),
@@ -339,13 +341,25 @@ export function ResourceMap() {
                 {isUrgent(selected) ? text.urgent : text.selected}
               </p>
               <h2 className="mt-2 text-2xl font-semibold text-slate-950">{localizedSelected?.name}</h2>
-              <p className="mt-2 text-sm font-medium text-slate-600">{localizedSelected?.city}</p>
+              <p className="mt-2 text-sm font-medium text-slate-600">{selected.address ?? localizedSelected?.city}</p>
               {userLocation && (
                 <p className="mt-2 text-sm font-semibold text-teal-800">
                   {text.distance}: {distanceMiles(userLocation, selected.coordinates).toFixed(1)} mi
                 </p>
               )}
               <p className="mt-4 leading-7 text-slate-700">{localizedSelected?.description}</p>
+              <dl className="mt-5 grid gap-2 text-sm text-slate-700">
+                {hasUsablePhone(selected.phone) && (
+                  <div>
+                    <dt className="font-semibold text-slate-950">{text.phone}</dt>
+                    <dd>{selected.phone}</dd>
+                  </div>
+                )}
+                <div>
+                  <dt className="font-semibold text-slate-950">{text.languages}</dt>
+                  <dd>{selected.languages.map((tag) => localizedOption(language, tag)).join(", ")}</dd>
+                </div>
+              </dl>
               <div className="mt-5 flex flex-wrap gap-2">
                 {[...selected.languages, ...selected.costTypes, ...selected.ageGroups].map((tag) => (
                   <span key={tag} className="rounded-md bg-teal-50 px-2.5 py-1 text-xs font-semibold text-teal-900">
@@ -468,10 +482,11 @@ function createResourcePopup(resource: Resource, language: LanguageCode) {
   const fallback = "Resource details unavailable";
   const name = localized.name || fallback;
   const description = localized.description || fallback;
-  const city = localized.city || fallback;
+  const city = resource.address || localized.city || fallback;
   const category = localized.category || fallback;
   const phone = hasUsablePhone(resource.phone) ? resource.phone : "";
   const websiteUrl = resource.websiteUrl || "";
+  const languages = resource.languages.map((tag) => localizedOption(language, tag)).join(", ");
 
   const container = document.createElement("article");
   container.className = "resource-map-popup-card";
@@ -500,6 +515,13 @@ function createResourcePopup(resource: Resource, language: LanguageCode) {
     phoneLine.className = "resource-map-popup-phone";
     phoneLine.textContent = phone;
     container.append(phoneLine);
+  }
+
+  if (languages) {
+    const languageLine = document.createElement("p");
+    languageLine.className = "resource-map-popup-phone";
+    languageLine.textContent = languages;
+    container.append(languageLine);
   }
 
   if (websiteUrl.startsWith("http")) {

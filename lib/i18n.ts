@@ -57,11 +57,15 @@ export function resourceKey(name: string) {
 
 export function localizedResource(language: LanguageCode, resource: { name: string; description: string; city: string; resourceType: string }) {
   const key = resourceKey(resource.name);
+  const localizedName = translate(language, `resources.${key}.name`);
+  const localizedDescription = translate(language, `resources.${key}.description`);
+  const localizedCity = translate(language, `resources.${key}.city`);
+  const localizedCategory = translate(language, `resources.${key}.category`);
   return {
-    name: translate(language, `resources.${key}.name`),
-    description: translate(language, `resources.${key}.description`),
-    city: translate(language, `resources.${key}.city`),
-    category: translate(language, `resources.${key}.category`) || localizedOption(language, resource.resourceType),
+    name: localizedName.startsWith("resources.") ? resource.name : localizedName,
+    description: localizedDescription.startsWith("resources.") ? resource.description : localizedDescription,
+    city: localizedCity.startsWith("resources.") ? resource.city : localizedCity,
+    category: localizedCategory.startsWith("resources.") ? localizedOption(language, resource.resourceType) : localizedCategory,
   };
 }
 
