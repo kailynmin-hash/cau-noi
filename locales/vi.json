@@ -260,7 +260,7 @@
       "subtitle": "Xu hướng tổng hợp trực tiếp từ phản hồi ẩn danh của thanh thiếu niên và gia đình.",
       "body": "Bảng Cộng Đồng chuyển các phản hồi khảo sát ẩn danh thành góc nhìn cấp cộng đồng mà không hiển thị câu trả lời cá nhân hoặc thông tin nhận dạng.",
       "indicatorsTitle": "Phân Tích Bảng Cộng Đồng",
-      "indicatorsIntro": "Các biểu đồ này cập nhật từ Supabase khi có phản hồi khảo sát ẩn danh mới. Bảng Cộng Đồng chỉ hiển thị tổng số, điểm trung bình, và tỷ lệ phần trăm.",
+      "indicatorsIntro": "Một góc nhìn duy nhất về xu hướng khảo sát ẩn danh, mức bao phủ danh bạ nguồn hỗ trợ, tiếp cận ngôn ngữ, nguồn bối cảnh công khai và thông tin cộng đồng ở dạng tổng hợp.",
       "impactTitle": "Vì Sao Điều Này Quan Trọng ở CA-45",
       "impactIntro": "Việc tiếp cận chăm sóc sức khỏe tinh thần chịu ảnh hưởng bởi ngôn ngữ, niềm tin, chi phí, kỳ vọng gia đình, và việc biết bắt đầu từ đâu. Cầu Nối trình bày các vấn đề này theo hướng giáo dục, vì cộng đồng, và không thiên về chính trị.",
       "cards": [
@@ -495,7 +495,7 @@
     "statsTitle": "Hữu ích ngay từ lần bấm đầu tiên",
     "stats": [
       [
-        "6",
+        "7",
         "trang điều hướng"
       ],
       [

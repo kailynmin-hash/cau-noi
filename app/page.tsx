@@ -15,19 +15,10 @@ import {
   Sparkles,
   Users,
 } from "lucide-react";
-import {
-  InsightCard,
-  LanguageAccessChart,
-  ResourceCategoryChart,
-  ResourceCoverageMap,
-  StatCard,
-} from "@/components/CivicVisualizations";
 import { HomeShowcase } from "@/components/HomeShowcase";
 import { ImpactMetrics } from "@/components/ImpactMetrics";
 import { useLanguage } from "@/components/LanguageProvider";
 import { PageHero, Section } from "@/components/PageShell";
-import { communityContextSources } from "@/data/communityStats";
-import { getResourceInsightData } from "@/lib/resourceInsights";
 
 const pathIcons = [Brain, Users, HomeIcon];
 const featureIcons = [HeartHandshake, MessageCircleHeart, BookOpen, Sparkles, HandHeart];
@@ -39,7 +30,6 @@ export default function Home() {
   const features = tv<[string, string][]>("home.features", []);
   const ca45Cards = tv<[string, string][]>("home.ca45Cards", []);
   const aboutCards = tv<[string, string][]>("pages.about.cards", []);
-  const insights = getResourceInsightData();
 
   return (
     <>
@@ -87,54 +77,6 @@ export default function Home() {
         </div>
       </Section>
 
-      <Section title={t("visuals.homeSnapshotTitle")} intro={t("visuals.homeSnapshotIntro")}>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCard label={t("visuals.totalResources")} value={insights.totalResources} helper={t("visuals.totalResourcesHelp")} icon={<HeartHandshake size={20} />} />
-          <StatCard label={t("visuals.citiesCovered")} value={insights.citiesCovered} helper={t("visuals.citiesCoveredHelp")} icon={<HomeIcon size={20} />} />
-          <StatCard label={t("visuals.languagesSupported")} value={insights.languagesSupported} helper={t("visuals.languagesSupportedHelp")} icon={<Languages size={20} />} />
-          <StatCard label={t("visuals.categoriesAvailable")} value={insights.categoriesAvailable} helper={t("visuals.categoriesAvailableHelp")} icon={<Sparkles size={20} />} />
-        </div>
-        <div className="mt-6 grid gap-4 lg:grid-cols-2">
-          <div>
-            <h3 className="mb-3 text-xl font-semibold text-slate-950">{t("visuals.resourcesByCategory")}</h3>
-            <ResourceCategoryChart data={insights.resourcesByCategory} ariaLabel={t("visuals.resourcesByCategory")} />
-          </div>
-          <div>
-            <h3 className="mb-3 text-xl font-semibold text-slate-950">{t("visuals.languageAccess")}</h3>
-            <LanguageAccessChart data={insights.resourcesByLanguage} ariaLabel={t("visuals.languageAccess")} />
-          </div>
-        </div>
-        <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_0.9fr]">
-          <ResourceCoverageMap
-            data={insights.cityCoverage}
-            ariaLabel={t("visuals.coverageMap")}
-            summary={{
-              totalResources: insights.totalResources,
-              citiesCovered: insights.focusCitiesCovered,
-              languagesSupported: insights.languagesSupported,
-            }}
-            labels={{
-              title: t("visuals.coverageTitle"),
-              resources: t("visuals.resourcesLabel"),
-              cities: t("visuals.citiesLabel"),
-              languages: t("visuals.languagesLabel"),
-              fewResources: t("visuals.fewResources"),
-              manyResources: t("visuals.manyResources"),
-              supportAvailable: t("visuals.supportAvailable"),
-              supportedLanguages: t("visuals.supportedLanguages"),
-              topCategories: t("visuals.topCategories"),
-              selectCity: t("visuals.selectCity"),
-              legend: t("visuals.legend"),
-            }}
-          />
-          <div className="grid gap-4">
-            {communityContextSources.map((source) => (
-              <InsightCard key={source.sourceUrl} {...source} />
-            ))}
-          </div>
-        </div>
-      </Section>
-
       <Section title={t("home.pathTitle")} intro={t("home.pathIntro")}>
         <div className="grid gap-4 md:grid-cols-3">
           {pathways.map(([title, body], index) => {
@@ -150,7 +92,7 @@ export default function Home() {
         </div>
       </Section>
 
-      <Section tone="mist">
+      <Section title={t("pages.dashboard.indicatorsTitle")} intro={t("pages.dashboard.indicatorsIntro")} tone="mist">
         <HomeShowcase />
       </Section>
 

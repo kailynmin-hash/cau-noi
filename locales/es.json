@@ -260,7 +260,7 @@
       "subtitle": "Tendencias agregadas en vivo de respuestas anónimas de jóvenes y familias.",
       "body": "El Panel Comunitario convierte respuestas anónimas del cuestionario en información comunitaria sin mostrar respuestas individuales ni datos de identificación.",
       "indicatorsTitle": "Analíticas del Panel Comunitario",
-      "indicatorsIntro": "Estos gráficos se actualizan desde Supabase a medida que se envían respuestas anónimas. El Panel Comunitario solo muestra totales, promedios y porcentajes.",
+      "indicatorsIntro": "Una sola vista de tendencias anónimas, cobertura del directorio de recursos, acceso por idioma, fuentes públicas de contexto e información comunitaria agregada.",
       "impactTitle": "Por Qué Esto Importa en CA-45",
       "impactIntro": "El acceso a la salud mental depende del idioma, la confianza, el costo, las expectativas familiares y saber por dónde empezar. Cầu Nối presenta estos temas de forma educativa, comunitaria y no partidista.",
       "cards": [
@@ -495,7 +495,7 @@
     "statsTitle": "Útil desde el primer clic",
     "stats": [
       [
-        "6",
+        "7",
         "páginas de navegación"
       ],
       [

@@ -260,7 +260,7 @@
       "subtitle": "Live aggregate trends from anonymous youth and family survey responses.",
       "body": "The Community Dashboard turns anonymous quiz responses into community-level insight without showing individual answers or identifying information.",
       "indicatorsTitle": "Community Dashboard Analytics",
-      "indicatorsIntro": "These charts update from Supabase as anonymous survey responses are submitted. The Community Dashboard displays totals, averages, and percentage breakdowns only.",
+      "indicatorsIntro": "A single view of anonymous survey trends, resource-directory coverage, language access, public context sources, and aggregate-only community insights.",
       "impactTitle": "Why This Matters in CA-45",
       "impactIntro": "Mental-health access is shaped by language, trust, cost, family expectations, and knowing where to begin. Cầu Nối presents these issues in an educational, community-focused, nonpartisan way.",
       "cards": [
@@ -495,7 +495,7 @@
     "statsTitle": "Built to feel useful from the first click",
     "stats": [
       [
-        "6",
+        "7",
         "navigation pages"
       ],
       [
