@@ -110,8 +110,8 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           ok: false,
-          error: "Missing required quiz submission fields.",
           missingFields,
+          receivedBody: body,
         },
         { status: 400 },
       );

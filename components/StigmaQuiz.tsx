@@ -169,6 +169,7 @@ export function StigmaQuiz() {
   const [stigmaAnswers, setStigmaAnswers] = useState<Record<number, number>>({});
   const [status, setStatus] = useState<"idle" | "saving" | "success" | "error">("idle");
   const [error, setError] = useState("");
+  const [debugOutput, setDebugOutput] = useState<unknown>(null);
 
   const answeredCount = Object.keys(directAnswers).length + Object.keys(stigmaAnswers).length;
   const totalQuestions = directQuestions.length + stigmaQuestions.length;
@@ -196,6 +197,7 @@ export function StigmaQuiz() {
 
     setStatus("saving");
     setError("");
+    setDebugOutput(null);
 
     const submitUrl = "/api/quiz-submissions";
 
@@ -211,7 +213,7 @@ export function StigmaQuiz() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const resultPayload = (await result.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
+      const resultPayload = (await result.json().catch(() => null)) as Record<string, unknown> | null;
 
       console.info("[quiz] submission response", {
         requestUrl: submitUrl,
@@ -220,10 +222,14 @@ export function StigmaQuiz() {
       });
 
       if (!result.ok || !resultPayload?.ok) {
-        if (result.status === 503) {
-          setError(copy.storageNotConfigured);
-        }
-        throw new Error(resultPayload?.error ?? "Quiz submission failed.");
+        setDebugOutput({
+          responseStatus: result.status,
+          responseJson: resultPayload,
+          missingFields: resultPayload?.missingFields,
+          debugError: resultPayload?.debugError,
+          debugDetails: resultPayload?.debugDetails,
+        });
+        throw new Error(typeof resultPayload?.error === "string" ? resultPayload.error : "Quiz submission failed.");
       }
     } catch (submitError) {
       console.error("[quiz] submission failed", {
@@ -232,7 +238,7 @@ export function StigmaQuiz() {
         error: submitError,
       });
       setStatus("error");
-      setError((current) => current || copy.errorBody);
+      setError(submitError instanceof Error ? submitError.message : copy.errorBody);
       return;
     }
 
@@ -247,6 +253,7 @@ export function StigmaQuiz() {
     setStigmaAnswers({});
     setStatus("idle");
     setError("");
+    setDebugOutput(null);
   };
 
   return (
@@ -363,6 +370,11 @@ export function StigmaQuiz() {
             {copy.errorTitle}
           </p>
           <p className="mt-2 text-sm leading-6">{error || copy.errorBody}</p>
+          {debugOutput ? (
+            <pre className="mt-4 max-h-80 overflow-auto rounded-md bg-white p-3 text-xs leading-5 text-slate-900">
+              {JSON.stringify(debugOutput, null, 2)}
+            </pre>
+          ) : null}
         </section>
       )}
 
