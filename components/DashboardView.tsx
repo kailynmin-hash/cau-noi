@@ -13,7 +13,9 @@ import {
   Wifi,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { TrendLineChart } from "@/components/CivicVisualizations";
 import { useLanguage } from "@/components/LanguageProvider";
+import type { ChartDatum } from "@/lib/resourceInsights";
 import { supabase, type SurveyResponse } from "@/lib/supabase";
 
 type DashboardStatus = "loading" | "ready" | "empty" | "error";
@@ -49,6 +51,7 @@ export function DashboardView() {
     realtime: t("dashboard.realtime"),
     noLanguage: t("dashboard.noLanguage"),
     responsesLabel: t("dashboard.responsesLabel"),
+    surveyTrend: t("visuals.surveyTrend"),
   };
   const [responses, setResponses] = useState<SurveyResponse[]>([]);
   const [status, setStatus] = useState<DashboardStatus>("loading");
@@ -203,6 +206,16 @@ export function DashboardView() {
           </div>
         </article>
       </section>
+
+      {aggregates.submissionTrend.length > 0 ? (
+        <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 className="text-2xl font-semibold text-slate-950">{text.surveyTrend}</h2>
+          <p className="mt-1 text-sm text-slate-600">{text.aggregateOnly}</p>
+          <div className="mt-5">
+            <TrendLineChart data={aggregates.submissionTrend} ariaLabel={text.surveyTrend} />
+          </div>
+        </section>
+      ) : null}
     </div>
   );
 }
@@ -250,6 +263,7 @@ function getAggregates(responses: SurveyResponse[]) {
       trendValues(responses, "language_barrier"),
       trendValues(responses, "stigma_score"),
     ],
+    submissionTrend: submissionTrend(responses),
     languageBreakdown: Object.entries(languageCounts)
       .map(([language, count]) => ({
         language,
@@ -258,6 +272,19 @@ function getAggregates(responses: SurveyResponse[]) {
       }))
       .sort((a, b) => b.count - a.count || a.language.localeCompare(b.language)),
   };
+}
+
+function submissionTrend(responses: SurveyResponse[]): ChartDatum[] {
+  const counts = responses.reduce<Record<string, number>>((acc, response) => {
+    if (!response.created_at) return acc;
+    const date = new Date(response.created_at);
+    if (Number.isNaN(date.getTime())) return acc;
+    const label = date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    acc[label] = (acc[label] ?? 0) + 1;
+    return acc;
+  }, {});
+
+  return Object.entries(counts).map(([name, value]) => ({ name, value }));
 }
 
 function trendValues(

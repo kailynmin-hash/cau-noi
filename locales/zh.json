@@ -584,5 +584,29 @@
     "responsesLabel": "份回应",
     "errorBody": "请检查连接，并稍后再试。",
     "lastUpdated": "上次更新"
+  },
+  "visuals": {
+    "homeSnapshotTitle": "CA-45 心理健康可及性快照",
+    "homeSnapshotIntro": "以 civic-tech 方式呈现 Cầu Nối 当前涵盖的资源、城市、语言和类别。",
+    "resourcesSnapshotTitle": "资源覆盖快照",
+    "resourcesSnapshotIntro": "基于目录的指标，显示支持资源分布在哪里，以及哪些获取路径更容易找到。",
+    "dashboardContextTitle": "社区可及性背景",
+    "dashboardContextIntro": "资源目录指标与匿名调查结果并列，让社区仪表板不只是问卷图表。",
+    "totalResources": "已列资源",
+    "totalResourcesHelp": "共享目录中的已核实链接。",
+    "citiesCovered": "覆盖城市",
+    "citiesCoveredHelp": "目录中呈现的城市和区域服务范围。",
+    "focusCitiesCovered": "重点城市覆盖",
+    "focusCitiesCoveredHelp": "至少有一条支持路径的 CA-45 及周边社区。",
+    "languagesSupported": "支持语言",
+    "languagesSupportedHelp": "资源中列出的语言标签。",
+    "categoriesAvailable": "可用类别",
+    "categoriesAvailableHelp": "目录中呈现的资源类型。",
+    "resourcesByCategory": "按类别划分的资源",
+    "languageAccess": "按资源数量显示语言可及性",
+    "resourcesByCity": "按城市划分的资源覆盖",
+    "resourcesByFormat": "按访问形式划分的资源",
+    "coverageMap": "CA-45 资源覆盖地图",
+    "surveyTrend": "调查提交趋势"
   }
 }

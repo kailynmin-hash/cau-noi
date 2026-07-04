@@ -584,5 +584,29 @@
     "responsesLabel": "件の回答",
     "errorBody": "接続を確認し、しばらくしてからもう一度お試しください。",
     "lastUpdated": "最終更新"
+  },
+  "visuals": {
+    "homeSnapshotTitle": "CA-45 メンタルヘルスアクセスのスナップショット",
+    "homeSnapshotIntro": "Cầu Nối に掲載されているリソース、都市、言語、カテゴリを示すシビックテック型の表示です。",
+    "resourcesSnapshotTitle": "リソースカバレッジのスナップショット",
+    "resourcesSnapshotIntro": "支援がどこに掲載され、どのアクセス経路が見つけやすいかを示すディレクトリ由来の指標です。",
+    "dashboardContextTitle": "コミュニティアクセスの背景",
+    "dashboardContextIntro": "匿名調査結果にリソースディレクトリの指標を並べ、コミュニティダッシュボードを調査チャートだけにしません。",
+    "totalResources": "掲載リソース",
+    "totalResourcesHelp": "共有ディレクトリ内の確認済みリンクです。",
+    "citiesCovered": "対象都市",
+    "citiesCoveredHelp": "掲載されている都市と地域サービス範囲です。",
+    "focusCitiesCovered": "重点都市のカバー",
+    "focusCitiesCoveredHelp": "少なくとも1つの支援経路がある CA-45 と周辺コミュニティです。",
+    "languagesSupported": "対応言語",
+    "languagesSupportedHelp": "リソースに付けられた言語タグです。",
+    "categoriesAvailable": "利用可能カテゴリ",
+    "categoriesAvailableHelp": "ディレクトリに含まれるリソース種別です。",
+    "resourcesByCategory": "カテゴリ別リソース",
+    "languageAccess": "リソース数による言語アクセス",
+    "resourcesByCity": "都市別リソースカバレッジ",
+    "resourcesByFormat": "アクセス形式別リソース",
+    "coverageMap": "CA-45 リソースカバレッジマップ",
+    "surveyTrend": "調査送信の推移"
   }
 }

@@ -584,5 +584,29 @@
     "responsesLabel": "respuestas",
     "errorBody": "Revisa la conexión e inténtalo de nuevo en unos momentos.",
     "lastUpdated": "Última actualización"
+  },
+  "visuals": {
+    "homeSnapshotTitle": "Panorama de Acceso a Salud Mental en CA-45",
+    "homeSnapshotIntro": "Una vista cívico-tecnológica de recursos, ciudades, idiomas y categorías representadas en Cầu Nối.",
+    "resourcesSnapshotTitle": "Panorama de Cobertura de Recursos",
+    "resourcesSnapshotIntro": "Métricas derivadas del directorio que muestran dónde hay apoyo listado y qué rutas de acceso son más visibles.",
+    "dashboardContextTitle": "Contexto de Acceso Comunitario",
+    "dashboardContextIntro": "Las métricas del directorio acompañan los resultados anónimos para que el Panel Comunitario no sea solo un gráfico del cuestionario.",
+    "totalResources": "Recursos listados",
+    "totalResourcesHelp": "Enlaces verificados en el directorio compartido.",
+    "citiesCovered": "Ciudades cubiertas",
+    "citiesCoveredHelp": "Ciudades y áreas regionales representadas.",
+    "focusCitiesCovered": "Ciudades foco cubiertas",
+    "focusCitiesCoveredHelp": "Comunidades de CA-45 y cercanas con al menos una ruta de apoyo.",
+    "languagesSupported": "Idiomas disponibles",
+    "languagesSupportedHelp": "Etiquetas de idioma en los recursos.",
+    "categoriesAvailable": "Categorías disponibles",
+    "categoriesAvailableHelp": "Tipos de recursos representados.",
+    "resourcesByCategory": "Recursos por categoría",
+    "languageAccess": "Acceso por idioma según recursos",
+    "resourcesByCity": "Cobertura por ciudad",
+    "resourcesByFormat": "Recursos por formato de acceso",
+    "coverageMap": "Mapa de cobertura de recursos de CA-45",
+    "surveyTrend": "Envíos de encuestas con el tiempo"
   }
 }

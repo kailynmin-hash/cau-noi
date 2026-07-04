@@ -584,5 +584,29 @@
     "responsesLabel": "phản hồi",
     "errorBody": "Vui lòng kiểm tra kết nối và thử lại sau ít phút.",
     "lastUpdated": "Cập nhật lần cuối"
+  },
+  "visuals": {
+    "homeSnapshotTitle": "Bức Tranh Tiếp Cận Sức Khỏe Tinh Thần CA-45",
+    "homeSnapshotIntro": "Góc nhìn civic-tech về nguồn hỗ trợ, thành phố, ngôn ngữ, và nhóm dịch vụ hiện có trong Cầu Nối.",
+    "resourcesSnapshotTitle": "Bức Tranh Bao Phủ Nguồn Hỗ Trợ",
+    "resourcesSnapshotIntro": "Chỉ số lấy từ danh bạ cho thấy nơi có hỗ trợ và các lối tiếp cận dễ tìm.",
+    "dashboardContextTitle": "Bối Cảnh Tiếp Cận Cộng Đồng",
+    "dashboardContextIntro": "Chỉ số từ danh bạ nguồn hỗ trợ được đặt cạnh khảo sát ẩn danh để Bảng Cộng Đồng không chỉ là biểu đồ khảo sát.",
+    "totalResources": "Nguồn hỗ trợ",
+    "totalResourcesHelp": "Liên kết đã kiểm tra trong danh bạ chung.",
+    "citiesCovered": "Thành phố được bao phủ",
+    "citiesCoveredHelp": "Thành phố và khu vực dịch vụ được thể hiện.",
+    "focusCitiesCovered": "Thành phố trọng tâm",
+    "focusCitiesCoveredHelp": "Cộng đồng CA-45 và lân cận có ít nhất một lối hỗ trợ.",
+    "languagesSupported": "Ngôn ngữ hỗ trợ",
+    "languagesSupportedHelp": "Thẻ ngôn ngữ trong các nguồn hỗ trợ.",
+    "categoriesAvailable": "Nhóm dịch vụ",
+    "categoriesAvailableHelp": "Loại nguồn hỗ trợ có trong danh bạ.",
+    "resourcesByCategory": "Nguồn hỗ trợ theo nhóm",
+    "languageAccess": "Tiếp cận ngôn ngữ theo số nguồn",
+    "resourcesByCity": "Bao phủ nguồn hỗ trợ theo thành phố",
+    "resourcesByFormat": "Nguồn hỗ trợ theo hình thức tiếp cận",
+    "coverageMap": "Bản đồ bao phủ nguồn hỗ trợ CA-45",
+    "surveyTrend": "Lượt gửi khảo sát theo thời gian"
   }
 }

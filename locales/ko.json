@@ -584,5 +584,29 @@
     "responsesLabel": "응답",
     "errorBody": "연결을 확인한 뒤 잠시 후 다시 시도해 주세요.",
     "lastUpdated": "마지막 업데이트"
+  },
+  "visuals": {
+    "homeSnapshotTitle": "CA-45 정신건강 접근성 스냅샷",
+    "homeSnapshotIntro": "Cầu Nối에 포함된 리소스, 도시, 언어, 범주를 보여주는 시민기술형 보기입니다.",
+    "resourcesSnapshotTitle": "리소스 커버리지 스냅샷",
+    "resourcesSnapshotIntro": "지원이 어디에 등록되어 있고 어떤 접근 경로가 보이는지 보여주는 디렉터리 기반 지표입니다.",
+    "dashboardContextTitle": "커뮤니티 접근성 맥락",
+    "dashboardContextIntro": "익명 설문 결과 옆에 리소스 디렉터리 지표를 배치해 커뮤니티 대시보드가 설문 차트에만 머물지 않게 합니다.",
+    "totalResources": "등록된 리소스",
+    "totalResourcesHelp": "공유 디렉터리의 확인된 링크입니다.",
+    "citiesCovered": "포함된 도시",
+    "citiesCoveredHelp": "표시된 도시와 지역 서비스 범위입니다.",
+    "focusCitiesCovered": "중점 도시 커버리지",
+    "focusCitiesCoveredHelp": "하나 이상의 지원 경로가 있는 CA-45 및 인근 커뮤니티입니다.",
+    "languagesSupported": "지원 언어",
+    "languagesSupportedHelp": "리소스에 표시된 언어 태그입니다.",
+    "categoriesAvailable": "이용 가능한 범주",
+    "categoriesAvailableHelp": "디렉터리에 포함된 리소스 유형입니다.",
+    "resourcesByCategory": "범주별 리소스",
+    "languageAccess": "리소스 수 기준 언어 접근성",
+    "resourcesByCity": "도시별 리소스 커버리지",
+    "resourcesByFormat": "접근 형식별 리소스",
+    "coverageMap": "CA-45 리소스 커버리지 지도",
+    "surveyTrend": "시간별 설문 제출"
   }
 }

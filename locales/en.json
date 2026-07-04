@@ -584,5 +584,29 @@
     "responsesLabel": "responses",
     "errorBody": "Please check the connection and try again shortly.",
     "lastUpdated": "Last updated"
+  },
+  "visuals": {
+    "homeSnapshotTitle": "CA-45 Mental Health Access Snapshot",
+    "homeSnapshotIntro": "A civic-tech view of the resources, cities, languages, and categories currently represented in Cầu Nối.",
+    "resourcesSnapshotTitle": "Resource Coverage Snapshot",
+    "resourcesSnapshotIntro": "Directory-derived metrics showing where support is listed and which access paths are easiest to find.",
+    "dashboardContextTitle": "Community Access Context",
+    "dashboardContextIntro": "Resource-directory metrics sit beside anonymous survey results so the Community Dashboard is not only a quiz chart.",
+    "totalResources": "Resources listed",
+    "totalResourcesHelp": "Verified links in the shared directory.",
+    "citiesCovered": "Cities covered",
+    "citiesCoveredHelp": "Cities and regional service areas represented.",
+    "focusCitiesCovered": "Focus cities covered",
+    "focusCitiesCoveredHelp": "CA-45 and nearby communities with at least one listed support path.",
+    "languagesSupported": "Languages supported",
+    "languagesSupportedHelp": "Language tags listed across resources.",
+    "categoriesAvailable": "Categories available",
+    "categoriesAvailableHelp": "Resource types represented in the directory.",
+    "resourcesByCategory": "Resources by category",
+    "languageAccess": "Language access by resource count",
+    "resourcesByCity": "Resource coverage by city",
+    "resourcesByFormat": "Resources by access format",
+    "coverageMap": "CA-45 resource coverage map",
+    "surveyTrend": "Survey submissions over time"
   }
 }
