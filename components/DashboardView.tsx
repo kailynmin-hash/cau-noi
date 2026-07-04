@@ -17,20 +17,8 @@ import { useLanguage } from "@/components/LanguageProvider";
 import { supabase, type SurveyResponse } from "@/lib/supabase";
 
 type DashboardStatus = "loading" | "ready" | "empty" | "error";
-type DashboardDebug = {
-  hasSupabaseUrl: boolean;
-  hasSupabaseAnonKey: boolean;
-  tableName: "survey_responses";
-  selectQuery: string;
-  rowsFetched: number;
-  countReturned: number | null;
-  returnedDataLength: number;
-  firstRowKeys: string[];
-  rawSupabaseError: string | null;
-};
 
 const tableName = "survey_responses" as const;
-const selectQuery = `supabase.from("${tableName}").select("*", { count: "exact" })`;
 
 export function DashboardView() {
   const { t } = useLanguage();
@@ -65,43 +53,9 @@ export function DashboardView() {
   const [responses, setResponses] = useState<SurveyResponse[]>([]);
   const [status, setStatus] = useState<DashboardStatus>("loading");
   const [error, setError] = useState("");
-  const [debug, setDebug] = useState<DashboardDebug>({
-    hasSupabaseUrl: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
-    hasSupabaseAnonKey: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
-    tableName,
-    selectQuery,
-    rowsFetched: 0,
-    countReturned: null,
-    returnedDataLength: 0,
-    firstRowKeys: [],
-    rawSupabaseError: null,
-  });
 
   const loadResponses = useCallback(async () => {
-    const { data, error: readError, count } = await supabase.from(tableName).select("*", { count: "exact" });
-    const rowsFetched = data?.length ?? 0;
-    const firstRow = Array.isArray(data) && data.length > 0 ? data[0] : null;
-    const firstRowKeys = firstRow && typeof firstRow === "object" ? Object.keys(firstRow) : [];
-
-    setDebug({
-      hasSupabaseUrl: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
-      hasSupabaseAnonKey: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
-      tableName,
-      selectQuery,
-      rowsFetched,
-      countReturned: count,
-      returnedDataLength: rowsFetched,
-      firstRowKeys,
-      rawSupabaseError: readError ? JSON.stringify(readError, null, 2) : null,
-    });
-
-    console.info("dashboard survey_responses select", {
-      query: selectQuery,
-      rowsFetched,
-      countReturned: count,
-      firstRowKeys,
-      error: readError,
-    });
+    const { data, error: readError } = await supabase.from(tableName).select("*", { count: "exact" });
 
     if (readError) {
       console.error("dashboard survey_responses read error", readError);
@@ -137,41 +91,32 @@ export function DashboardView() {
 
   if (status === "loading") {
     return (
-      <div className="grid gap-4">
-        <div className="rounded-lg border border-slate-200 bg-white p-8 text-center shadow-sm">
-          <Loader2 className="mx-auto animate-spin text-teal-700" size={30} aria-hidden="true" />
-          <p className="mt-3 font-semibold text-slate-950">{text.loading}</p>
-        </div>
-        <DashboardDebugPanel debug={debug} />
+      <div className="rounded-lg border border-slate-200 bg-white p-8 text-center shadow-sm">
+        <Loader2 className="mx-auto animate-spin text-teal-700" size={30} aria-hidden="true" />
+        <p className="mt-3 font-semibold text-slate-950">{text.loading}</p>
       </div>
     );
   }
 
   if (status === "error") {
     return (
-      <div className="grid gap-4">
-        <div className="rounded-lg border border-rose-200 bg-rose-50 p-5 text-rose-950">
-          <p className="flex items-center gap-2 font-semibold">
-            <AlertCircle size={18} aria-hidden="true" />
-            {text.errorTitle}
-          </p>
-          <p className="mt-2 text-sm leading-6">{text.errorBody}</p>
-          <p className="mt-2 text-xs leading-5 opacity-80">{error}</p>
-        </div>
-        <DashboardDebugPanel debug={debug} />
+      <div className="rounded-lg border border-rose-200 bg-rose-50 p-5 text-rose-950">
+        <p className="flex items-center gap-2 font-semibold">
+          <AlertCircle size={18} aria-hidden="true" />
+          {text.errorTitle}
+        </p>
+        <p className="mt-2 text-sm leading-6">{text.errorBody}</p>
+        <p className="mt-2 text-xs leading-5 opacity-80">{error}</p>
       </div>
     );
   }
 
   if (status === "empty") {
     return (
-      <div className="grid gap-4">
-        <div className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center shadow-sm">
-          <Users className="mx-auto text-teal-700" size={34} aria-hidden="true" />
-          <h2 className="mt-4 text-2xl font-semibold text-slate-950">{text.emptyTitle}</h2>
-          <p className="mx-auto mt-2 max-w-xl leading-7 text-slate-600">{text.emptyBody}</p>
-        </div>
-        <DashboardDebugPanel debug={debug} />
+      <div className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center shadow-sm">
+        <Users className="mx-auto text-teal-700" size={34} aria-hidden="true" />
+        <h2 className="mt-4 text-2xl font-semibold text-slate-950">{text.emptyTitle}</h2>
+        <p className="mx-auto mt-2 max-w-xl leading-7 text-slate-600">{text.emptyBody}</p>
       </div>
     );
   }
@@ -199,7 +144,6 @@ export function DashboardView() {
         </p>
         <p className="text-sm">{text.realtime}</p>
       </div>
-      <DashboardDebugPanel debug={debug} />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <SummaryCard icon={Users} label={text.total} value={String(aggregates.responseCount)} helper={text.aggregateHelper} />
@@ -384,34 +328,6 @@ function LanguageBreakdown({
         </div>
       ))}
     </div>
-  );
-}
-
-function DashboardDebugPanel({ debug }: { debug: DashboardDebug }) {
-  const rows = [
-    ["hasSupabaseUrl", String(debug.hasSupabaseUrl)],
-    ["hasSupabaseAnonKey", String(debug.hasSupabaseAnonKey)],
-    ["tableName", debug.tableName],
-    ["selectQuery", debug.selectQuery],
-    ["rowsFetched", String(debug.rowsFetched)],
-    ["countReturned", String(debug.countReturned)],
-    ["returnedDataLength", String(debug.returnedDataLength)],
-    ["firstRowKeys", debug.firstRowKeys.join(", ") || "[]"],
-    ["rawSupabaseError", debug.rawSupabaseError ?? "null"],
-  ];
-
-  return (
-    <section className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-950 shadow-sm">
-      <h2 className="font-semibold">Temporary Dashboard Debug</h2>
-      <dl className="mt-3 grid gap-2 text-xs sm:grid-cols-2 lg:grid-cols-3">
-        {rows.map(([label, value]) => (
-          <div key={label} className="min-w-0 rounded-md bg-white/70 p-3">
-            <dt className="font-semibold">{label}</dt>
-            <dd className="mt-1 overflow-auto whitespace-pre-wrap break-words font-mono">{value}</dd>
-          </div>
-        ))}
-      </dl>
-    </section>
   );
 }
 
