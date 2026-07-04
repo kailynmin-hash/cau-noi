@@ -1,7 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, BookOpen, Brain, HandHeart, HeartHandshake, HomeIcon, LockKeyhole, MessageCircleHeart, Sparkles, Users } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpen,
+  Brain,
+  HandHeart,
+  HeartHandshake,
+  HomeIcon,
+  Languages,
+  LockKeyhole,
+  MessageCircleHeart,
+  ShieldCheck,
+  Sparkles,
+  Users,
+} from "lucide-react";
 import { HomeShowcase } from "@/components/HomeShowcase";
 import { ImpactMetrics } from "@/components/ImpactMetrics";
 import { useLanguage } from "@/components/LanguageProvider";
@@ -9,12 +22,14 @@ import { PageHero, Section } from "@/components/PageShell";
 
 const pathIcons = [Brain, Users, HomeIcon];
 const featureIcons = [HeartHandshake, MessageCircleHeart, BookOpen, Sparkles, HandHeart];
+const aboutIcons = [Languages, HeartHandshake, ShieldCheck];
 
 export default function Home() {
   const { t, tv } = useLanguage();
   const pathways = tv<[string, string][]>("home.pathways", []);
   const features = tv<[string, string][]>("home.features", []);
   const ca45Cards = tv<[string, string][]>("home.ca45Cards", []);
+  const aboutCards = tv<[string, string][]>("pages.about.cards", []);
 
   return (
     <>
@@ -36,6 +51,31 @@ export default function Home() {
           </Link>
         </div>
       </PageHero>
+
+      <Section title={t("pages.about.eyebrow")} intro={t("pages.about.body")} tone="mist">
+        <div id="about-cau-noi" className="scroll-mt-28">
+          <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+            <article className="rounded-lg border border-teal-200 bg-white p-6 shadow-sm">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-teal-700">{t("pages.about.subtitle")}</p>
+              <h2 className="mt-4 text-2xl font-semibold leading-tight text-slate-950 sm:text-3xl">{t("pages.about.title")}</h2>
+              <p className="mt-4 leading-7 text-slate-600">{t("pages.about.boundaryBody")}</p>
+            </article>
+
+            <div className="grid gap-4 sm:grid-cols-3">
+              {aboutCards.map(([title, body], index) => {
+                const Icon = aboutIcons[index] ?? Sparkles;
+                return (
+                  <article key={title} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+                    <Icon size={22} className="text-teal-700" aria-hidden="true" />
+                    <h3 className="mt-4 text-lg font-semibold text-slate-950">{title}</h3>
+                    <p className="mt-3 text-sm leading-6 text-slate-600">{body}</p>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </Section>
 
       <Section title={t("home.pathTitle")} intro={t("home.pathIntro")}>
         <div className="grid gap-4 md:grid-cols-3">

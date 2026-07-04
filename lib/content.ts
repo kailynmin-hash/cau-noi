@@ -20,7 +20,6 @@ export const navItems = [
   { href: "/quiz", key: "quiz" },
   { href: "/dashboard", key: "dashboard" },
   { href: "/map", key: "map" },
-  { href: "/about", key: "about" },
 ] as const;
 
 export const pathways = [

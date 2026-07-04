@@ -47,7 +47,7 @@ export function SiteFooter() {
           <p className="max-w-2xl leading-6">{t("footer.privacyBody")}</p>
         </div>
         <div className="flex flex-wrap gap-3 md:justify-end">
-          <Link href="/about" className="rounded-md px-1 font-medium text-teal-800 hover:text-teal-950">
+          <Link href="/#about-cau-noi" className="rounded-md px-1 font-medium text-teal-800 hover:text-teal-950">
             {t("footer.about")}
           </Link>
           <Link href="/resources" className="rounded-md px-1 font-medium text-teal-800 hover:text-teal-950">
