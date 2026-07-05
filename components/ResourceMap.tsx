@@ -38,6 +38,8 @@ const maxZoom = 17;
 const citySourceId = "cau-noi-city-labels";
 const terrainSourceId = "mapbox-dem";
 const buildingsLayerId = "cau-noi-3d-buildings";
+const filtersPanelStorageKey = "cau-noi-map-filters-open";
+const detailsPanelStorageKey = "cau-noi-map-details-open";
 
 type MapMode = "explore" | "satellite";
 type ViewMode = "2d" | "3d";
@@ -83,6 +85,10 @@ export function ResourceMap() {
     zoomOut: t("map.zoomOut"),
     resetCamera: t("map.resetCamera"),
     useArea: t("map.useArea"),
+    hideFilters: t("map.hideFilters"),
+    showFilters: t("map.showFilters"),
+    hideDetails: t("map.hideDetails"),
+    showDetails: t("map.showDetails"),
     flyToResource: t("map.flyToResource"),
     distance: t("map.distance"),
     cta: t("map.cta"),
@@ -110,6 +116,12 @@ export function ResourceMap() {
   const [selectedName, setSelectedName] = useState(resources[0].name);
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [filtersOpen, setFiltersOpen] = useState(() => getStoredPanelState(filtersPanelStorageKey, true));
+  const [detailsOpen, setDetailsOpen] = useState(() => {
+    const nextFiltersOpen = getStoredPanelState(filtersPanelStorageKey, true);
+    const nextDetailsOpen = getStoredPanelState(detailsPanelStorageKey, true);
+    return isMobileMapLayout() && nextFiltersOpen && nextDetailsOpen ? false : nextDetailsOpen;
+  });
   const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
   const filtered = useMemo(
@@ -148,6 +160,7 @@ export function ResourceMap() {
         event.stopPropagation();
         setSelectedName(resource.name);
         setSelectedResource(resource);
+        openDetailsPanel();
       });
 
       return new mapboxgl.Marker({ element: markerEl, anchor: "center" })
@@ -212,6 +225,16 @@ export function ResourceMap() {
   const setRequestedViewMode = (nextViewMode: ViewMode) => {
     setMapMessage("");
     setViewMode(nextViewMode);
+  };
+
+  const openFiltersPanel = () => {
+    setFiltersOpen(true);
+    if (isMobileMapLayout()) setDetailsOpen(false);
+  };
+
+  const openDetailsPanel = () => {
+    setDetailsOpen(true);
+    if (isMobileMapLayout()) setFiltersOpen(false);
   };
 
   useEffect(() => {
@@ -295,6 +318,18 @@ export function ResourceMap() {
   }, [filtered]);
 
   useEffect(() => {
+    window.localStorage.setItem(filtersPanelStorageKey, String(filtersOpen));
+    const resizeTimer = window.setTimeout(() => mapRef.current?.resize(), 250);
+    return () => window.clearTimeout(resizeTimer);
+  }, [filtersOpen]);
+
+  useEffect(() => {
+    window.localStorage.setItem(detailsPanelStorageKey, String(detailsOpen));
+    const resizeTimer = window.setTimeout(() => mapRef.current?.resize(), 250);
+    return () => window.clearTimeout(resizeTimer);
+  }, [detailsOpen]);
+
+  useEffect(() => {
     viewModeRef.current = viewMode;
     applyMapView(viewMode);
     // View changes are applied directly to the Mapbox instance.
@@ -304,6 +339,7 @@ export function ResourceMap() {
   useEffect(() => {
     syncMarkers();
     // Markers live in HTML overlay state and are intentionally re-synced after filters/style changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtered]);
 
   useEffect(() => {
@@ -404,18 +440,46 @@ export function ResourceMap() {
     });
   };
 
+  const gridClassName =
+    filtersOpen && detailsOpen
+      ? "lg:grid-cols-[340px_minmax(0,1fr)] xl:grid-cols-[360px_minmax(520px,1fr)_320px]"
+      : filtersOpen
+        ? "lg:grid-cols-[340px_minmax(0,1fr)]"
+        : detailsOpen
+          ? "lg:grid-cols-[minmax(0,1fr)] xl:grid-cols-[minmax(520px,1fr)_320px]"
+          : "lg:grid-cols-1";
+  const detailsPanelClassName =
+    filtersOpen && detailsOpen
+      ? "lg:col-span-2 xl:col-span-1"
+      : "";
+
   return (
-    <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[340px_minmax(0,1fr)] xl:grid-cols-[360px_minmax(520px,1fr)_320px]">
-      <aside className="min-w-0 rounded-lg border border-slate-200 bg-white p-4 shadow-sm lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto">
+    <div className={`grid grid-cols-1 items-start gap-6 transition-all duration-300 ${gridClassName}`}>
+      {filtersOpen ? (
+      <aside
+        id="map-filters-panel"
+        className="fixed inset-x-3 bottom-3 z-50 max-h-[78vh] min-w-0 translate-y-0 overflow-y-auto rounded-xl border border-slate-200 bg-white p-4 shadow-2xl shadow-slate-950/20 transition duration-300 lg:static lg:max-h-[calc(100vh-8rem)] lg:rounded-lg lg:shadow-sm"
+      >
         <div className="mb-5 flex items-center justify-between gap-3">
           <p className="flex items-center gap-2 font-semibold text-slate-950">
             <Filter size={18} className="text-teal-700" aria-hidden="true" />
             {text.filters}
           </p>
-          <button type="button" onClick={resetFilters} className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-slate-200 px-2.5 text-xs font-semibold text-slate-700 hover:bg-teal-50">
-            <RotateCcw size={14} aria-hidden="true" />
-            {text.reset}
-          </button>
+          <div className="flex flex-wrap justify-end gap-2">
+            <button type="button" onClick={resetFilters} className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-slate-200 px-2.5 text-xs font-semibold text-slate-700 hover:bg-teal-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-100">
+              <RotateCcw size={14} aria-hidden="true" />
+              {text.reset}
+            </button>
+            <button
+              type="button"
+              onClick={() => setFiltersOpen(false)}
+              aria-controls="map-filters-panel"
+              aria-expanded={filtersOpen}
+              className="inline-flex min-h-9 items-center rounded-md bg-slate-900 px-2.5 text-xs font-semibold text-white hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-200"
+            >
+              {text.hideFilters}
+            </button>
+          </div>
         </div>
         <div className="grid gap-4">
           <Select label={text.language} value={languageFilter} options={languageOptions} onChange={setLanguageFilter} />
@@ -453,6 +517,7 @@ export function ResourceMap() {
                   onSelect={() => {
                     setSelectedName(resource.name);
                     setSelectedResource(resource);
+                    openDetailsPanel();
                     flyToResource(resource);
                   }}
                 />
@@ -463,6 +528,7 @@ export function ResourceMap() {
           )}
         </div>
       </aside>
+      ) : null}
 
       <div className="relative min-h-[560px] min-w-0 overflow-hidden rounded-lg border border-teal-900/30 bg-[#061d1b] p-3 text-white shadow-sm lg:min-h-[650px]">
         <div className="absolute left-4 top-4 z-20 flex items-center gap-2 rounded-lg border border-white/15 bg-black/35 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-teal-50 backdrop-blur">
@@ -485,7 +551,7 @@ export function ResourceMap() {
         </div>
 
         <div className="absolute right-4 top-4 z-20 grid max-w-[calc(100%-2rem)] gap-2 rounded-xl border border-white/15 bg-black/40 p-2 shadow-2xl shadow-black/20 backdrop-blur md:max-w-none">
-          <div className="grid grid-cols-2 gap-1">
+          <div className="grid grid-cols-2 gap-1 sm:grid-cols-4">
             {(["2d", "3d"] as const).map((option) => (
               <button
                 key={option}
@@ -499,8 +565,28 @@ export function ResourceMap() {
                 {option === "2d" ? text.view2d : text.view3d}
               </button>
             ))}
+            <button
+              type="button"
+              onClick={() => (filtersOpen ? setFiltersOpen(false) : openFiltersPanel())}
+              aria-controls="map-filters-panel"
+              aria-expanded={filtersOpen}
+              aria-label={filtersOpen ? text.hideFilters : text.showFilters}
+              className="min-h-9 rounded-md px-3 text-sm font-semibold text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
+            >
+              {filtersOpen ? text.hideFilters : text.showFilters}
+            </button>
+            <button
+              type="button"
+              onClick={() => (detailsOpen ? setDetailsOpen(false) : openDetailsPanel())}
+              aria-controls="map-details-panel"
+              aria-expanded={detailsOpen}
+              aria-label={detailsOpen ? text.hideDetails : text.showDetails}
+              className="min-h-9 rounded-md px-3 text-sm font-semibold text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
+            >
+              {detailsOpen ? text.hideDetails : text.showDetails}
+            </button>
           </div>
-          <div className="grid grid-cols-2 gap-1">
+          <div className="grid grid-cols-2 gap-1 sm:grid-cols-4">
             {(["explore", "satellite"] as const).map((option) => (
               <button
                 key={option}
@@ -513,8 +599,6 @@ export function ResourceMap() {
                 {option === "explore" ? text.explore : text.satellite}
               </button>
             ))}
-          </div>
-          <div className="grid gap-1 sm:grid-cols-2">
             <button
               type="button"
               onClick={resetView}
@@ -534,6 +618,32 @@ export function ResourceMap() {
           </div>
         </div>
 
+        {!filtersOpen && (
+          <button
+            type="button"
+            onClick={openFiltersPanel}
+            aria-controls="map-filters-panel"
+            aria-expanded={filtersOpen}
+            className="absolute left-4 top-20 z-20 inline-flex min-h-10 items-center gap-2 rounded-md border border-white/15 bg-black/45 px-3 text-sm font-semibold text-white shadow-xl backdrop-blur transition hover:bg-white/15 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
+          >
+            <Filter size={16} aria-hidden="true" />
+            {text.showFilters}
+          </button>
+        )}
+
+        {!detailsOpen && (
+          <button
+            type="button"
+            onClick={openDetailsPanel}
+            aria-controls="map-details-panel"
+            aria-expanded={detailsOpen}
+            className="absolute right-4 top-20 z-20 inline-flex min-h-10 items-center gap-2 rounded-md border border-white/15 bg-black/45 px-3 text-sm font-semibold text-white shadow-xl backdrop-blur transition hover:bg-white/15 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
+          >
+            <View size={16} aria-hidden="true" />
+            {text.showDetails}
+          </button>
+        )}
+
         {mapboxToken ? (
           <div ref={mapContainerRef} className="h-[540px] min-h-[560px] w-full rounded-lg lg:h-[650px] lg:min-h-[650px]" />
         ) : (
@@ -551,7 +661,22 @@ export function ResourceMap() {
         </div>
       </div>
 
-      <aside className="min-w-0 rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto xl:col-span-1">
+      {detailsOpen ? (
+      <aside
+        id="map-details-panel"
+        className={`fixed inset-x-3 bottom-3 z-50 max-h-[78vh] min-w-0 overflow-y-auto rounded-xl border border-slate-200 bg-white p-5 shadow-2xl shadow-slate-950/20 transition duration-300 lg:static lg:max-h-[calc(100vh-8rem)] lg:rounded-lg lg:shadow-sm ${detailsPanelClassName}`}
+      >
+          <div className="mb-4 flex justify-end">
+            <button
+              type="button"
+              onClick={() => setDetailsOpen(false)}
+              aria-controls="map-details-panel"
+              aria-expanded={detailsOpen}
+              className="inline-flex min-h-9 items-center rounded-md bg-slate-900 px-2.5 text-xs font-semibold text-white hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-200"
+            >
+              {text.hideDetails}
+            </button>
+          </div>
           {selected ? (
             <>
               <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${isUrgent(selected) ? "text-rose-700" : "text-teal-700"}`}>
@@ -631,6 +756,7 @@ export function ResourceMap() {
             <p className="leading-7 text-slate-600">{text.noMatch}</p>
           )}
         </aside>
+      ) : null}
     </div>
   );
 }
@@ -817,6 +943,16 @@ function removeCityLabels(map: MapboxMap) {
 function findFirstSymbolLayer(map: MapboxMap) {
   const layers = map.getStyle().layers ?? [];
   return layers.find((layer) => layer.type === "symbol")?.id;
+}
+
+function getStoredPanelState(key: string, defaultValue: boolean) {
+  if (typeof window === "undefined") return defaultValue;
+  const storedValue = window.localStorage.getItem(key);
+  return storedValue === null ? defaultValue : storedValue === "true";
+}
+
+function isMobileMapLayout() {
+  return typeof window !== "undefined" && window.matchMedia("(max-width: 1023px)").matches;
 }
 
 function MapButton({ label, onClick, icon: Icon }: { label: string; onClick: () => void; icon: typeof Plus }) {
