@@ -129,17 +129,17 @@ export function ResourceMap() {
 
   const syncMarkers = () => {
     const map = mapRef.current;
-    if (!map) return;
+    if (!map || !map.isStyleLoaded()) return;
     const currentResources = filteredRef.current;
 
     if (viewModeRef.current === "3d") {
       markerRef.current.forEach((marker) => marker.remove());
       markerRef.current = [];
-      syncClusteredResources(map, currentResources);
+      safeSyncClusteredResources(map, currentResources, fallbackTo2d);
       return;
     }
 
-    removeClusteredResources(map);
+    safeRemoveClusteredResources(map);
 
     markerRef.current.forEach((marker) => marker.remove());
     markerRef.current = currentResources.map((resource) => {
@@ -165,33 +165,58 @@ export function ResourceMap() {
 
   const applyMapView = (nextViewMode: ViewMode, animate = true) => {
     const map = mapRef.current;
-    if (!map) return;
+    if (!map || !map.isStyleLoaded()) return;
 
     if (nextViewMode === "3d") {
-      add3dEnhancements(map);
-      syncClusteredResources(map, filteredRef.current);
-      map.easeTo({
-        center: map.getCenter(),
-        zoom: Math.max(map.getZoom(), 12.5),
-        pitch: 56,
-        bearing: -24,
-        duration: animate ? 950 : 0,
-      });
+      try {
+        add3dEnhancements(map);
+        safeSyncClusteredResources(map, filteredRef.current, fallbackTo2d);
+        map.easeTo({
+          center: map.getCenter(),
+          zoom: Math.max(map.getZoom(), 12.5),
+          pitch: 56,
+          bearing: -24,
+          duration: animate ? 950 : 0,
+        });
+      } catch (error) {
+        fallbackTo2d(error);
+      }
       return;
     }
 
     markerRef.current.forEach((marker) => marker.remove());
     markerRef.current = [];
-    removeClusteredResources(map);
-    remove3dEnhancements(map);
-    map.easeTo({
-      center: map.getCenter(),
-      pitch: 0,
-      bearing: 0,
-      duration: animate ? 800 : 0,
-    });
+    safeRemoveClusteredResources(map);
+    safeRemove3dEnhancements(map);
+    try {
+      map.easeTo({
+        center: map.getCenter(),
+        pitch: 0,
+        bearing: 0,
+        duration: animate ? 800 : 0,
+      });
+    } catch (error) {
+      console.error("map reset camera error", error);
+    }
     syncMarkers();
   };
+
+  function fallbackTo2d(error: unknown) {
+    console.error("map 3d mode failed; falling back to 2d", error);
+    const map = mapRef.current;
+    if (map) {
+      safeRemoveClusteredResources(map);
+      safeRemove3dEnhancements(map);
+      try {
+        map.easeTo({ pitch: 0, bearing: 0, duration: 350 });
+      } catch (cameraError) {
+        console.error("map 2d fallback camera error", cameraError);
+      }
+    }
+    viewModeRef.current = "2d";
+    setViewMode("2d");
+    setMapMessage("3d-unavailable");
+  }
 
   const setRequestedViewMode = (nextViewMode: ViewMode) => {
     if (nextViewMode === "3d" && !supports3d) {
@@ -209,17 +234,24 @@ export function ResourceMap() {
 
     mapboxgl.accessToken = mapboxToken;
 
-    const map = new mapboxgl.Map({
-      container: mapContainerRef.current,
-      style: getMapStyle("explore"),
-      center: [center.lng, center.lat],
-      zoom: initialZoom,
-      minZoom,
-      maxZoom,
-      pitch: 0,
-      bearing: 0,
-      attributionControl: false,
-    });
+    let map: MapboxMap;
+    try {
+      map = new mapboxgl.Map({
+        container: mapContainerRef.current,
+        style: getMapStyle("explore"),
+        center: [center.lng, center.lat],
+        zoom: initialZoom,
+        minZoom,
+        maxZoom,
+        pitch: 0,
+        bearing: 0,
+        attributionControl: false,
+      });
+    } catch (error) {
+      console.error("map initialization error", error);
+      window.setTimeout(() => setMapMessage("map-unavailable"), 0);
+      return;
+    }
 
     map.addControl(new mapboxgl.AttributionControl({ compact: true }), "bottom-right");
     map.on("click", (event) => {
@@ -269,7 +301,12 @@ export function ResourceMap() {
       applyMapView(viewModeRef.current, false);
       syncMarkers();
     });
-    map.on("error", () => {
+    map.on("error", (event) => {
+      console.error("mapbox runtime error", event.error ?? event);
+      if (viewModeRef.current === "3d") {
+        fallbackTo2d(event.error ?? event);
+        return;
+      }
       if (requestedModeRef.current === "satellite" && !styleFallbackRef.current) {
         styleFallbackRef.current = true;
         setMapMessage("satellite-unavailable");
@@ -293,7 +330,17 @@ export function ResourceMap() {
   useEffect(() => {
     if (!mapRef.current || !mapboxToken) return;
     requestedModeRef.current = mode;
-    mapRef.current.setStyle(getMapStyle(mode));
+    try {
+      mapRef.current.setStyle(getMapStyle(mode));
+    } catch (error) {
+      console.error("map style switch error", error);
+      if (mode === "satellite") {
+        window.setTimeout(() => {
+          setMapMessage("satellite-unavailable");
+          setMode("explore");
+        }, 0);
+      }
+    }
   }, [mapboxToken, mode]);
 
   useEffect(() => {
@@ -310,6 +357,7 @@ export function ResourceMap() {
   useEffect(() => {
     syncMarkers();
     // Markers live in HTML overlay state and are intentionally re-synced after filters/style changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtered]);
 
   useEffect(() => {
@@ -356,23 +404,31 @@ export function ResourceMap() {
   };
 
   const resetView = () => {
-    mapRef.current?.flyTo({
-      center: [center.lng, center.lat],
-      zoom: initialZoom,
-      pitch: viewModeRef.current === "3d" ? 56 : 0,
-      bearing: viewModeRef.current === "3d" ? -24 : 0,
-      duration: 900,
-    });
+    try {
+      mapRef.current?.flyTo({
+        center: [center.lng, center.lat],
+        zoom: initialZoom,
+        pitch: viewModeRef.current === "3d" ? 56 : 0,
+        bearing: viewModeRef.current === "3d" ? -24 : 0,
+        duration: 900,
+      });
+    } catch (error) {
+      console.error("map reset camera error", error);
+    }
   };
 
   function flyToResource(resource: Resource) {
-    mapRef.current?.flyTo({
-      center: [resource.coordinates.lng, resource.coordinates.lat],
-      zoom: viewModeRef.current === "3d" ? 15.2 : 13.8,
-      pitch: viewModeRef.current === "3d" ? 56 : 0,
-      bearing: viewModeRef.current === "3d" ? -24 : 0,
-      duration: 950,
-    });
+    try {
+      mapRef.current?.flyTo({
+        center: [resource.coordinates.lng, resource.coordinates.lat],
+        zoom: viewModeRef.current === "3d" ? 15.2 : 13.8,
+        pitch: viewModeRef.current === "3d" ? 56 : 0,
+        bearing: viewModeRef.current === "3d" ? -24 : 0,
+        duration: 950,
+      });
+    } catch (error) {
+      console.error("map fly to resource error", error);
+    }
   }
 
   const useMyArea = () => {
@@ -380,19 +436,25 @@ export function ResourceMap() {
     navigator.geolocation.getCurrentPosition((position) => {
       const next = { lat: position.coords.latitude, lng: position.coords.longitude };
       setUserLocation(next);
-      mapRef.current?.flyTo({
-        center: [next.lng, next.lat],
-        zoom: 12.5,
-        pitch: viewModeRef.current === "3d" ? 56 : 0,
-        bearing: viewModeRef.current === "3d" ? -24 : 0,
-        duration: 900,
-      });
+      try {
+        mapRef.current?.flyTo({
+          center: [next.lng, next.lat],
+          zoom: 12.5,
+          pitch: viewModeRef.current === "3d" ? 56 : 0,
+          bearing: viewModeRef.current === "3d" ? -24 : 0,
+          duration: 900,
+        });
+      } catch (error) {
+        console.error("map use my area camera error", error);
+      }
 
       userMarkerRef.current?.remove();
       const el = document.createElement("div");
       el.className = "grid size-8 place-items-center rounded-full border-2 border-white bg-sky-500 shadow-lg";
       el.innerHTML = `<span class="size-2 rounded-full bg-white"></span>`;
-      userMarkerRef.current = new mapboxgl.Marker({ element: el }).setLngLat([next.lng, next.lat]).addTo(mapRef.current!);
+      if (mapRef.current) {
+        userMarkerRef.current = new mapboxgl.Marker({ element: el }).setLngLat([next.lng, next.lat]).addTo(mapRef.current);
+      }
     });
   };
 
@@ -419,7 +481,7 @@ export function ResourceMap() {
         {!mapboxToken && <p className="mt-5 rounded-md bg-sky-50 p-3 text-sm leading-6 text-sky-950">{text.fallback}</p>}
         {mapMessage && (
           <p className="mt-5 rounded-md bg-rose-50 p-3 text-sm leading-6 text-rose-950">
-            {mapMessage === "3d-unavailable" ? text.threeDUnavailable : text.satelliteUnavailable}
+            {mapMessage === "3d-unavailable" || mapMessage === "map-unavailable" ? text.threeDUnavailable : text.satelliteUnavailable}
           </p>
         )}
       </aside>
@@ -635,7 +697,16 @@ function cityFeatureCollection() {
   };
 }
 
+function safeSyncClusteredResources(map: MapboxMap, source: Resource[], onError: (error: unknown) => void) {
+  try {
+    syncClusteredResources(map, source);
+  } catch (error) {
+    onError(error);
+  }
+}
+
 function syncClusteredResources(map: MapboxMap, source: Resource[]) {
+  if (!map.isStyleLoaded()) return;
   const existingSource = map.getSource(resourceSourceId) as mapboxgl.GeoJSONSource | undefined;
   if (existingSource) {
     existingSource.setData(resourceFeatureCollection(source));
@@ -717,7 +788,17 @@ function removeClusteredResources(map: MapboxMap) {
   if (map.getSource(resourceSourceId)) map.removeSource(resourceSourceId);
 }
 
+function safeRemoveClusteredResources(map: MapboxMap) {
+  try {
+    removeClusteredResources(map);
+  } catch (error) {
+    console.error("map clustered resource cleanup error", error);
+  }
+}
+
 function add3dEnhancements(map: MapboxMap) {
+  if (!map.isStyleLoaded()) return;
+
   if (!map.getSource(terrainSourceId)) {
     map.addSource(terrainSourceId, {
       type: "raster-dem",
@@ -735,7 +816,8 @@ function add3dEnhancements(map: MapboxMap) {
   });
 
   const labelLayerId = findFirstSymbolLayer(map);
-  if (!map.getLayer(buildingsLayerId)) {
+  const hasCompositeSource = Boolean(map.getSource("composite"));
+  if (hasCompositeSource && !map.getLayer(buildingsLayerId)) {
     map.addLayer(
       {
         id: buildingsLayerId,
@@ -765,7 +847,17 @@ function remove3dEnhancements(map: MapboxMap) {
   map.setFog(null);
 }
 
+function safeRemove3dEnhancements(map: MapboxMap) {
+  try {
+    remove3dEnhancements(map);
+  } catch (error) {
+    console.error("map 3d cleanup error", error);
+  }
+}
+
 function addCityLabels(map: MapboxMap) {
+  if (!map.isStyleLoaded()) return;
+
   if (!map.getSource(citySourceId)) {
     map.addSource(citySourceId, {
       type: "geojson",
