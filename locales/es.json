@@ -231,7 +231,7 @@
     "mapTitle": "CA-45 live resource map",
     "fallback": "Mapbox token is missing. Add NEXT_PUBLIC_MAPBOX_TOKEN in Vercel to load Explore and Satellite map styles.",
     "satelliteUnavailable": "Satellite view is temporarily unavailable.",
-    "threeDUnavailable": "La vista 3D está desactivada en este dispositivo para mantener el mapa fluido y usable.",
+    "threeDUnavailable": "La vista 3D no está disponible en este dispositivo.",
     "note": "Pins are approximate resource locations for planning. Verify details directly with providers.",
     "selected": "Selected resource",
     "noMatch": "No map resources match those filters.",

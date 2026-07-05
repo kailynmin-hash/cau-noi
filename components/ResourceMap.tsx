@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import mapboxgl, { type Map as MapboxMap, type Marker, type Popup } from "mapbox-gl";
 import {
   Crosshair,
+  ExternalLink,
   Filter,
   LocateFixed,
   Minus,
@@ -34,7 +35,6 @@ const center = { lat: 33.7743, lng: -117.9406 };
 const initialZoom = 12;
 const minZoom = 10;
 const maxZoom = 17;
-const resourceSourceId = "cau-noi-resources";
 const citySourceId = "cau-noi-city-labels";
 const terrainSourceId = "mapbox-dem";
 const buildingsLayerId = "cau-noi-3d-buildings";
@@ -75,6 +75,8 @@ export function ResourceMap() {
     selected: t("map.selected"),
     noMatch: t("map.noMatch"),
     access: t("map.access"),
+    resources: t("resourceFinder.resources"),
+    of: t("resourceFinder.of"),
     phone: t("resourceFinder.phone"),
     languages: t("resourceFinder.languages"),
     zoomIn: t("map.zoomIn"),
@@ -84,6 +86,7 @@ export function ResourceMap() {
     flyToResource: t("map.flyToResource"),
     distance: t("map.distance"),
     cta: t("map.cta"),
+    website: t("common.website"),
     websiteComingSoon: t("common.websiteComingSoon"),
     urgent: t("map.urgent"),
   };
@@ -99,7 +102,6 @@ export function ResourceMap() {
   const [mode, setMode] = useState<MapMode>("explore");
   const [viewMode, setViewMode] = useState<ViewMode>("2d");
   const [mapMessage, setMapMessage] = useState("");
-  const [supports3d] = useState(() => !shouldFallbackTo2d());
   const [languageFilter, setLanguageFilter] = useState<LanguageFilter>("All languages");
   const [costFilter, setCostFilter] = useState<CostFilter>("All costs");
   const [ageFilter, setAgeFilter] = useState<AgeGroupFilter>("All age groups");
@@ -132,15 +134,6 @@ export function ResourceMap() {
     if (!map || !map.isStyleLoaded()) return;
     const currentResources = filteredRef.current;
 
-    if (viewModeRef.current === "3d") {
-      markerRef.current.forEach((marker) => marker.remove());
-      markerRef.current = [];
-      safeSyncClusteredResources(map, currentResources, fallbackTo2d);
-      return;
-    }
-
-    safeRemoveClusteredResources(map);
-
     markerRef.current.forEach((marker) => marker.remove());
     markerRef.current = currentResources.map((resource) => {
       const markerEl = document.createElement("button");
@@ -170,14 +163,14 @@ export function ResourceMap() {
     if (nextViewMode === "3d") {
       try {
         add3dEnhancements(map);
-        safeSyncClusteredResources(map, filteredRef.current, fallbackTo2d);
         map.easeTo({
           center: map.getCenter(),
           zoom: Math.max(map.getZoom(), 12.5),
-          pitch: 56,
-          bearing: -24,
+          pitch: 60,
+          bearing: -20,
           duration: animate ? 950 : 0,
         });
+        syncMarkers();
       } catch (error) {
         fallbackTo2d(error);
       }
@@ -186,7 +179,6 @@ export function ResourceMap() {
 
     markerRef.current.forEach((marker) => marker.remove());
     markerRef.current = [];
-    safeRemoveClusteredResources(map);
     safeRemove3dEnhancements(map);
     try {
       map.easeTo({
@@ -205,7 +197,6 @@ export function ResourceMap() {
     console.error("map 3d mode failed; falling back to 2d", error);
     const map = mapRef.current;
     if (map) {
-      safeRemoveClusteredResources(map);
       safeRemove3dEnhancements(map);
       try {
         map.easeTo({ pitch: 0, bearing: 0, duration: 350 });
@@ -219,12 +210,6 @@ export function ResourceMap() {
   }
 
   const setRequestedViewMode = (nextViewMode: ViewMode) => {
-    if (nextViewMode === "3d" && !supports3d) {
-      setMapMessage("3d-unavailable");
-      setViewMode("2d");
-      return;
-    }
-
     setMapMessage("");
     setViewMode(nextViewMode);
   };
@@ -254,46 +239,8 @@ export function ResourceMap() {
     }
 
     map.addControl(new mapboxgl.AttributionControl({ compact: true }), "bottom-right");
-    map.on("click", (event) => {
-      if (viewModeRef.current === "3d" && map.getLayer("resource-clusters")) {
-        const features = map.queryRenderedFeatures(event.point, {
-          layers: ["resource-clusters", "resource-unclustered", "resource-unclustered-inner"],
-        });
-        const feature = features[0];
-        const featureProperties = feature ? (feature as { properties?: { cluster_id?: number; name?: string } }).properties : undefined;
-        const featureGeometry = feature ? (feature as { geometry?: { coordinates?: [number, number] } }).geometry : undefined;
-
-        if (feature?.layer?.id === "resource-clusters") {
-          const source = map.getSource(resourceSourceId) as mapboxgl.GeoJSONSource | undefined;
-          const clusterId = featureProperties?.cluster_id;
-          const coordinates = featureGeometry?.coordinates;
-          if (!coordinates || clusterId === undefined) return;
-          source?.getClusterExpansionZoom(clusterId, (error, zoom) => {
-            if (error || zoom == null) return;
-            map.easeTo({ center: coordinates, zoom, pitch: 56, bearing: -24, duration: 850 });
-          });
-          return;
-        }
-
-        if (featureProperties?.name) {
-          const resource = filteredRef.current.find((item) => item.name === featureProperties.name);
-          if (resource) {
-            setSelectedName(resource.name);
-            setSelectedResource(resource);
-            flyToResource(resource);
-            return;
-          }
-        }
-      }
-
+    map.on("click", () => {
       setSelectedResource(null);
-    });
-    map.on("mousemove", (event) => {
-      if (viewModeRef.current !== "3d" || !map.getLayer("resource-clusters")) return;
-      const features = map.queryRenderedFeatures(event.point, {
-        layers: ["resource-clusters", "resource-unclustered", "resource-unclustered-inner"],
-      });
-      map.getCanvas().style.cursor = features.length > 0 ? "pointer" : "";
     });
     map.on("style.load", () => {
       styleFallbackRef.current = false;
@@ -357,7 +304,6 @@ export function ResourceMap() {
   useEffect(() => {
     syncMarkers();
     // Markers live in HTML overlay state and are intentionally re-synced after filters/style changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtered]);
 
   useEffect(() => {
@@ -375,7 +321,7 @@ export function ResourceMap() {
       maxWidth: "340px",
     })
       .setLngLat([popupResource.coordinates.lng, popupResource.coordinates.lat])
-      .setDOMContent(createResourcePopup(popupResource, language))
+      .setDOMContent(createResourcePopup(popupResource, language, text.cta, text.websiteComingSoon))
       .addTo(map);
 
     let isCleaningUp = false;
@@ -393,7 +339,7 @@ export function ResourceMap() {
         popupRef.current = null;
       }
     };
-  }, [language, popupResource]);
+  }, [language, popupResource, text.cta, text.websiteComingSoon]);
 
   const resetFilters = () => {
     setLanguageFilter("All languages");
@@ -408,8 +354,8 @@ export function ResourceMap() {
       mapRef.current?.flyTo({
         center: [center.lng, center.lat],
         zoom: initialZoom,
-        pitch: viewModeRef.current === "3d" ? 56 : 0,
-        bearing: viewModeRef.current === "3d" ? -24 : 0,
+        pitch: viewModeRef.current === "3d" ? 60 : 0,
+        bearing: viewModeRef.current === "3d" ? -20 : 0,
         duration: 900,
       });
     } catch (error) {
@@ -422,8 +368,8 @@ export function ResourceMap() {
       mapRef.current?.flyTo({
         center: [resource.coordinates.lng, resource.coordinates.lat],
         zoom: viewModeRef.current === "3d" ? 15.2 : 13.8,
-        pitch: viewModeRef.current === "3d" ? 56 : 0,
-        bearing: viewModeRef.current === "3d" ? -24 : 0,
+        pitch: viewModeRef.current === "3d" ? 60 : 0,
+        bearing: viewModeRef.current === "3d" ? -20 : 0,
         duration: 950,
       });
     } catch (error) {
@@ -440,8 +386,8 @@ export function ResourceMap() {
         mapRef.current?.flyTo({
           center: [next.lng, next.lat],
           zoom: 12.5,
-          pitch: viewModeRef.current === "3d" ? 56 : 0,
-          bearing: viewModeRef.current === "3d" ? -24 : 0,
+          pitch: viewModeRef.current === "3d" ? 60 : 0,
+          bearing: viewModeRef.current === "3d" ? -20 : 0,
           duration: 900,
         });
       } catch (error) {
@@ -459,7 +405,7 @@ export function ResourceMap() {
   };
 
   return (
-    <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[280px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(520px,1fr)_320px]">
+    <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[340px_minmax(0,1fr)] xl:grid-cols-[360px_minmax(520px,1fr)_320px]">
       <aside className="min-w-0 rounded-lg border border-slate-200 bg-white p-4 shadow-sm lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto">
         <div className="mb-5 flex items-center justify-between gap-3">
           <p className="flex items-center gap-2 font-semibold text-slate-950">
@@ -484,6 +430,38 @@ export function ResourceMap() {
             {mapMessage === "3d-unavailable" || mapMessage === "map-unavailable" ? text.threeDUnavailable : text.satelliteUnavailable}
           </p>
         )}
+
+        <div className="mt-6 border-t border-slate-100 pt-5">
+          <div className="mb-3 flex items-end justify-between gap-3">
+            <div>
+              <h2 className="font-semibold text-slate-950">{text.resources}</h2>
+              <p className="mt-1 text-xs font-medium text-slate-500">
+                {filtered.length} {text.of} {resources.length}
+              </p>
+            </div>
+          </div>
+          {filtered.length > 0 ? (
+            <div className="grid gap-3">
+              {filtered.map((resource) => (
+                <MapResourceCard
+                  key={resource.name}
+                  resource={resource}
+                  language={language}
+                  selected={selected?.name === resource.name}
+                  mapLabel={text.flyToResource}
+                  websiteLabel={text.website}
+                  onSelect={() => {
+                    setSelectedName(resource.name);
+                    setSelectedResource(resource);
+                    flyToResource(resource);
+                  }}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="rounded-md border border-dashed border-slate-300 bg-slate-50 p-4 text-sm leading-6 text-slate-600">{text.noMatch}</p>
+          )}
+        </div>
       </aside>
 
       <div className="relative min-h-[560px] min-w-0 overflow-hidden rounded-lg border border-teal-900/30 bg-[#061d1b] p-3 text-white shadow-sm lg:min-h-[650px]">
@@ -513,7 +491,7 @@ export function ResourceMap() {
                 key={option}
                 type="button"
                 onClick={() => setRequestedViewMode(option)}
-                disabled={option === "3d" && !supports3d}
+                aria-pressed={viewMode === option}
                 className={`min-h-9 rounded-md px-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-55 ${
                   viewMode === option ? "bg-white text-teal-950" : "text-white hover:bg-white/10"
                 }`}
@@ -657,28 +635,69 @@ export function ResourceMap() {
   );
 }
 
+function MapResourceCard({
+  resource,
+  language,
+  selected,
+  mapLabel,
+  websiteLabel,
+  onSelect,
+}: {
+  resource: Resource;
+  language: LanguageCode;
+  selected: boolean;
+  mapLabel: string;
+  websiteLabel: string;
+  onSelect: () => void;
+}) {
+  const localized = localizedResource(language, resource);
+
+  return (
+    <article className={`rounded-lg border p-4 shadow-sm transition ${selected ? "border-teal-500 bg-teal-50" : "border-slate-200 bg-white hover:border-teal-200"}`}>
+      <button type="button" onClick={onSelect} className="block w-full text-left focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-100">
+        <p className={`text-xs font-semibold uppercase tracking-[0.16em] ${isUrgent(resource) ? "text-rose-700" : "text-teal-700"}`}>
+          {localized.category}
+        </p>
+        <h3 className="mt-2 text-base font-semibold leading-snug text-slate-950">{localized.name}</h3>
+        <p className="mt-2 text-xs font-medium text-slate-600">{resource.address ?? localized.city}</p>
+        <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">{localized.description}</p>
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          {[resource.mode, ...resource.languages.slice(0, 3)].map((tag) => (
+            <span key={tag} className="rounded-md bg-white px-2 py-1 text-[11px] font-semibold text-teal-900 ring-1 ring-teal-100">
+              {localizedOption(language, tag)}
+            </span>
+          ))}
+        </div>
+      </button>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={onSelect}
+          className="inline-flex min-h-9 flex-1 items-center justify-center gap-1.5 rounded-md border border-teal-200 bg-white px-3 text-xs font-semibold text-teal-800 transition hover:bg-teal-50"
+        >
+          <View size={14} aria-hidden="true" />
+          {mapLabel}
+        </button>
+        {resource.websiteUrl ? (
+          <a
+            href={resource.websiteUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-9 flex-1 items-center justify-center gap-1.5 rounded-md bg-teal-700 px-3 text-xs font-semibold text-white transition hover:bg-teal-800"
+          >
+            <ExternalLink size={14} aria-hidden="true" />
+            {websiteLabel}
+          </a>
+        ) : null}
+      </div>
+    </article>
+  );
+}
+
 function getMapStyle(mode: MapMode) {
   return mode === "satellite"
     ? "mapbox://styles/mapbox/satellite-streets-v12"
     : "mapbox://styles/mapbox/streets-v12";
-}
-
-function resourceFeatureCollection(source: Resource[]) {
-  return {
-    type: "FeatureCollection" as const,
-    features: source.map((resource) => ({
-      type: "Feature" as const,
-      geometry: {
-        type: "Point" as const,
-        coordinates: [resource.coordinates.lng, resource.coordinates.lat],
-      },
-      properties: {
-        name: resource.name,
-        urgent: isUrgent(resource),
-        city: resource.city,
-      },
-    })),
-  };
 }
 
 function cityFeatureCollection() {
@@ -695,105 +714,6 @@ function cityFeatureCollection() {
       },
     })),
   };
-}
-
-function safeSyncClusteredResources(map: MapboxMap, source: Resource[], onError: (error: unknown) => void) {
-  try {
-    syncClusteredResources(map, source);
-  } catch (error) {
-    onError(error);
-  }
-}
-
-function syncClusteredResources(map: MapboxMap, source: Resource[]) {
-  if (!map.isStyleLoaded()) return;
-  const existingSource = map.getSource(resourceSourceId) as mapboxgl.GeoJSONSource | undefined;
-  if (existingSource) {
-    existingSource.setData(resourceFeatureCollection(source));
-    return;
-  }
-
-  map.addSource(resourceSourceId, {
-    type: "geojson",
-    data: resourceFeatureCollection(source),
-    cluster: true,
-    clusterMaxZoom: 14,
-    clusterRadius: 48,
-  });
-
-  map.addLayer({
-    id: "resource-clusters",
-    type: "circle",
-    source: resourceSourceId,
-    filter: ["has", "point_count"],
-    paint: {
-      "circle-color": ["step", ["get", "point_count"], "#14b8a6", 8, "#38bdf8", 18, "#f43f5e"],
-      "circle-radius": ["step", ["get", "point_count"], 20, 8, 26, 18, 34],
-      "circle-stroke-color": "#ffffff",
-      "circle-stroke-width": 2,
-      "circle-opacity": 0.92,
-      "circle-emissive-strength": 0.8,
-    },
-  });
-
-  map.addLayer({
-    id: "resource-cluster-count",
-    type: "symbol",
-    source: resourceSourceId,
-    filter: ["has", "point_count"],
-    layout: {
-      "text-field": ["get", "point_count_abbreviated"],
-      "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
-      "text-size": 13,
-    },
-    paint: {
-      "text-color": "#ffffff",
-      "text-halo-color": "rgba(0,0,0,0.35)",
-      "text-halo-width": 1,
-    },
-  });
-
-  map.addLayer({
-    id: "resource-unclustered",
-    type: "circle",
-    source: resourceSourceId,
-    filter: ["!", ["has", "point_count"]],
-    paint: {
-      "circle-color": ["case", ["boolean", ["get", "urgent"], false], "#f43f5e", "#14b8a6"],
-      "circle-radius": 13,
-      "circle-stroke-color": "#ffffff",
-      "circle-stroke-width": 2,
-      "circle-opacity": 0.96,
-      "circle-emissive-strength": 0.9,
-    },
-  });
-
-  map.addLayer({
-    id: "resource-unclustered-inner",
-    type: "circle",
-    source: resourceSourceId,
-    filter: ["!", ["has", "point_count"]],
-    paint: {
-      "circle-color": "#ffffff",
-      "circle-radius": 4,
-      "circle-opacity": 1,
-    },
-  });
-}
-
-function removeClusteredResources(map: MapboxMap) {
-  ["resource-unclustered-inner", "resource-unclustered", "resource-cluster-count", "resource-clusters"].forEach((layerId) => {
-    if (map.getLayer(layerId)) map.removeLayer(layerId);
-  });
-  if (map.getSource(resourceSourceId)) map.removeSource(resourceSourceId);
-}
-
-function safeRemoveClusteredResources(map: MapboxMap) {
-  try {
-    removeClusteredResources(map);
-  } catch (error) {
-    console.error("map clustered resource cleanup error", error);
-  }
 }
 
 function add3dEnhancements(map: MapboxMap) {
@@ -899,17 +819,6 @@ function findFirstSymbolLayer(map: MapboxMap) {
   return layers.find((layer) => layer.type === "symbol")?.id;
 }
 
-function shouldFallbackTo2d() {
-  if (typeof window === "undefined" || typeof navigator === "undefined") return false;
-  const nav = navigator as Navigator & { deviceMemory?: number };
-  return (
-    window.innerWidth < 640 ||
-    (nav.hardwareConcurrency && nav.hardwareConcurrency <= 4) ||
-    (nav.deviceMemory && nav.deviceMemory <= 4) ||
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches
-  );
-}
-
 function MapButton({ label, onClick, icon: Icon }: { label: string; onClick: () => void; icon: typeof Plus }) {
   return (
     <button
@@ -971,7 +880,7 @@ function isUrgent(resource: Resource) {
   return resource.resourceType === "988 Suicide & Crisis Lifeline";
 }
 
-function createResourcePopup(resource: Resource, language: LanguageCode) {
+function createResourcePopup(resource: Resource, language: LanguageCode, visitWebsiteLabel: string, websiteComingSoonLabel: string) {
   const localized = localizedResource(language, resource);
   const fallback = "Resource details unavailable";
   const name = localized.name || fallback;
@@ -1024,13 +933,13 @@ function createResourcePopup(resource: Resource, language: LanguageCode) {
     link.href = websiteUrl;
     link.target = "_blank";
     link.rel = "noopener noreferrer";
-    link.textContent = "Visit website";
+    link.textContent = visitWebsiteLabel;
     link.addEventListener("click", (event) => event.stopPropagation());
     container.append(link);
   } else {
     const fallback = document.createElement("p");
     fallback.className = "resource-map-popup-fallback";
-    fallback.textContent = localizedOption(language, "Website coming soon");
+    fallback.textContent = websiteComingSoonLabel;
     container.append(fallback);
   }
 
