@@ -11,6 +11,7 @@ import {
   Plus,
   RotateCcw,
   ShieldCheck,
+  View,
 } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { localizedOption, localizedResource, type LanguageCode } from "@/lib/i18n";
@@ -33,8 +34,24 @@ const center = { lat: 33.7743, lng: -117.9406 };
 const initialZoom = 12;
 const minZoom = 10;
 const maxZoom = 17;
+const resourceSourceId = "cau-noi-resources";
+const citySourceId = "cau-noi-city-labels";
+const terrainSourceId = "mapbox-dem";
+const buildingsLayerId = "cau-noi-3d-buildings";
 
 type MapMode = "explore" | "satellite";
+type ViewMode = "2d" | "3d";
+
+const cityLabels = [
+  { name: "Fullerton", coordinates: [-117.9243, 33.8704] },
+  { name: "La Mirada", coordinates: [-118.0107, 33.9172] },
+  { name: "Buena Park", coordinates: [-117.9981, 33.8675] },
+  { name: "Anaheim", coordinates: [-117.9145, 33.8366] },
+  { name: "Garden Grove", coordinates: [-117.9414, 33.7739] },
+  { name: "Santa Ana", coordinates: [-117.8677, 33.7455] },
+  { name: "Westminster", coordinates: [-117.9931, 33.7592] },
+  { name: "Fountain Valley", coordinates: [-117.9537, 33.7092] },
+];
 
 export function ResourceMap() {
   const { language, t } = useLanguage();
@@ -48,9 +65,12 @@ export function ResourceMap() {
     city: t("map.city"),
     explore: t("map.explore"),
     satellite: t("map.satellite"),
+    view2d: t("map.view2d"),
+    view3d: t("map.view3d"),
     mapTitle: t("map.mapTitle"),
     fallback: t("map.fallback"),
     satelliteUnavailable: t("map.satelliteUnavailable"),
+    threeDUnavailable: t("map.threeDUnavailable"),
     note: t("map.note"),
     selected: t("map.selected"),
     noMatch: t("map.noMatch"),
@@ -59,8 +79,9 @@ export function ResourceMap() {
     languages: t("resourceFinder.languages"),
     zoomIn: t("map.zoomIn"),
     zoomOut: t("map.zoomOut"),
-    resetView: t("map.resetView"),
+    resetCamera: t("map.resetCamera"),
     useArea: t("map.useArea"),
+    flyToResource: t("map.flyToResource"),
     distance: t("map.distance"),
     cta: t("map.cta"),
     websiteComingSoon: t("common.websiteComingSoon"),
@@ -73,8 +94,12 @@ export function ResourceMap() {
   const userMarkerRef = useRef<Marker | null>(null);
   const styleFallbackRef = useRef(false);
   const requestedModeRef = useRef<MapMode>("explore");
+  const filteredRef = useRef<Resource[]>(resources);
+  const viewModeRef = useRef<ViewMode>("2d");
   const [mode, setMode] = useState<MapMode>("explore");
+  const [viewMode, setViewMode] = useState<ViewMode>("2d");
   const [mapMessage, setMapMessage] = useState("");
+  const [supports3d] = useState(() => !shouldFallbackTo2d());
   const [languageFilter, setLanguageFilter] = useState<LanguageFilter>("All languages");
   const [costFilter, setCostFilter] = useState<CostFilter>("All costs");
   const [ageFilter, setAgeFilter] = useState<AgeGroupFilter>("All age groups");
@@ -105,9 +130,19 @@ export function ResourceMap() {
   const syncMarkers = () => {
     const map = mapRef.current;
     if (!map) return;
+    const currentResources = filteredRef.current;
+
+    if (viewModeRef.current === "3d") {
+      markerRef.current.forEach((marker) => marker.remove());
+      markerRef.current = [];
+      syncClusteredResources(map, currentResources);
+      return;
+    }
+
+    removeClusteredResources(map);
 
     markerRef.current.forEach((marker) => marker.remove());
-    markerRef.current = filtered.map((resource) => {
+    markerRef.current = currentResources.map((resource) => {
       const markerEl = document.createElement("button");
       markerEl.type = "button";
       markerEl.className = `group grid size-9 place-items-center rounded-full border-2 text-white shadow-lg shadow-black/25 transition hover:border-white hover:shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40 ${
@@ -128,6 +163,47 @@ export function ResourceMap() {
     });
   };
 
+  const applyMapView = (nextViewMode: ViewMode, animate = true) => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    if (nextViewMode === "3d") {
+      add3dEnhancements(map);
+      syncClusteredResources(map, filteredRef.current);
+      map.easeTo({
+        center: map.getCenter(),
+        zoom: Math.max(map.getZoom(), 12.5),
+        pitch: 56,
+        bearing: -24,
+        duration: animate ? 950 : 0,
+      });
+      return;
+    }
+
+    markerRef.current.forEach((marker) => marker.remove());
+    markerRef.current = [];
+    removeClusteredResources(map);
+    remove3dEnhancements(map);
+    map.easeTo({
+      center: map.getCenter(),
+      pitch: 0,
+      bearing: 0,
+      duration: animate ? 800 : 0,
+    });
+    syncMarkers();
+  };
+
+  const setRequestedViewMode = (nextViewMode: ViewMode) => {
+    if (nextViewMode === "3d" && !supports3d) {
+      setMapMessage("3d-unavailable");
+      setViewMode("2d");
+      return;
+    }
+
+    setMapMessage("");
+    setViewMode(nextViewMode);
+  };
+
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current || !mapboxToken) return;
 
@@ -140,18 +216,57 @@ export function ResourceMap() {
       zoom: initialZoom,
       minZoom,
       maxZoom,
-      pitch: 42,
-      bearing: -18,
+      pitch: 0,
+      bearing: 0,
       attributionControl: false,
     });
 
     map.addControl(new mapboxgl.AttributionControl({ compact: true }), "bottom-right");
-    map.on("click", () => {
+    map.on("click", (event) => {
+      if (viewModeRef.current === "3d" && map.getLayer("resource-clusters")) {
+        const features = map.queryRenderedFeatures(event.point, {
+          layers: ["resource-clusters", "resource-unclustered", "resource-unclustered-inner"],
+        });
+        const feature = features[0];
+        const featureProperties = feature ? (feature as { properties?: { cluster_id?: number; name?: string } }).properties : undefined;
+        const featureGeometry = feature ? (feature as { geometry?: { coordinates?: [number, number] } }).geometry : undefined;
+
+        if (feature?.layer?.id === "resource-clusters") {
+          const source = map.getSource(resourceSourceId) as mapboxgl.GeoJSONSource | undefined;
+          const clusterId = featureProperties?.cluster_id;
+          const coordinates = featureGeometry?.coordinates;
+          if (!coordinates || clusterId === undefined) return;
+          source?.getClusterExpansionZoom(clusterId, (error, zoom) => {
+            if (error || zoom == null) return;
+            map.easeTo({ center: coordinates, zoom, pitch: 56, bearing: -24, duration: 850 });
+          });
+          return;
+        }
+
+        if (featureProperties?.name) {
+          const resource = filteredRef.current.find((item) => item.name === featureProperties.name);
+          if (resource) {
+            setSelectedName(resource.name);
+            setSelectedResource(resource);
+            flyToResource(resource);
+            return;
+          }
+        }
+      }
+
       setSelectedResource(null);
+    });
+    map.on("mousemove", (event) => {
+      if (viewModeRef.current !== "3d" || !map.getLayer("resource-clusters")) return;
+      const features = map.queryRenderedFeatures(event.point, {
+        layers: ["resource-clusters", "resource-unclustered", "resource-unclustered-inner"],
+      });
+      map.getCanvas().style.cursor = features.length > 0 ? "pointer" : "";
     });
     map.on("style.load", () => {
       styleFallbackRef.current = false;
       setMapMessage("");
+      applyMapView(viewModeRef.current, false);
       syncMarkers();
     });
     map.on("error", () => {
@@ -182,9 +297,19 @@ export function ResourceMap() {
   }, [mapboxToken, mode]);
 
   useEffect(() => {
+    filteredRef.current = filtered;
+  }, [filtered]);
+
+  useEffect(() => {
+    viewModeRef.current = viewMode;
+    applyMapView(viewMode);
+    // View changes are applied directly to the Mapbox instance.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewMode]);
+
+  useEffect(() => {
     syncMarkers();
     // Markers live in HTML overlay state and are intentionally re-synced after filters/style changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtered]);
 
   useEffect(() => {
@@ -231,15 +356,37 @@ export function ResourceMap() {
   };
 
   const resetView = () => {
-    mapRef.current?.flyTo({ center: [center.lng, center.lat], zoom: initialZoom, pitch: 42, bearing: -18, duration: 900 });
+    mapRef.current?.flyTo({
+      center: [center.lng, center.lat],
+      zoom: initialZoom,
+      pitch: viewModeRef.current === "3d" ? 56 : 0,
+      bearing: viewModeRef.current === "3d" ? -24 : 0,
+      duration: 900,
+    });
   };
+
+  function flyToResource(resource: Resource) {
+    mapRef.current?.flyTo({
+      center: [resource.coordinates.lng, resource.coordinates.lat],
+      zoom: viewModeRef.current === "3d" ? 15.2 : 13.8,
+      pitch: viewModeRef.current === "3d" ? 56 : 0,
+      bearing: viewModeRef.current === "3d" ? -24 : 0,
+      duration: 950,
+    });
+  }
 
   const useMyArea = () => {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition((position) => {
       const next = { lat: position.coords.latitude, lng: position.coords.longitude };
       setUserLocation(next);
-      mapRef.current?.flyTo({ center: [next.lng, next.lat], zoom: 12.5, duration: 900 });
+      mapRef.current?.flyTo({
+        center: [next.lng, next.lat],
+        zoom: 12.5,
+        pitch: viewModeRef.current === "3d" ? 56 : 0,
+        bearing: viewModeRef.current === "3d" ? -24 : 0,
+        duration: 900,
+      });
 
       userMarkerRef.current?.remove();
       const el = document.createElement("div");
@@ -270,7 +417,11 @@ export function ResourceMap() {
           <Select label={text.city} value={cityFilter} options={cityOptions} onChange={setCityFilter} />
         </div>
         {!mapboxToken && <p className="mt-5 rounded-md bg-sky-50 p-3 text-sm leading-6 text-sky-950">{text.fallback}</p>}
-        {mapMessage && <p className="mt-5 rounded-md bg-rose-50 p-3 text-sm leading-6 text-rose-950">{text.satelliteUnavailable}</p>}
+        {mapMessage && (
+          <p className="mt-5 rounded-md bg-rose-50 p-3 text-sm leading-6 text-rose-950">
+            {mapMessage === "3d-unavailable" ? text.threeDUnavailable : text.satelliteUnavailable}
+          </p>
+        )}
       </aside>
 
       <div className="relative min-h-[560px] min-w-0 overflow-hidden rounded-lg border border-teal-900/30 bg-[#061d1b] p-3 text-white shadow-sm lg:min-h-[650px]">
@@ -293,19 +444,54 @@ export function ResourceMap() {
           </span>
         </div>
 
-        <div className="absolute right-4 top-4 z-20 flex rounded-lg border border-white/15 bg-black/35 p-1 backdrop-blur">
-          {(["explore", "satellite"] as const).map((option) => (
+        <div className="absolute right-4 top-4 z-20 grid max-w-[calc(100%-2rem)] gap-2 rounded-xl border border-white/15 bg-black/40 p-2 shadow-2xl shadow-black/20 backdrop-blur md:max-w-none">
+          <div className="grid grid-cols-2 gap-1">
+            {(["2d", "3d"] as const).map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => setRequestedViewMode(option)}
+                disabled={option === "3d" && !supports3d}
+                className={`min-h-9 rounded-md px-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-55 ${
+                  viewMode === option ? "bg-white text-teal-950" : "text-white hover:bg-white/10"
+                }`}
+              >
+                {option === "2d" ? text.view2d : text.view3d}
+              </button>
+            ))}
+          </div>
+          <div className="grid grid-cols-2 gap-1">
+            {(["explore", "satellite"] as const).map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => setMode(option)}
+                className={`min-h-9 rounded-md px-3 text-sm font-semibold transition ${
+                  mode === option ? "bg-white text-teal-950" : "text-white hover:bg-white/10"
+                }`}
+              >
+                {option === "explore" ? text.explore : text.satellite}
+              </button>
+            ))}
+          </div>
+          <div className="grid gap-1 sm:grid-cols-2">
             <button
-              key={option}
               type="button"
-              onClick={() => setMode(option)}
-              className={`min-h-9 rounded-md px-3 text-sm font-semibold transition ${
-                mode === option ? "bg-white text-teal-950" : "text-white hover:bg-white/10"
-              }`}
+              onClick={resetView}
+              className="inline-flex min-h-9 items-center justify-center gap-2 rounded-md border border-white/15 px-3 text-sm font-semibold text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
             >
-              {option === "explore" ? text.explore : text.satellite}
+              <Crosshair size={15} aria-hidden="true" />
+              {text.resetCamera}
             </button>
-          ))}
+            <button
+              type="button"
+              onClick={useMyArea}
+              className="inline-flex min-h-9 items-center justify-center gap-2 rounded-md border border-white/15 px-3 text-sm font-semibold text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
+            >
+              <LocateFixed size={15} aria-hidden="true" />
+              {text.useArea}
+            </button>
+          </div>
         </div>
 
         {mapboxToken ? (
@@ -322,15 +508,6 @@ export function ResourceMap() {
         <div className="absolute bottom-4 left-4 z-20 flex flex-wrap gap-2">
           <MapButton label={text.zoomIn} onClick={() => mapRef.current?.zoomIn()} icon={Plus} />
           <MapButton label={text.zoomOut} onClick={() => mapRef.current?.zoomOut()} icon={Minus} />
-          <MapButton label={text.resetView} onClick={resetView} icon={Crosshair} />
-          <button
-            type="button"
-            onClick={useMyArea}
-            className="inline-flex min-h-10 items-center gap-2 rounded-md border border-white/15 bg-black/35 px-3 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/15 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
-          >
-            <LocateFixed size={16} aria-hidden="true" />
-            {text.useArea}
-          </button>
         </div>
       </div>
 
@@ -367,6 +544,14 @@ export function ResourceMap() {
                   </span>
                 ))}
               </div>
+              <button
+                type="button"
+                onClick={() => flyToResource(selected)}
+                className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md border border-teal-200 bg-white px-4 text-sm font-semibold text-teal-800 transition hover:bg-teal-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-100"
+              >
+                <View size={16} aria-hidden="true" />
+                {text.flyToResource}
+              </button>
               <div className="mt-5 rounded-lg bg-[#f6faf7] p-4">
                 <p className="flex items-center gap-2 font-semibold text-slate-950">
                   <ShieldCheck size={17} className="text-teal-700" aria-hidden="true" />
@@ -414,6 +599,223 @@ function getMapStyle(mode: MapMode) {
   return mode === "satellite"
     ? "mapbox://styles/mapbox/satellite-streets-v12"
     : "mapbox://styles/mapbox/streets-v12";
+}
+
+function resourceFeatureCollection(source: Resource[]) {
+  return {
+    type: "FeatureCollection" as const,
+    features: source.map((resource) => ({
+      type: "Feature" as const,
+      geometry: {
+        type: "Point" as const,
+        coordinates: [resource.coordinates.lng, resource.coordinates.lat],
+      },
+      properties: {
+        name: resource.name,
+        urgent: isUrgent(resource),
+        city: resource.city,
+      },
+    })),
+  };
+}
+
+function cityFeatureCollection() {
+  return {
+    type: "FeatureCollection" as const,
+    features: cityLabels.map((city) => ({
+      type: "Feature" as const,
+      geometry: {
+        type: "Point" as const,
+        coordinates: city.coordinates,
+      },
+      properties: {
+        name: city.name,
+      },
+    })),
+  };
+}
+
+function syncClusteredResources(map: MapboxMap, source: Resource[]) {
+  const existingSource = map.getSource(resourceSourceId) as mapboxgl.GeoJSONSource | undefined;
+  if (existingSource) {
+    existingSource.setData(resourceFeatureCollection(source));
+    return;
+  }
+
+  map.addSource(resourceSourceId, {
+    type: "geojson",
+    data: resourceFeatureCollection(source),
+    cluster: true,
+    clusterMaxZoom: 14,
+    clusterRadius: 48,
+  });
+
+  map.addLayer({
+    id: "resource-clusters",
+    type: "circle",
+    source: resourceSourceId,
+    filter: ["has", "point_count"],
+    paint: {
+      "circle-color": ["step", ["get", "point_count"], "#14b8a6", 8, "#38bdf8", 18, "#f43f5e"],
+      "circle-radius": ["step", ["get", "point_count"], 20, 8, 26, 18, 34],
+      "circle-stroke-color": "#ffffff",
+      "circle-stroke-width": 2,
+      "circle-opacity": 0.92,
+      "circle-emissive-strength": 0.8,
+    },
+  });
+
+  map.addLayer({
+    id: "resource-cluster-count",
+    type: "symbol",
+    source: resourceSourceId,
+    filter: ["has", "point_count"],
+    layout: {
+      "text-field": ["get", "point_count_abbreviated"],
+      "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
+      "text-size": 13,
+    },
+    paint: {
+      "text-color": "#ffffff",
+      "text-halo-color": "rgba(0,0,0,0.35)",
+      "text-halo-width": 1,
+    },
+  });
+
+  map.addLayer({
+    id: "resource-unclustered",
+    type: "circle",
+    source: resourceSourceId,
+    filter: ["!", ["has", "point_count"]],
+    paint: {
+      "circle-color": ["case", ["boolean", ["get", "urgent"], false], "#f43f5e", "#14b8a6"],
+      "circle-radius": 13,
+      "circle-stroke-color": "#ffffff",
+      "circle-stroke-width": 2,
+      "circle-opacity": 0.96,
+      "circle-emissive-strength": 0.9,
+    },
+  });
+
+  map.addLayer({
+    id: "resource-unclustered-inner",
+    type: "circle",
+    source: resourceSourceId,
+    filter: ["!", ["has", "point_count"]],
+    paint: {
+      "circle-color": "#ffffff",
+      "circle-radius": 4,
+      "circle-opacity": 1,
+    },
+  });
+}
+
+function removeClusteredResources(map: MapboxMap) {
+  ["resource-unclustered-inner", "resource-unclustered", "resource-cluster-count", "resource-clusters"].forEach((layerId) => {
+    if (map.getLayer(layerId)) map.removeLayer(layerId);
+  });
+  if (map.getSource(resourceSourceId)) map.removeSource(resourceSourceId);
+}
+
+function add3dEnhancements(map: MapboxMap) {
+  if (!map.getSource(terrainSourceId)) {
+    map.addSource(terrainSourceId, {
+      type: "raster-dem",
+      url: "mapbox://mapbox.mapbox-terrain-dem-v1",
+      tileSize: 512,
+      maxzoom: 14,
+    });
+  }
+
+  map.setTerrain({ source: terrainSourceId, exaggeration: 1.15 });
+  map.setFog({
+    color: "rgb(232, 244, 240)",
+    "high-color": "rgb(196, 231, 225)",
+    "horizon-blend": 0.12,
+  });
+
+  const labelLayerId = findFirstSymbolLayer(map);
+  if (!map.getLayer(buildingsLayerId)) {
+    map.addLayer(
+      {
+        id: buildingsLayerId,
+        source: "composite",
+        "source-layer": "building",
+        filter: ["==", ["get", "extrude"], "true"],
+        type: "fill-extrusion",
+        minzoom: 14,
+        paint: {
+          "fill-extrusion-color": "#8fb7ad",
+          "fill-extrusion-height": ["interpolate", ["linear"], ["zoom"], 14, 0, 15.05, ["get", "height"]],
+          "fill-extrusion-base": ["interpolate", ["linear"], ["zoom"], 14, 0, 15.05, ["get", "min_height"]],
+          "fill-extrusion-opacity": 0.58,
+        },
+      },
+      labelLayerId,
+    );
+  }
+
+  addCityLabels(map);
+}
+
+function remove3dEnhancements(map: MapboxMap) {
+  if (map.getLayer(buildingsLayerId)) map.removeLayer(buildingsLayerId);
+  removeCityLabels(map);
+  map.setTerrain(null);
+  map.setFog(null);
+}
+
+function addCityLabels(map: MapboxMap) {
+  if (!map.getSource(citySourceId)) {
+    map.addSource(citySourceId, {
+      type: "geojson",
+      data: cityFeatureCollection(),
+    });
+  }
+
+  if (!map.getLayer("ca45-city-labels")) {
+    map.addLayer({
+      id: "ca45-city-labels",
+      type: "symbol",
+      source: citySourceId,
+      minzoom: 9.5,
+      layout: {
+        "text-field": ["get", "name"],
+        "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+        "text-size": ["interpolate", ["linear"], ["zoom"], 10, 12, 14, 16],
+        "text-offset": [0, 1.25],
+        "text-anchor": "top",
+        "text-allow-overlap": false,
+        "text-padding": 10,
+      },
+      paint: {
+        "text-color": "#083b36",
+        "text-halo-color": "rgba(255,255,255,0.92)",
+        "text-halo-width": 1.5,
+      },
+    });
+  }
+}
+
+function removeCityLabels(map: MapboxMap) {
+  if (map.getLayer("ca45-city-labels")) map.removeLayer("ca45-city-labels");
+  if (map.getSource(citySourceId)) map.removeSource(citySourceId);
+}
+
+function findFirstSymbolLayer(map: MapboxMap) {
+  const layers = map.getStyle().layers ?? [];
+  return layers.find((layer) => layer.type === "symbol")?.id;
+}
+
+function shouldFallbackTo2d() {
+  if (typeof window === "undefined" || typeof navigator === "undefined") return false;
+  const nav = navigator as Navigator & { deviceMemory?: number };
+  return (
+    window.innerWidth < 640 ||
+    (nav.hardwareConcurrency && nav.hardwareConcurrency <= 4) ||
+    (nav.deviceMemory && nav.deviceMemory <= 4) ||
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
 }
 
 function MapButton({ label, onClick, icon: Icon }: { label: string; onClick: () => void; icon: typeof Plus }) {
