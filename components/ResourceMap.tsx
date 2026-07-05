@@ -38,7 +38,6 @@ const maxZoom = 17;
 const citySourceId = "cau-noi-city-labels";
 const terrainSourceId = "mapbox-dem";
 const buildingsLayerId = "cau-noi-3d-buildings";
-const filtersPanelStorageKey = "cau-noi-map-filters-open";
 const detailsPanelStorageKey = "cau-noi-map-details-open";
 
 type MapMode = "explore" | "satellite";
@@ -116,9 +115,8 @@ export function ResourceMap() {
   const [selectedName, setSelectedName] = useState(resources[0].name);
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [filtersOpen, setFiltersOpen] = useState(() => getStoredPanelState(filtersPanelStorageKey, true));
   const [detailsOpen, setDetailsOpen] = useState(() => {
-    const nextFiltersOpen = getStoredPanelState(filtersPanelStorageKey, true);
+    const nextFiltersOpen = true;
     const nextDetailsOpen = getStoredPanelState(detailsPanelStorageKey, true);
     return isMobileMapLayout() && nextFiltersOpen && nextDetailsOpen ? false : nextDetailsOpen;
   });
@@ -138,13 +136,14 @@ export function ResourceMap() {
   );
 
   const selected = filtered.find((resource) => resource.name === selectedName) ?? filtered[0] ?? null;
-  const popupResource = selectedResource && filtered.some((resource) => resource.name === selectedResource.name) ? selectedResource : null;
+  const mappableFiltered = useMemo(() => filtered.filter(hasMappableCoordinates), [filtered]);
+  const popupResource = selectedResource && hasMappableCoordinates(selectedResource) && filtered.some((resource) => resource.name === selectedResource.name) ? selectedResource : null;
   const localizedSelected = selected ? localizedResource(language, selected) : null;
 
   const syncMarkers = () => {
     const map = mapRef.current;
     if (!map || !map.isStyleLoaded()) return;
-    const currentResources = filteredRef.current;
+    const currentResources = filteredRef.current.filter(hasMappableCoordinates);
 
     markerRef.current.forEach((marker) => marker.remove());
     markerRef.current = currentResources.map((resource) => {
@@ -227,14 +226,8 @@ export function ResourceMap() {
     setViewMode(nextViewMode);
   };
 
-  const openFiltersPanel = () => {
-    setFiltersOpen(true);
-    if (isMobileMapLayout()) setDetailsOpen(false);
-  };
-
   const openDetailsPanel = () => {
     setDetailsOpen(true);
-    if (isMobileMapLayout()) setFiltersOpen(false);
   };
 
   useEffect(() => {
@@ -318,12 +311,6 @@ export function ResourceMap() {
   }, [filtered]);
 
   useEffect(() => {
-    window.localStorage.setItem(filtersPanelStorageKey, String(filtersOpen));
-    const resizeTimer = window.setTimeout(() => mapRef.current?.resize(), 250);
-    return () => window.clearTimeout(resizeTimer);
-  }, [filtersOpen]);
-
-  useEffect(() => {
     window.localStorage.setItem(detailsPanelStorageKey, String(detailsOpen));
     const resizeTimer = window.setTimeout(() => mapRef.current?.resize(), 250);
     return () => window.clearTimeout(resizeTimer);
@@ -400,6 +387,7 @@ export function ResourceMap() {
   };
 
   function flyToResource(resource: Resource) {
+    if (!hasMappableCoordinates(resource)) return;
     try {
       mapRef.current?.flyTo({
         center: [resource.coordinates.lng, resource.coordinates.lat],
@@ -441,24 +429,19 @@ export function ResourceMap() {
   };
 
   const gridClassName =
-    filtersOpen && detailsOpen
+    detailsOpen
       ? "lg:grid-cols-[340px_minmax(0,1fr)] xl:grid-cols-[360px_minmax(520px,1fr)_320px]"
-      : filtersOpen
-        ? "lg:grid-cols-[340px_minmax(0,1fr)]"
-        : detailsOpen
-          ? "lg:grid-cols-[minmax(0,1fr)] xl:grid-cols-[minmax(520px,1fr)_320px]"
-          : "lg:grid-cols-1";
+      : "lg:grid-cols-[340px_minmax(0,1fr)]";
   const detailsPanelClassName =
-    filtersOpen && detailsOpen
+    detailsOpen
       ? "lg:col-span-2 xl:col-span-1"
       : "";
 
   return (
     <div className={`grid grid-cols-1 items-start gap-6 transition-all duration-300 ${gridClassName}`}>
-      {filtersOpen ? (
       <aside
         id="map-filters-panel"
-        className="fixed inset-x-3 bottom-3 z-50 max-h-[78vh] min-w-0 translate-y-0 overflow-y-auto rounded-xl border border-slate-200 bg-white p-4 shadow-2xl shadow-slate-950/20 transition duration-300 lg:static lg:max-h-[calc(100vh-8rem)] lg:rounded-lg lg:shadow-sm"
+        className="min-w-0 overflow-y-auto rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition duration-300 lg:max-h-[calc(100vh-8rem)]"
       >
         <div className="mb-5 flex items-center justify-between gap-3">
           <p className="flex items-center gap-2 font-semibold text-slate-950">
@@ -469,15 +452,6 @@ export function ResourceMap() {
             <button type="button" onClick={resetFilters} className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-slate-200 px-2.5 text-xs font-semibold text-slate-700 hover:bg-teal-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-100">
               <RotateCcw size={14} aria-hidden="true" />
               {text.reset}
-            </button>
-            <button
-              type="button"
-              onClick={() => setFiltersOpen(false)}
-              aria-controls="map-filters-panel"
-              aria-expanded={filtersOpen}
-              className="inline-flex min-h-9 items-center rounded-md bg-slate-900 px-2.5 text-xs font-semibold text-white hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-200"
-            >
-              {text.hideFilters}
             </button>
           </div>
         </div>
@@ -500,7 +474,7 @@ export function ResourceMap() {
             <div>
               <h2 className="font-semibold text-slate-950">{text.resources}</h2>
               <p className="mt-1 text-xs font-medium text-slate-500">
-                {filtered.length} {text.of} {resources.length}
+                Showing {filtered.length} {text.resources.toLowerCase()} · {mappableFiltered.length} map pins · {resources.length} total
               </p>
             </div>
           </div>
@@ -518,17 +492,18 @@ export function ResourceMap() {
                     setSelectedName(resource.name);
                     setSelectedResource(resource);
                     openDetailsPanel();
-                    flyToResource(resource);
+                    if (hasMappableCoordinates(resource)) flyToResource(resource);
                   }}
                 />
               ))}
             </div>
+          ) : resources.length === 0 ? (
+            <p className="rounded-md border border-dashed border-slate-300 bg-slate-50 p-4 text-sm leading-6 text-slate-600">{text.noMatch}</p>
           ) : (
             <p className="rounded-md border border-dashed border-slate-300 bg-slate-50 p-4 text-sm leading-6 text-slate-600">{text.noMatch}</p>
           )}
         </div>
       </aside>
-      ) : null}
 
       <div className="relative min-h-[560px] min-w-0 overflow-hidden rounded-lg border border-teal-900/30 bg-[#061d1b] p-3 text-white shadow-sm lg:min-h-[650px]">
         <div className="absolute left-4 top-4 z-20 flex items-center gap-2 rounded-lg border border-white/15 bg-black/35 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-teal-50 backdrop-blur">
@@ -565,16 +540,6 @@ export function ResourceMap() {
                 {option === "2d" ? text.view2d : text.view3d}
               </button>
             ))}
-            <button
-              type="button"
-              onClick={() => (filtersOpen ? setFiltersOpen(false) : openFiltersPanel())}
-              aria-controls="map-filters-panel"
-              aria-expanded={filtersOpen}
-              aria-label={filtersOpen ? text.hideFilters : text.showFilters}
-              className="min-h-9 rounded-md px-3 text-sm font-semibold text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
-            >
-              {filtersOpen ? text.hideFilters : text.showFilters}
-            </button>
             <button
               type="button"
               onClick={() => (detailsOpen ? setDetailsOpen(false) : openDetailsPanel())}
@@ -617,19 +582,6 @@ export function ResourceMap() {
             </button>
           </div>
         </div>
-
-        {!filtersOpen && (
-          <button
-            type="button"
-            onClick={openFiltersPanel}
-            aria-controls="map-filters-panel"
-            aria-expanded={filtersOpen}
-            className="absolute left-4 top-20 z-20 inline-flex min-h-10 items-center gap-2 rounded-md border border-white/15 bg-black/45 px-3 text-sm font-semibold text-white shadow-xl backdrop-blur transition hover:bg-white/15 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
-          >
-            <Filter size={16} aria-hidden="true" />
-            {text.showFilters}
-          </button>
-        )}
 
         {!detailsOpen && (
           <button
@@ -684,7 +636,7 @@ export function ResourceMap() {
               </p>
               <h2 className="mt-2 text-2xl font-semibold text-slate-950">{localizedSelected?.name}</h2>
               <p className="mt-2 text-sm font-medium text-slate-600">{selected.address ?? localizedSelected?.city}</p>
-              {userLocation && (
+              {userLocation && hasMappableCoordinates(selected) && (
                 <p className="mt-2 text-sm font-semibold text-teal-800">
                   {text.distance}: {distanceMiles(userLocation, selected.coordinates).toFixed(1)} mi
                 </p>
@@ -712,6 +664,7 @@ export function ResourceMap() {
               <button
                 type="button"
                 onClick={() => flyToResource(selected)}
+                disabled={!hasMappableCoordinates(selected)}
                 className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md border border-teal-200 bg-white px-4 text-sm font-semibold text-teal-800 transition hover:bg-teal-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-100"
               >
                 <View size={16} aria-hidden="true" />
@@ -1014,6 +967,10 @@ function toRad(value: number) {
 
 function isUrgent(resource: Resource) {
   return resource.resourceType === "988 Suicide & Crisis Lifeline";
+}
+
+function hasMappableCoordinates(resource: Resource) {
+  return Number.isFinite(resource.coordinates?.lat) && Number.isFinite(resource.coordinates?.lng);
 }
 
 function createResourcePopup(resource: Resource, language: LanguageCode, visitWebsiteLabel: string, websiteComingSoonLabel: string) {
