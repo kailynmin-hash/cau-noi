@@ -116,6 +116,7 @@ export function ResourceMap() {
   const coordinateAudit = useMemo(() => auditResourceCoordinates(resources), []);
   const validCoordinateCount = coordinateAudit.valid.length;
   const invalidCoordinateCount = coordinateAudit.invalid.length;
+  const noMapLocationCount = coordinateAudit.noMapLocation.length;
   const mappableFiltered = useMemo(() => filtered.filter(hasMappableCoordinates), [filtered]);
   const popupResource = selectedResource && hasMappableCoordinates(selectedResource) && filtered.some((resource) => resource.name === selectedResource.name) ? selectedResource : null;
   const localizedSelected = selected ? localizedResource(language, selected) : null;
@@ -125,7 +126,7 @@ export function ResourceMap() {
     const map = mapRef.current;
     if (!map) return;
     const currentResources = filteredRef.current.filter(hasMappableCoordinates);
-    const invalidResources = filteredRef.current.filter((resource) => !hasMappableCoordinates(resource));
+    const invalidResources = auditResourceCoordinates(filteredRef.current).invalid;
 
     markerRef.current.forEach((marker) => marker.remove());
     const nextMarkers: Marker[] = [];
@@ -179,6 +180,7 @@ export function ResourceMap() {
       attemptedMarkers: currentResources.length,
       markersRendered: nextMarkers.length,
       invalidCoordinates: invalidResources.length,
+      noMapLocation: filteredRef.current.length - currentResources.length - invalidResources.length,
       markerExamples,
     });
   };
@@ -364,6 +366,7 @@ export function ResourceMap() {
       totalResourcesLoaded: resources.length,
       validCoordinates: validCoordinateCount,
       invalidCoordinates: invalidCoordinateCount,
+      noMapLocation: noMapLocationCount,
       resourcesFilteredOut: resources.length - filtered.length,
       markersRendered: markerCount,
       selectedMapStyle: mode,
@@ -375,7 +378,7 @@ export function ResourceMap() {
         swapped: coordinates.swapped,
       })),
     });
-  }, [coordinateAudit.valid, filtered.length, invalidCoordinateCount, markerCount, mode, validCoordinateCount]);
+  }, [coordinateAudit.valid, filtered.length, invalidCoordinateCount, markerCount, mode, noMapLocationCount, validCoordinateCount]);
 
   return (
     <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[340px_minmax(0,1fr)] xl:grid-cols-[360px_minmax(520px,1fr)_320px]">
@@ -384,7 +387,7 @@ export function ResourceMap() {
         className="min-w-0 overflow-y-auto rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition duration-300 lg:max-h-[calc(100vh-8rem)]"
       >
         <p className="mb-4 rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white">
-          Resources loaded: {resources.length} · Valid coordinates: {validCoordinateCount} · Invalid coordinates: {invalidCoordinateCount} · Markers rendered: {markerCount}
+          Resources loaded: {resources.length} · Valid coordinates: {validCoordinateCount} · No map location: {noMapLocationCount} · Invalid coordinates: {invalidCoordinateCount} · Markers rendered: {markerCount}
           <span className="block pt-1 font-medium text-slate-300">
             Resources filtered out: {resources.length - filtered.length} · Selected map style: {mode}
           </span>
@@ -769,15 +772,39 @@ function auditResourceCoordinates(resourceList: Resource[]) {
       const coordinates = getResourceLngLat(resource);
       if (coordinates) {
         audit.valid.push({ resource, coordinates });
-      } else {
+      } else if (hasRawCoordinateValue(resource)) {
         audit.invalid.push(resource);
+      } else {
+        audit.noMapLocation.push(resource);
       }
       return audit;
     },
     {
       valid: [] as Array<{ resource: Resource; coordinates: NormalizedCoordinates }>,
       invalid: [] as Resource[],
+      noMapLocation: [] as Resource[],
     },
+  );
+}
+
+function hasRawCoordinateValue(resource: Resource) {
+  const coordinateRecord = resource as Resource & {
+    lat?: number | null;
+    lng?: number | null;
+    coordinates?: { lat?: number | null; lng?: number | null } | [number | null, number | null] | null;
+  };
+
+  if (Array.isArray(coordinateRecord.coordinates)) {
+    return coordinateRecord.coordinates.some((value) => value !== null && value !== undefined);
+  }
+
+  return (
+    coordinateRecord.coordinates?.lat !== null && coordinateRecord.coordinates?.lat !== undefined ||
+    coordinateRecord.coordinates?.lng !== null && coordinateRecord.coordinates?.lng !== undefined ||
+    resource.latitude !== null && resource.latitude !== undefined ||
+    resource.longitude !== null && resource.longitude !== undefined ||
+    coordinateRecord.lat !== null && coordinateRecord.lat !== undefined ||
+    coordinateRecord.lng !== null && coordinateRecord.lng !== undefined
   );
 }
 
