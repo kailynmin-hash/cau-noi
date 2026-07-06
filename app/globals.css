@@ -190,6 +190,61 @@ article.rounded-lg:hover {
   transform: translateY(-1px);
 }
 
+.resource-pin-marker {
+  align-items: center;
+  background: linear-gradient(145deg, #14b8a6, #0f766e);
+  border: 2px solid #ffffff;
+  border-radius: 999px 999px 999px 4px;
+  box-shadow:
+    0 0 0 5px rgba(20, 184, 166, 0.22),
+    0 10px 22px rgba(2, 44, 34, 0.32);
+  cursor: pointer;
+  display: grid;
+  height: 30px;
+  justify-items: center;
+  outline: none;
+  place-items: center;
+  transform: rotate(-45deg);
+  transition:
+    box-shadow 160ms ease,
+    scale 160ms ease,
+    background 160ms ease;
+  width: 30px;
+}
+
+.resource-pin-marker:hover,
+.resource-pin-marker:focus-visible {
+  box-shadow:
+    0 0 0 7px rgba(20, 184, 166, 0.3),
+    0 14px 28px rgba(2, 44, 34, 0.38);
+  scale: 1.08;
+}
+
+.resource-pin-marker-selected {
+  background: linear-gradient(145deg, #38bdf8, #0f766e);
+  box-shadow:
+    0 0 0 8px rgba(255, 255, 255, 0.38),
+    0 0 0 13px rgba(56, 189, 248, 0.24),
+    0 14px 30px rgba(2, 44, 34, 0.4);
+  z-index: 10;
+}
+
+.resource-pin-marker-urgent {
+  background: linear-gradient(145deg, #fb7185, #e11d48);
+  box-shadow:
+    0 0 0 5px rgba(244, 63, 94, 0.22),
+    0 10px 22px rgba(88, 28, 45, 0.32);
+}
+
+.resource-pin-dot {
+  background: #ffffff;
+  border-radius: 999px;
+  display: block;
+  height: 9px;
+  transform: rotate(45deg);
+  width: 9px;
+}
+
 .resource-map-popup {
   z-index: 30;
 }
