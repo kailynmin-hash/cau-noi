@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import mapboxgl, { type Map as MapboxMap, type Marker, type Popup } from "mapbox-gl";
 import {
-  ExternalLink,
+  Crosshair,
   Filter,
   LocateFixed,
   Minus,
@@ -11,7 +11,6 @@ import {
   Plus,
   RotateCcw,
   ShieldCheck,
-  View,
 } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { localizedOption, localizedResource, type LanguageCode } from "@/lib/i18n";
@@ -34,15 +33,8 @@ const center = { lat: 33.7743, lng: -117.9406 };
 const initialZoom = 12;
 const minZoom = 10;
 const maxZoom = 17;
-const coordinateBounds = {
-  minLat: 33.5,
-  maxLat: 34.2,
-  minLng: -118.3,
-  maxLng: -117.5,
-};
 
 type MapMode = "explore" | "satellite";
-type NormalizedCoordinates = { lat: number; lng: number; source: string; swapped: boolean };
 
 export function ResourceMap() {
   const { language, t } = useLanguage();
@@ -63,18 +55,14 @@ export function ResourceMap() {
     selected: t("map.selected"),
     noMatch: t("map.noMatch"),
     access: t("map.access"),
-    resources: t("resourceFinder.resources"),
-    of: t("resourceFinder.of"),
     phone: t("resourceFinder.phone"),
     languages: t("resourceFinder.languages"),
     zoomIn: t("map.zoomIn"),
     zoomOut: t("map.zoomOut"),
-    resetCamera: t("map.resetCamera"),
+    resetView: t("map.resetView"),
     useArea: t("map.useArea"),
-    flyToResource: t("map.flyToResource"),
     distance: t("map.distance"),
     cta: t("map.cta"),
-    website: t("common.website"),
     websiteComingSoon: t("common.websiteComingSoon"),
     urgent: t("map.urgent"),
   };
@@ -85,7 +73,6 @@ export function ResourceMap() {
   const userMarkerRef = useRef<Marker | null>(null);
   const styleFallbackRef = useRef(false);
   const requestedModeRef = useRef<MapMode>("explore");
-  const filteredRef = useRef<Resource[]>(resources);
   const [mode, setMode] = useState<MapMode>("explore");
   const [mapMessage, setMapMessage] = useState("");
   const [languageFilter, setLanguageFilter] = useState<LanguageFilter>("All languages");
@@ -96,7 +83,6 @@ export function ResourceMap() {
   const [selectedName, setSelectedName] = useState(resources[0].name);
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [markerCount, setMarkerCount] = useState(0);
   const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
   const filtered = useMemo(
@@ -113,86 +99,32 @@ export function ResourceMap() {
   );
 
   const selected = filtered.find((resource) => resource.name === selectedName) ?? filtered[0] ?? null;
-  const coordinateAudit = useMemo(() => auditResourceCoordinates(resources), []);
-  const validCoordinateCount = coordinateAudit.valid.length;
-  const invalidCoordinateCount = coordinateAudit.invalid.length;
-  const noMapLocationCount = coordinateAudit.noMapLocation.length;
-  const sampleCoordinates = useMemo(
-    () =>
-      coordinateAudit.valid.slice(0, 10).map(({ resource, coordinates }) => ({
-        name: resource.name,
-        address: resource.address ?? resource.city,
-        lng: coordinates.lng,
-        lat: coordinates.lat,
-        precision: resource.locationApproximate ? "approximate" : "exact",
-      })),
-    [coordinateAudit.valid],
-  );
-  const mappableFiltered = useMemo(() => filtered.filter(hasMappableCoordinates), [filtered]);
-  const popupResource = selectedResource && hasMappableCoordinates(selectedResource) && filtered.some((resource) => resource.name === selectedResource.name) ? selectedResource : null;
+  const popupResource = selectedResource && filtered.some((resource) => resource.name === selectedResource.name) ? selectedResource : null;
   const localizedSelected = selected ? localizedResource(language, selected) : null;
-  const selectedCoordinates = selected ? getResourceLngLat(selected) : null;
 
   const syncMarkers = () => {
     const map = mapRef.current;
     if (!map) return;
-    const currentResources = filteredRef.current.filter(hasMappableCoordinates);
-    const invalidResources = auditResourceCoordinates(filteredRef.current).invalid;
 
     markerRef.current.forEach((marker) => marker.remove());
-    const nextMarkers: Marker[] = [];
-    const markerExamples: Array<{ name: string; lat: number; lng: number; source: string; swapped: boolean }> = [];
-
-    currentResources.forEach((resource) => {
-      const lngLat = getResourceLngLat(resource);
-      if (!lngLat) return;
-
-      const markerElement = createResourceMarkerElement(resource, resource.name === selectedName);
-      markerElement.addEventListener("click", (event) => {
+    markerRef.current = filtered.map((resource) => {
+      const markerEl = document.createElement("button");
+      markerEl.type = "button";
+      markerEl.className = `group grid size-9 place-items-center rounded-full border-2 text-white shadow-lg shadow-black/25 transition hover:border-white hover:shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40 ${
+        isUrgent(resource) ? "border-rose-100 bg-rose-500" : "border-teal-100 bg-teal-500"
+      }`;
+      markerEl.setAttribute("aria-label", resource.name);
+      markerEl.innerHTML = `<span class="size-3 rounded-full bg-white shadow-sm"></span>`;
+      markerEl.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();
         setSelectedName(resource.name);
         setSelectedResource(resource);
       });
 
-      const marker = new mapboxgl.Marker({ element: markerElement, anchor: "bottom" })
-        .setLngLat([lngLat.lng, lngLat.lat])
+      return new mapboxgl.Marker({ element: markerEl, anchor: "center" })
+        .setLngLat([resource.coordinates.lng, resource.coordinates.lat])
         .addTo(map);
-      nextMarkers.push(marker);
-      if (markerExamples.length < 5) {
-        markerExamples.push({
-          name: resource.name,
-          lat: lngLat.lat,
-          lng: lngLat.lng,
-          source: lngLat.source,
-          swapped: lngLat.swapped,
-        });
-      }
-    });
-
-    markerRef.current = nextMarkers;
-    setMarkerCount(nextMarkers.length);
-    if (invalidResources.length > 0) {
-      console.warn(
-        "resource map invalid coordinates skipped",
-        invalidResources.map((resource) => ({
-          name: resource.name,
-          city: resource.city,
-          coordinates: resource.coordinates,
-          latitude: resource.latitude,
-          longitude: resource.longitude,
-        })),
-      );
-    }
-    console.info("resource map markers synced", {
-      mapExists: Boolean(mapRef.current),
-      mapLoaded: map.loaded(),
-      styleLoaded: map.isStyleLoaded(),
-      attemptedMarkers: currentResources.length,
-      markersRendered: nextMarkers.length,
-      invalidCoordinates: invalidResources.length,
-      noMapLocation: filteredRef.current.length - currentResources.length - invalidResources.length,
-      markerExamples,
     });
   };
 
@@ -201,24 +133,16 @@ export function ResourceMap() {
 
     mapboxgl.accessToken = mapboxToken;
 
-    let map: MapboxMap;
-    try {
-      map = new mapboxgl.Map({
-        container: mapContainerRef.current,
-        style: getMapStyle("explore"),
-        center: [center.lng, center.lat],
-        zoom: initialZoom,
-        minZoom,
-        maxZoom,
-        attributionControl: false,
-      });
-    } catch (error) {
-      console.error("map initialization error", error);
-      window.setTimeout(() => setMapMessage("map-unavailable"), 0);
-      return;
-    }
+    const map = new mapboxgl.Map({
+      container: mapContainerRef.current,
+      style: getMapStyle("explore"),
+      center: [center.lng, center.lat],
+      zoom: initialZoom,
+      minZoom,
+      maxZoom,
+      attributionControl: false,
+    });
 
-    mapRef.current = map;
     map.addControl(new mapboxgl.AttributionControl({ compact: true }), "bottom-right");
     map.on("click", () => {
       setSelectedResource(null);
@@ -228,9 +152,7 @@ export function ResourceMap() {
       setMapMessage("");
       syncMarkers();
     });
-    map.once("load", syncMarkers);
-    map.on("error", (event) => {
-      console.error("mapbox runtime error", event.error ?? event);
+    map.on("error", () => {
       if (requestedModeRef.current === "satellite" && !styleFallbackRef.current) {
         styleFallbackRef.current = true;
         setMapMessage("satellite-unavailable");
@@ -238,10 +160,10 @@ export function ResourceMap() {
         map.setStyle(getMapStyle("explore"));
       }
     });
+    mapRef.current = map;
+
     return () => {
       markerRef.current.forEach((marker) => marker.remove());
-      markerRef.current = [];
-      setMarkerCount(0);
       popupRef.current?.remove();
       userMarkerRef.current?.remove();
       map.remove();
@@ -254,36 +176,21 @@ export function ResourceMap() {
   useEffect(() => {
     if (!mapRef.current || !mapboxToken) return;
     requestedModeRef.current = mode;
-    try {
-      mapRef.current.setStyle(getMapStyle(mode));
-    } catch (error) {
-      console.error("map style switch error", error);
-      if (mode === "satellite") {
-        window.setTimeout(() => {
-          setMapMessage("satellite-unavailable");
-          setMode("explore");
-        }, 0);
-      }
-    }
+    mapRef.current.setStyle(getMapStyle(mode));
   }, [mapboxToken, mode]);
 
   useEffect(() => {
-    filteredRef.current = filtered;
-  }, [filtered]);
-
-  useEffect(() => {
     syncMarkers();
-    // Resource markers are intentionally re-synced after filters/style changes.
+    // Markers live in HTML overlay state and are intentionally re-synced after filters/style changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filtered, selectedName]);
+  }, [filtered]);
 
   useEffect(() => {
     const map = mapRef.current;
     popupRef.current?.remove();
     popupRef.current = null;
 
-    const popupCoordinates = popupResource ? getResourceLngLat(popupResource) : null;
-    if (!map || !popupResource || !popupCoordinates) return;
+    if (!map || !popupResource) return;
 
     const popup = new mapboxgl.Popup({
       offset: 20,
@@ -292,8 +199,8 @@ export function ResourceMap() {
       className: "resource-map-popup",
       maxWidth: "340px",
     })
-      .setLngLat([popupCoordinates.lng, popupCoordinates.lat])
-      .setDOMContent(createResourcePopup(popupResource, language, text.cta, text.websiteComingSoon))
+      .setLngLat([popupResource.coordinates.lng, popupResource.coordinates.lat])
+      .setDOMContent(createResourcePopup(popupResource, language))
       .addTo(map);
 
     let isCleaningUp = false;
@@ -311,7 +218,7 @@ export function ResourceMap() {
         popupRef.current = null;
       }
     };
-  }, [language, popupResource, text.cta, text.websiteComingSoon]);
+  }, [language, popupResource]);
 
   const resetFilters = () => {
     setLanguageFilter("All languages");
@@ -322,112 +229,36 @@ export function ResourceMap() {
   };
 
   const resetView = () => {
-    try {
-      mapRef.current?.flyTo({
-        center: [center.lng, center.lat],
-        zoom: initialZoom,
-        duration: 900,
-      });
-    } catch (error) {
-      console.error("map reset camera error", error);
-    }
+    mapRef.current?.flyTo({ center: [center.lng, center.lat], zoom: initialZoom, duration: 900 });
   };
-
-  function flyToResource(resource: Resource) {
-    const lngLat = getResourceLngLat(resource);
-    if (!lngLat) return;
-    try {
-      mapRef.current?.flyTo({
-        center: [lngLat.lng, lngLat.lat],
-        zoom: 13.8,
-        duration: 950,
-      });
-    } catch (error) {
-      console.error("map fly to resource error", error);
-    }
-  }
 
   const useMyArea = () => {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition((position) => {
       const next = { lat: position.coords.latitude, lng: position.coords.longitude };
       setUserLocation(next);
-      try {
-        mapRef.current?.flyTo({
-          center: [next.lng, next.lat],
-          zoom: 12.5,
-          duration: 900,
-        });
-      } catch (error) {
-        console.error("map use my area camera error", error);
-      }
+      mapRef.current?.flyTo({ center: [next.lng, next.lat], zoom: 12.5, duration: 900 });
 
       userMarkerRef.current?.remove();
       const el = document.createElement("div");
       el.className = "grid size-8 place-items-center rounded-full border-2 border-white bg-sky-500 shadow-lg";
       el.innerHTML = `<span class="size-2 rounded-full bg-white"></span>`;
-      if (mapRef.current) {
-        userMarkerRef.current = new mapboxgl.Marker({ element: el }).setLngLat([next.lng, next.lat]).addTo(mapRef.current);
-      }
+      userMarkerRef.current = new mapboxgl.Marker({ element: el }).setLngLat([next.lng, next.lat]).addTo(mapRef.current!);
     });
   };
 
-  useEffect(() => {
-    console.info("resource map marker pipeline", {
-      totalResourcesLoaded: resources.length,
-      validCoordinates: validCoordinateCount,
-      invalidCoordinates: invalidCoordinateCount,
-      noMapLocation: noMapLocationCount,
-      resourcesFilteredOut: resources.length - filtered.length,
-      markersRendered: markerCount,
-      selectedMapStyle: mode,
-      finalMarkerCoordinateExamples: coordinateAudit.valid.slice(0, 5).map(({ resource, coordinates }) => ({
-        name: resource.name,
-        lat: coordinates.lat,
-        lng: coordinates.lng,
-        source: coordinates.source,
-        swapped: coordinates.swapped,
-      })),
-    });
-  }, [coordinateAudit.valid, filtered.length, invalidCoordinateCount, markerCount, mode, noMapLocationCount, validCoordinateCount]);
-
   return (
-    <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[340px_minmax(0,1fr)] xl:grid-cols-[360px_minmax(520px,1fr)_320px]">
-      <aside
-        id="map-filters-panel"
-        className="min-w-0 overflow-y-auto rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition duration-300 lg:max-h-[calc(100vh-8rem)]"
-      >
-        <p className="mb-4 rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white">
-          Resources loaded: {resources.length} · Valid coordinates: {validCoordinateCount} · No map location: {noMapLocationCount} · Invalid coordinates: {invalidCoordinateCount} · Markers rendered: {markerCount}
-          <span className="block pt-1 font-medium text-slate-300">
-            Resources filtered out: {resources.length - filtered.length} · Selected map style: {mode}
-          </span>
-        </p>
-        <details className="mb-4 rounded-md border border-slate-200 bg-slate-50 p-3 text-xs text-slate-700">
-          <summary className="cursor-pointer font-semibold text-slate-950">Coordinate sample debug</summary>
-          <ol className="mt-3 grid gap-2">
-            {sampleCoordinates.map((sample) => (
-              <li key={sample.name}>
-                <span className="block font-semibold text-slate-900">{sample.name}</span>
-                <span className="block">{sample.address}</span>
-                <span className="block">
-                  lng {sample.lng.toFixed(6)} · lat {sample.lat.toFixed(6)} · {sample.precision}
-                </span>
-              </li>
-            ))}
-          </ol>
-        </details>
+    <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[280px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(520px,1fr)_320px]">
+      <aside className="min-w-0 rounded-lg border border-slate-200 bg-white p-4 shadow-sm lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto">
         <div className="mb-5 flex items-center justify-between gap-3">
           <p className="flex items-center gap-2 font-semibold text-slate-950">
             <Filter size={18} className="text-teal-700" aria-hidden="true" />
             {text.filters}
           </p>
-          <div className="flex flex-wrap justify-end gap-2">
-            <button type="button" onClick={resetFilters} className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-slate-200 px-2.5 text-xs font-semibold text-slate-700 hover:bg-teal-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-100">
-              <RotateCcw size={14} aria-hidden="true" />
-              {text.reset}
-            </button>
-          </div>
+          <button type="button" onClick={resetFilters} className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-slate-200 px-2.5 text-xs font-semibold text-slate-700 hover:bg-teal-50">
+            <RotateCcw size={14} aria-hidden="true" />
+            {text.reset}
+          </button>
         </div>
         <div className="grid gap-4">
           <Select label={text.language} value={languageFilter} options={languageOptions} onChange={setLanguageFilter} />
@@ -437,45 +268,7 @@ export function ResourceMap() {
           <Select label={text.city} value={cityFilter} options={cityOptions} onChange={setCityFilter} />
         </div>
         {!mapboxToken && <p className="mt-5 rounded-md bg-sky-50 p-3 text-sm leading-6 text-sky-950">{text.fallback}</p>}
-        {mapMessage && (
-          <p className="mt-5 rounded-md bg-rose-50 p-3 text-sm leading-6 text-rose-950">
-            {mapMessage === "satellite-unavailable" ? text.satelliteUnavailable : text.fallback}
-          </p>
-        )}
-
-        <div className="mt-6 border-t border-slate-100 pt-5">
-          <div className="mb-3 flex items-end justify-between gap-3">
-            <div>
-              <h2 className="font-semibold text-slate-950">{text.resources}</h2>
-              <p className="mt-1 text-xs font-medium text-slate-500">
-                Showing {filtered.length} {text.resources.toLowerCase()} · {mappableFiltered.length} map pins · {resources.length} total
-              </p>
-            </div>
-          </div>
-          {filtered.length > 0 ? (
-            <div className="grid gap-3">
-              {filtered.map((resource) => (
-                <MapResourceCard
-                  key={resource.name}
-                  resource={resource}
-                  language={language}
-                  selected={selected?.name === resource.name}
-                  mapLabel={text.flyToResource}
-                  websiteLabel={text.website}
-                  onSelect={() => {
-                    setSelectedName(resource.name);
-                    setSelectedResource(resource);
-                    if (hasMappableCoordinates(resource)) flyToResource(resource);
-                  }}
-                />
-              ))}
-            </div>
-          ) : resources.length === 0 ? (
-            <p className="rounded-md border border-dashed border-slate-300 bg-slate-50 p-4 text-sm leading-6 text-slate-600">{text.noMatch}</p>
-          ) : (
-            <p className="rounded-md border border-dashed border-slate-300 bg-slate-50 p-4 text-sm leading-6 text-slate-600">{text.noMatch}</p>
-          )}
-        </div>
+        {mapMessage && <p className="mt-5 rounded-md bg-rose-50 p-3 text-sm leading-6 text-rose-950">{text.satelliteUnavailable}</p>}
       </aside>
 
       <div className="relative min-h-[560px] min-w-0 overflow-hidden rounded-lg border border-teal-900/30 bg-[#061d1b] p-3 text-white shadow-sm lg:min-h-[650px]">
@@ -498,37 +291,19 @@ export function ResourceMap() {
           </span>
         </div>
 
-        <div className="absolute right-4 top-4 z-20 grid max-w-[calc(100%-2rem)] gap-2 rounded-xl border border-white/15 bg-black/40 p-2 shadow-2xl shadow-black/20 backdrop-blur md:max-w-none">
-          <div className="grid grid-cols-2 gap-1 sm:grid-cols-4">
-            {(["explore", "satellite"] as const).map((option) => (
-              <button
-                key={option}
-                type="button"
-                onClick={() => setMode(option)}
-                className={`min-h-9 rounded-md px-3 text-sm font-semibold transition ${
-                  mode === option ? "bg-white text-teal-950" : "text-white hover:bg-white/10"
-                }`}
-              >
-                {option === "explore" ? text.explore : text.satellite}
-              </button>
-            ))}
+        <div className="absolute right-4 top-4 z-20 flex rounded-lg border border-white/15 bg-black/35 p-1 backdrop-blur">
+          {(["explore", "satellite"] as const).map((option) => (
             <button
+              key={option}
               type="button"
-              onClick={resetView}
-              className="inline-flex min-h-9 items-center justify-center gap-2 rounded-md border border-white/15 px-3 text-sm font-semibold text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
+              onClick={() => setMode(option)}
+              className={`min-h-9 rounded-md px-3 text-sm font-semibold transition ${
+                mode === option ? "bg-white text-teal-950" : "text-white hover:bg-white/10"
+              }`}
             >
-              <RotateCcw size={15} aria-hidden="true" />
-              {text.resetCamera}
+              {option === "explore" ? text.explore : text.satellite}
             </button>
-            <button
-              type="button"
-              onClick={useMyArea}
-              className="inline-flex min-h-9 items-center justify-center gap-2 rounded-md border border-white/15 px-3 text-sm font-semibold text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
-            >
-              <LocateFixed size={15} aria-hidden="true" />
-              {text.useArea}
-            </button>
-          </div>
+          ))}
         </div>
 
         {mapboxToken ? (
@@ -545,13 +320,19 @@ export function ResourceMap() {
         <div className="absolute bottom-4 left-4 z-20 flex flex-wrap gap-2">
           <MapButton label={text.zoomIn} onClick={() => mapRef.current?.zoomIn()} icon={Plus} />
           <MapButton label={text.zoomOut} onClick={() => mapRef.current?.zoomOut()} icon={Minus} />
+          <MapButton label={text.resetView} onClick={resetView} icon={Crosshair} />
+          <button
+            type="button"
+            onClick={useMyArea}
+            className="inline-flex min-h-10 items-center gap-2 rounded-md border border-white/15 bg-black/35 px-3 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/15 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
+          >
+            <LocateFixed size={16} aria-hidden="true" />
+            {text.useArea}
+          </button>
         </div>
       </div>
 
-      <aside
-        id="map-details-panel"
-        className="min-w-0 rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto xl:col-span-1"
-      >
+      <aside className="min-w-0 rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto xl:col-span-1">
           {selected ? (
             <>
               <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${isUrgent(selected) ? "text-rose-700" : "text-teal-700"}`}>
@@ -559,9 +340,9 @@ export function ResourceMap() {
               </p>
               <h2 className="mt-2 text-2xl font-semibold text-slate-950">{localizedSelected?.name}</h2>
               <p className="mt-2 text-sm font-medium text-slate-600">{selected.address ?? localizedSelected?.city}</p>
-              {userLocation && selectedCoordinates && (
+              {userLocation && (
                 <p className="mt-2 text-sm font-semibold text-teal-800">
-                  {text.distance}: {distanceMiles(userLocation, selectedCoordinates).toFixed(1)} mi
+                  {text.distance}: {distanceMiles(userLocation, selected.coordinates).toFixed(1)} mi
                 </p>
               )}
               <p className="mt-4 leading-7 text-slate-700">{localizedSelected?.description}</p>
@@ -584,15 +365,6 @@ export function ResourceMap() {
                   </span>
                 ))}
               </div>
-              <button
-                type="button"
-                onClick={() => flyToResource(selected)}
-                disabled={!hasMappableCoordinates(selected)}
-                className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md border border-teal-200 bg-white px-4 text-sm font-semibold text-teal-800 transition hover:bg-teal-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-100"
-              >
-                <View size={16} aria-hidden="true" />
-                {text.flyToResource}
-              </button>
               <div className="mt-5 rounded-lg bg-[#f6faf7] p-4">
                 <p className="flex items-center gap-2 font-semibold text-slate-950">
                   <ShieldCheck size={17} className="text-teal-700" aria-hidden="true" />
@@ -633,65 +405,6 @@ export function ResourceMap() {
           )}
         </aside>
     </div>
-  );
-}
-
-function MapResourceCard({
-  resource,
-  language,
-  selected,
-  mapLabel,
-  websiteLabel,
-  onSelect,
-}: {
-  resource: Resource;
-  language: LanguageCode;
-  selected: boolean;
-  mapLabel: string;
-  websiteLabel: string;
-  onSelect: () => void;
-}) {
-  const localized = localizedResource(language, resource);
-
-  return (
-    <article className={`rounded-lg border p-4 shadow-sm transition ${selected ? "border-teal-500 bg-teal-50" : "border-slate-200 bg-white hover:border-teal-200"}`}>
-      <button type="button" onClick={onSelect} className="block w-full text-left focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-100">
-        <p className={`text-xs font-semibold uppercase tracking-[0.16em] ${isUrgent(resource) ? "text-rose-700" : "text-teal-700"}`}>
-          {localized.category}
-        </p>
-        <h3 className="mt-2 text-base font-semibold leading-snug text-slate-950">{localized.name}</h3>
-        <p className="mt-2 text-xs font-medium text-slate-600">{resource.address ?? localized.city}</p>
-        <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">{localized.description}</p>
-        <div className="mt-3 flex flex-wrap gap-1.5">
-          {[resource.mode, ...resource.languages.slice(0, 3)].map((tag) => (
-            <span key={tag} className="rounded-md bg-white px-2 py-1 text-[11px] font-semibold text-teal-900 ring-1 ring-teal-100">
-              {localizedOption(language, tag)}
-            </span>
-          ))}
-        </div>
-      </button>
-      <div className="mt-3 flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={onSelect}
-          className="inline-flex min-h-9 flex-1 items-center justify-center gap-1.5 rounded-md border border-teal-200 bg-white px-3 text-xs font-semibold text-teal-800 transition hover:bg-teal-50"
-        >
-          <View size={14} aria-hidden="true" />
-          {mapLabel}
-        </button>
-        {resource.websiteUrl ? (
-          <a
-            href={resource.websiteUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex min-h-9 flex-1 items-center justify-center gap-1.5 rounded-md bg-teal-700 px-3 text-xs font-semibold text-white transition hover:bg-teal-800"
-          >
-            <ExternalLink size={14} aria-hidden="true" />
-            {websiteLabel}
-          </a>
-        ) : null}
-      </div>
-    </article>
   );
 }
 
@@ -762,127 +475,7 @@ function isUrgent(resource: Resource) {
   return resource.resourceType === "988 Suicide & Crisis Lifeline";
 }
 
-function getResourceLngLat(resource: Resource): NormalizedCoordinates | null {
-  const coordinateRecord = resource as Resource & {
-    lat?: number;
-    lng?: number;
-    coordinates?: { lat?: number; lng?: number } | [number, number];
-  };
-
-  if (Array.isArray(coordinateRecord.coordinates)) {
-    const [first, second] = coordinateRecord.coordinates;
-    return normalizeCoordinatePair(first, second, "coordinates-array");
-  }
-
-  const objectCoordinates = normalizeLatLng(
-    coordinateRecord.coordinates?.lat,
-    coordinateRecord.coordinates?.lng,
-    "coordinates-object",
-  );
-  if (objectCoordinates) return objectCoordinates;
-
-  const latitudeLongitude = normalizeLatLng(resource.latitude, resource.longitude, "latitude-longitude");
-  if (latitudeLongitude) return latitudeLongitude;
-
-  return normalizeLatLng(coordinateRecord.lat, coordinateRecord.lng, "lat-lng");
-}
-
-function hasMappableCoordinates(resource: Resource) {
-  return getResourceLngLat(resource) !== null;
-}
-
-function auditResourceCoordinates(resourceList: Resource[]) {
-  return resourceList.reduce(
-    (audit, resource) => {
-      const coordinates = getResourceLngLat(resource);
-      if (coordinates) {
-        audit.valid.push({ resource, coordinates });
-      } else if (hasRawCoordinateValue(resource)) {
-        audit.invalid.push(resource);
-      } else {
-        audit.noMapLocation.push(resource);
-      }
-      return audit;
-    },
-    {
-      valid: [] as Array<{ resource: Resource; coordinates: NormalizedCoordinates }>,
-      invalid: [] as Resource[],
-      noMapLocation: [] as Resource[],
-    },
-  );
-}
-
-function hasRawCoordinateValue(resource: Resource) {
-  const coordinateRecord = resource as Resource & {
-    lat?: number | null;
-    lng?: number | null;
-    coordinates?: { lat?: number | null; lng?: number | null } | [number | null, number | null] | null;
-  };
-
-  if (Array.isArray(coordinateRecord.coordinates)) {
-    return coordinateRecord.coordinates.some((value) => value !== null && value !== undefined);
-  }
-
-  return (
-    coordinateRecord.coordinates?.lat !== null && coordinateRecord.coordinates?.lat !== undefined ||
-    coordinateRecord.coordinates?.lng !== null && coordinateRecord.coordinates?.lng !== undefined ||
-    resource.latitude !== null && resource.latitude !== undefined ||
-    resource.longitude !== null && resource.longitude !== undefined ||
-    coordinateRecord.lat !== null && coordinateRecord.lat !== undefined ||
-    coordinateRecord.lng !== null && coordinateRecord.lng !== undefined
-  );
-}
-
-function normalizeCoordinatePair(first: number | null | undefined, second: number | null | undefined, source: string): NormalizedCoordinates | null {
-  if (!isFiniteCoordinate(first) || !isFiniteCoordinate(second)) return null;
-
-  // GeoJSON-style arrays are [longitude, latitude]. If a future resource is
-  // accidentally entered as [latitude, longitude], the bounds check swaps it.
-  const lngLat = normalizeLatLng(second, first, source);
-  if (lngLat) return lngLat;
-
-  return normalizeLatLng(first, second, source);
-}
-
-function normalizeLatLng(lat: number | null | undefined, lng: number | null | undefined, source: string): NormalizedCoordinates | null {
-  if (!isFiniteCoordinate(lat) || !isFiniteCoordinate(lng)) return null;
-
-  if (isInCa45MapBounds(lat, lng)) {
-    return { lat, lng, source, swapped: false };
-  }
-
-  if (isInCa45MapBounds(lng, lat)) {
-    return { lat: lng, lng: lat, source, swapped: true };
-  }
-
-  return null;
-}
-
-function isFiniteCoordinate(value: number | null | undefined): value is number {
-  return typeof value === "number" && Number.isFinite(value);
-}
-
-function isInCa45MapBounds(lat: number, lng: number) {
-  return (
-    lat >= coordinateBounds.minLat &&
-    lat <= coordinateBounds.maxLat &&
-    lng >= coordinateBounds.minLng &&
-    lng <= coordinateBounds.maxLng
-  );
-}
-
-function createResourceMarkerElement(resource: Resource, selected: boolean) {
-  const marker = document.createElement("button");
-  marker.type = "button";
-  marker.title = resource.name;
-  marker.setAttribute("aria-label", resource.name);
-  marker.className = `resource-pin-marker ${selected ? "resource-pin-marker-selected" : ""} ${isUrgent(resource) ? "resource-pin-marker-urgent" : ""}`;
-  marker.innerHTML =
-    '<svg class="resource-pin-shape" aria-hidden="true" viewBox="0 0 34 42" focusable="false"><path fill="currentColor" stroke="#fff" stroke-width="2" d="M17 1C8.7 1 2 7.7 2 16c0 11.4 15 25 15 25s15-13.6 15-25C32 7.7 25.3 1 17 1Z"/><circle class="resource-pin-dot" cx="17" cy="16" r="5"/></svg>';
-  return marker;
-}
-
-function createResourcePopup(resource: Resource, language: LanguageCode, visitWebsiteLabel: string, websiteComingSoonLabel: string) {
+function createResourcePopup(resource: Resource, language: LanguageCode) {
   const localized = localizedResource(language, resource);
   const fallback = "Resource details unavailable";
   const name = localized.name || fallback;
@@ -935,13 +528,13 @@ function createResourcePopup(resource: Resource, language: LanguageCode, visitWe
     link.href = websiteUrl;
     link.target = "_blank";
     link.rel = "noopener noreferrer";
-    link.textContent = visitWebsiteLabel;
+    link.textContent = "Visit website";
     link.addEventListener("click", (event) => event.stopPropagation());
     container.append(link);
   } else {
     const fallback = document.createElement("p");
     fallback.className = "resource-map-popup-fallback";
-    fallback.textContent = websiteComingSoonLabel;
+    fallback.textContent = localizedOption(language, "Website coming soon");
     container.append(fallback);
   }
 

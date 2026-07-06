@@ -1,17 +1,8 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useLanguage } from "@/components/LanguageProvider";
 import { PageHero, Section } from "@/components/PageShell";
-
-const ResourceMap = dynamic(() => import("@/components/ResourceMap").then((mod) => mod.ResourceMap), {
-  ssr: false,
-  loading: () => (
-    <div className="grid min-h-[560px] place-items-center rounded-lg border border-teal-900/20 bg-[#061d1b] p-8 text-center text-white">
-      <p className="text-sm font-semibold uppercase tracking-[0.18em] text-teal-100">Loading map</p>
-    </div>
-  ),
-});
+import { ResourceMap } from "@/components/ResourceMap";
 
 export default function MapPage() {
   const { t } = useLanguage();
