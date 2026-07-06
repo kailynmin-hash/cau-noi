@@ -114,7 +114,7 @@ export function ResourceMap() {
 
   const syncMarkers = () => {
     const map = mapRef.current;
-    if (!map || !map.isStyleLoaded()) return;
+    if (!map) return;
     const currentResources = filteredRef.current.filter(hasMappableCoordinates);
 
     markerRef.current.forEach((marker) => marker.remove());
@@ -140,6 +140,13 @@ export function ResourceMap() {
 
     markerRef.current = nextMarkers;
     setMarkerCount(nextMarkers.length);
+    console.info("resource map markers synced", {
+      mapExists: Boolean(mapRef.current),
+      mapLoaded: map.loaded(),
+      styleLoaded: map.isStyleLoaded(),
+      attemptedMarkers: currentResources.length,
+      markersRendered: nextMarkers.length,
+    });
   };
 
   useEffect(() => {
@@ -174,6 +181,7 @@ export function ResourceMap() {
       setMapMessage("");
       syncMarkers();
     });
+    map.once("load", syncMarkers);
     map.on("error", (event) => {
       console.error("mapbox runtime error", event.error ?? event);
       if (requestedModeRef.current === "satellite" && !styleFallbackRef.current) {
