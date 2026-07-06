@@ -781,7 +781,7 @@ function auditResourceCoordinates(resourceList: Resource[]) {
   );
 }
 
-function normalizeCoordinatePair(first: number | undefined, second: number | undefined, source: string): NormalizedCoordinates | null {
+function normalizeCoordinatePair(first: number | null | undefined, second: number | null | undefined, source: string): NormalizedCoordinates | null {
   if (!isFiniteCoordinate(first) || !isFiniteCoordinate(second)) return null;
 
   // GeoJSON-style arrays are [longitude, latitude]. If a future resource is
@@ -792,7 +792,7 @@ function normalizeCoordinatePair(first: number | undefined, second: number | und
   return normalizeLatLng(first, second, source);
 }
 
-function normalizeLatLng(lat: number | undefined, lng: number | undefined, source: string): NormalizedCoordinates | null {
+function normalizeLatLng(lat: number | null | undefined, lng: number | null | undefined, source: string): NormalizedCoordinates | null {
   if (!isFiniteCoordinate(lat) || !isFiniteCoordinate(lng)) return null;
 
   if (isInCa45MapBounds(lat, lng)) {
@@ -806,7 +806,7 @@ function normalizeLatLng(lat: number | undefined, lng: number | undefined, sourc
   return null;
 }
 
-function isFiniteCoordinate(value: number | undefined): value is number {
+function isFiniteCoordinate(value: number | null | undefined): value is number {
   return typeof value === "number" && Number.isFinite(value);
 }
 
