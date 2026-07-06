@@ -35,10 +35,10 @@ const initialZoom = 12;
 const minZoom = 10;
 const maxZoom = 17;
 const coordinateBounds = {
-  minLat: 33.3,
+  minLat: 33.5,
   maxLat: 34.1,
-  minLng: -118.3,
-  maxLng: -117.4,
+  minLng: -118.2,
+  maxLng: -117.6,
 };
 
 type MapMode = "explore" | "satellite";
