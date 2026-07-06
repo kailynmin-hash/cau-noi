@@ -106,9 +106,11 @@ export function ResourceMap() {
   );
 
   const selected = filtered.find((resource) => resource.name === selectedName) ?? filtered[0] ?? null;
+  const resourcesWithCoordinates = useMemo(() => resources.filter(hasMappableCoordinates), []);
   const mappableFiltered = useMemo(() => filtered.filter(hasMappableCoordinates), [filtered]);
   const popupResource = selectedResource && hasMappableCoordinates(selectedResource) && filtered.some((resource) => resource.name === selectedResource.name) ? selectedResource : null;
   const localizedSelected = selected ? localizedResource(language, selected) : null;
+  const selectedCoordinates = selected ? getResourceLngLat(selected) : null;
 
   const syncMarkers = () => {
     const map = mapRef.current;
@@ -116,7 +118,12 @@ export function ResourceMap() {
     const currentResources = filteredRef.current.filter(hasMappableCoordinates);
 
     markerRef.current.forEach((marker) => marker.remove());
-    markerRef.current = currentResources.map((resource) => {
+    const nextMarkers: Marker[] = [];
+
+    currentResources.forEach((resource) => {
+      const lngLat = getResourceLngLat(resource);
+      if (!lngLat) return;
+
       const markerElement = createResourceMarkerElement(resource, resource.name === selectedName);
       markerElement.addEventListener("click", (event) => {
         event.preventDefault();
@@ -125,11 +132,14 @@ export function ResourceMap() {
         setSelectedResource(resource);
       });
 
-      return new mapboxgl.Marker({ element: markerElement, anchor: "bottom" })
-        .setLngLat([resource.coordinates.lng, resource.coordinates.lat])
+      const marker = new mapboxgl.Marker({ element: markerElement, anchor: "bottom" })
+        .setLngLat([lngLat.lng, lngLat.lat])
         .addTo(map);
+      nextMarkers.push(marker);
     });
-    setMarkerCount(currentResources.length);
+
+    markerRef.current = nextMarkers;
+    setMarkerCount(nextMarkers.length);
   };
 
   useEffect(() => {
@@ -217,7 +227,8 @@ export function ResourceMap() {
     popupRef.current?.remove();
     popupRef.current = null;
 
-    if (!map || !popupResource) return;
+    const popupCoordinates = popupResource ? getResourceLngLat(popupResource) : null;
+    if (!map || !popupResource || !popupCoordinates) return;
 
     const popup = new mapboxgl.Popup({
       offset: 20,
@@ -226,7 +237,7 @@ export function ResourceMap() {
       className: "resource-map-popup",
       maxWidth: "340px",
     })
-      .setLngLat([popupResource.coordinates.lng, popupResource.coordinates.lat])
+      .setLngLat([popupCoordinates.lng, popupCoordinates.lat])
       .setDOMContent(createResourcePopup(popupResource, language, text.cta, text.websiteComingSoon))
       .addTo(map);
 
@@ -268,10 +279,11 @@ export function ResourceMap() {
   };
 
   function flyToResource(resource: Resource) {
-    if (!hasMappableCoordinates(resource)) return;
+    const lngLat = getResourceLngLat(resource);
+    if (!lngLat) return;
     try {
       mapRef.current?.flyTo({
-        center: [resource.coordinates.lng, resource.coordinates.lat],
+        center: [lngLat.lng, lngLat.lat],
         zoom: 13.8,
         duration: 950,
       });
@@ -305,6 +317,16 @@ export function ResourceMap() {
     });
   };
 
+  useEffect(() => {
+    console.info("resource map marker pipeline", {
+      totalResourcesLoaded: resources.length,
+      resourcesWithCoordinates: resourcesWithCoordinates.length,
+      resourcesFilteredOut: resources.length - filtered.length,
+      markersRendered: markerCount,
+      selectedMapStyle: mode,
+    });
+  }, [filtered.length, markerCount, mode, resourcesWithCoordinates.length]);
+
   return (
     <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[340px_minmax(0,1fr)] xl:grid-cols-[360px_minmax(520px,1fr)_320px]">
       <aside
@@ -312,7 +334,10 @@ export function ResourceMap() {
         className="min-w-0 overflow-y-auto rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition duration-300 lg:max-h-[calc(100vh-8rem)]"
       >
         <p className="mb-4 rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white">
-          Debug: total resources loaded {resources.length} · total markers rendered {markerCount} · selected map style {mode}
+          Resources loaded: {resources.length} · With coordinates: {resourcesWithCoordinates.length} · Markers rendered: {markerCount}
+          <span className="block pt-1 font-medium text-slate-300">
+            Resources filtered out: {resources.length - filtered.length} · Selected map style: {mode}
+          </span>
         </p>
         <div className="mb-5 flex items-center justify-between gap-3">
           <p className="flex items-center gap-2 font-semibold text-slate-950">
@@ -456,9 +481,9 @@ export function ResourceMap() {
               </p>
               <h2 className="mt-2 text-2xl font-semibold text-slate-950">{localizedSelected?.name}</h2>
               <p className="mt-2 text-sm font-medium text-slate-600">{selected.address ?? localizedSelected?.city}</p>
-              {userLocation && hasMappableCoordinates(selected) && (
+              {userLocation && selectedCoordinates && (
                 <p className="mt-2 text-sm font-semibold text-teal-800">
-                  {text.distance}: {distanceMiles(userLocation, selected.coordinates).toFixed(1)} mi
+                  {text.distance}: {distanceMiles(userLocation, selectedCoordinates).toFixed(1)} mi
                 </p>
               )}
               <p className="mt-4 leading-7 text-slate-700">{localizedSelected?.description}</p>
@@ -659,8 +684,38 @@ function isUrgent(resource: Resource) {
   return resource.resourceType === "988 Suicide & Crisis Lifeline";
 }
 
+function getResourceLngLat(resource: Resource) {
+  const coordinateRecord = resource as Resource & {
+    lat?: number;
+    lng?: number;
+    coordinates?: { lat?: number; lng?: number } | [number, number];
+  };
+
+  if (Array.isArray(coordinateRecord.coordinates)) {
+    const [lng, lat] = coordinateRecord.coordinates;
+    return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
+  }
+
+  const lat = Number.isFinite(coordinateRecord.coordinates?.lat)
+    ? coordinateRecord.coordinates?.lat
+    : Number.isFinite(resource.latitude)
+      ? resource.latitude
+      : Number.isFinite(coordinateRecord.lat)
+        ? coordinateRecord.lat
+        : null;
+  const lng = Number.isFinite(coordinateRecord.coordinates?.lng)
+    ? coordinateRecord.coordinates?.lng
+    : Number.isFinite(resource.longitude)
+      ? resource.longitude
+      : Number.isFinite(coordinateRecord.lng)
+        ? coordinateRecord.lng
+        : null;
+
+  return typeof lat === "number" && typeof lng === "number" ? { lat, lng } : null;
+}
+
 function hasMappableCoordinates(resource: Resource) {
-  return Number.isFinite(resource.coordinates?.lat) && Number.isFinite(resource.coordinates?.lng);
+  return getResourceLngLat(resource) !== null;
 }
 
 function createResourceMarkerElement(resource: Resource, selected: boolean) {

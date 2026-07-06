@@ -202,8 +202,11 @@ article.rounded-lg:hover {
   display: grid;
   height: 30px;
   justify-items: center;
+  opacity: 1;
   outline: none;
   place-items: center;
+  pointer-events: auto;
+  position: relative;
   transform: rotate(-45deg);
   transition:
     box-shadow 160ms ease,
@@ -226,7 +229,7 @@ article.rounded-lg:hover {
     0 0 0 8px rgba(255, 255, 255, 0.38),
     0 0 0 13px rgba(56, 189, 248, 0.24),
     0 14px 30px rgba(2, 44, 34, 0.4);
-  z-index: 10;
+  z-index: 20;
 }
 
 .resource-pin-marker-urgent {
