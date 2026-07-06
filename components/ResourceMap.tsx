@@ -36,9 +36,9 @@ const minZoom = 10;
 const maxZoom = 17;
 const coordinateBounds = {
   minLat: 33.5,
-  maxLat: 34.1,
-  minLng: -118.2,
-  maxLng: -117.6,
+  maxLat: 34.2,
+  minLng: -118.3,
+  maxLng: -117.5,
 };
 
 type MapMode = "explore" | "satellite";
@@ -117,6 +117,17 @@ export function ResourceMap() {
   const validCoordinateCount = coordinateAudit.valid.length;
   const invalidCoordinateCount = coordinateAudit.invalid.length;
   const noMapLocationCount = coordinateAudit.noMapLocation.length;
+  const sampleCoordinates = useMemo(
+    () =>
+      coordinateAudit.valid.slice(0, 10).map(({ resource, coordinates }) => ({
+        name: resource.name,
+        address: resource.address ?? resource.city,
+        lng: coordinates.lng,
+        lat: coordinates.lat,
+        precision: resource.locationApproximate ? "approximate" : "exact",
+      })),
+    [coordinateAudit.valid],
+  );
   const mappableFiltered = useMemo(() => filtered.filter(hasMappableCoordinates), [filtered]);
   const popupResource = selectedResource && hasMappableCoordinates(selectedResource) && filtered.some((resource) => resource.name === selectedResource.name) ? selectedResource : null;
   const localizedSelected = selected ? localizedResource(language, selected) : null;
@@ -392,6 +403,20 @@ export function ResourceMap() {
             Resources filtered out: {resources.length - filtered.length} · Selected map style: {mode}
           </span>
         </p>
+        <details className="mb-4 rounded-md border border-slate-200 bg-slate-50 p-3 text-xs text-slate-700">
+          <summary className="cursor-pointer font-semibold text-slate-950">Coordinate sample debug</summary>
+          <ol className="mt-3 grid gap-2">
+            {sampleCoordinates.map((sample) => (
+              <li key={sample.name}>
+                <span className="block font-semibold text-slate-900">{sample.name}</span>
+                <span className="block">{sample.address}</span>
+                <span className="block">
+                  lng {sample.lng.toFixed(6)} · lat {sample.lat.toFixed(6)} · {sample.precision}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </details>
         <div className="mb-5 flex items-center justify-between gap-3">
           <p className="flex items-center gap-2 font-semibold text-slate-950">
             <Filter size={18} className="text-teal-700" aria-hidden="true" />
@@ -852,7 +877,8 @@ function createResourceMarkerElement(resource: Resource, selected: boolean) {
   marker.title = resource.name;
   marker.setAttribute("aria-label", resource.name);
   marker.className = `resource-pin-marker ${selected ? "resource-pin-marker-selected" : ""} ${isUrgent(resource) ? "resource-pin-marker-urgent" : ""}`;
-  marker.innerHTML = '<span class="resource-pin-dot" aria-hidden="true"></span>';
+  marker.innerHTML =
+    '<svg class="resource-pin-shape" aria-hidden="true" viewBox="0 0 34 42" focusable="false"><path fill="currentColor" stroke="#fff" stroke-width="2" d="M17 1C8.7 1 2 7.7 2 16c0 11.4 15 25 15 25s15-13.6 15-25C32 7.7 25.3 1 17 1Z"/><circle class="resource-pin-dot" cx="17" cy="16" r="5"/></svg>';
   return marker;
 }
 
