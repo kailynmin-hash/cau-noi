@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import mapboxgl, { type Map as MapboxMap, type Marker, type Popup } from "mapbox-gl";
+import mapboxgl, { type Map as MapboxMap, type Popup } from "mapbox-gl";
 import {
   ExternalLink,
   Filter,
@@ -34,6 +34,12 @@ const center = { lat: 33.7743, lng: -117.9406 };
 const initialZoom = 12;
 const minZoom = 10;
 const maxZoom = 17;
+const resourceSourceId = "cau-noi-map-resources";
+const clusterLayerId = "cau-noi-resource-clusters";
+const clusterCountLayerId = "cau-noi-resource-cluster-count";
+const resourceLayerId = "cau-noi-resource-points";
+const resourceInnerLayerId = "cau-noi-resource-point-inner";
+const selectedResourceLayerId = "cau-noi-selected-resource";
 
 type MapMode = "explore" | "satellite";
 
@@ -73,9 +79,8 @@ export function ResourceMap() {
   };
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapboxMap | null>(null);
-  const markerRef = useRef<Marker[]>([]);
   const popupRef = useRef<Popup | null>(null);
-  const userMarkerRef = useRef<Marker | null>(null);
+  const userMarkerRef = useRef<mapboxgl.Marker | null>(null);
   const styleFallbackRef = useRef(false);
   const requestedModeRef = useRef<MapMode>("explore");
   const filteredRef = useRef<Resource[]>(resources);
@@ -110,36 +115,96 @@ export function ResourceMap() {
   const popupResource = selectedResource && hasMappableCoordinates(selectedResource) && filtered.some((resource) => resource.name === selectedResource.name) ? selectedResource : null;
   const localizedSelected = selected ? localizedResource(language, selected) : null;
 
-  const syncMarkers = () => {
+  const syncResourceLayers = () => {
     const map = mapRef.current;
     if (!map || !map.isStyleLoaded()) return;
     const currentResources = filteredRef.current.filter(hasMappableCoordinates);
+    const data = resourceFeatureCollection(currentResources);
+    const existingSource = map.getSource(resourceSourceId) as mapboxgl.GeoJSONSource | undefined;
 
-    markerRef.current.forEach((marker) => marker.remove());
-    markerRef.current = currentResources.map((resource) => {
-      const markerEl = document.createElement("button");
-      markerEl.type = "button";
-      markerEl.className = `group grid size-9 place-items-center rounded-full border-2 text-white shadow-lg shadow-black/25 transition hover:border-white hover:shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40 ${
-        resource.name === selectedName
-          ? "border-white bg-sky-500 ring-4 ring-white/45"
-          : isUrgent(resource)
-            ? "border-rose-100 bg-rose-500"
-            : "border-teal-100 bg-teal-500"
-      }`;
-      markerEl.setAttribute("aria-label", resource.name);
-      markerEl.innerHTML = `<span class="size-3 rounded-full bg-white shadow-sm"></span>`;
-      markerEl.addEventListener("click", (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        setSelectedName(resource.name);
-        setSelectedResource(resource);
-      });
+    if (existingSource) {
+      existingSource.setData(data);
+      updateSelectedResourceLayer(map, selectedName);
+      setMarkerCount(currentResources.length);
+      return;
+    }
 
-      return new mapboxgl.Marker({ element: markerEl, anchor: "center" })
-        .setLngLat([resource.coordinates.lng, resource.coordinates.lat])
-        .addTo(map);
+    map.addSource(resourceSourceId, {
+      type: "geojson",
+      data,
+      cluster: true,
+      clusterMaxZoom: 13,
+      clusterRadius: 48,
     });
-    setMarkerCount(markerRef.current.length);
+
+    map.addLayer({
+      id: clusterLayerId,
+      type: "circle",
+      source: resourceSourceId,
+      filter: ["has", "point_count"],
+      paint: {
+        "circle-color": ["step", ["get", "point_count"], "#0f766e", 10, "#0891b2", 25, "#f43f5e"],
+        "circle-radius": ["step", ["get", "point_count"], 18, 10, 24, 25, 31],
+        "circle-stroke-color": "#ffffff",
+        "circle-stroke-width": 2,
+        "circle-opacity": 0.96,
+      },
+    });
+
+    map.addLayer({
+      id: clusterCountLayerId,
+      type: "symbol",
+      source: resourceSourceId,
+      filter: ["has", "point_count"],
+      layout: {
+        "text-field": ["get", "point_count_abbreviated"],
+        "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
+        "text-size": 13,
+      },
+      paint: {
+        "text-color": "#ffffff",
+      },
+    });
+
+    map.addLayer({
+      id: resourceLayerId,
+      type: "circle",
+      source: resourceSourceId,
+      filter: ["!", ["has", "point_count"]],
+      paint: {
+        "circle-color": ["case", ["boolean", ["get", "urgent"], false], "#f43f5e", "#14b8a6"],
+        "circle-radius": 12,
+        "circle-stroke-color": "#ffffff",
+        "circle-stroke-width": 2,
+        "circle-opacity": 0.98,
+      },
+    });
+
+    map.addLayer({
+      id: resourceInnerLayerId,
+      type: "circle",
+      source: resourceSourceId,
+      filter: ["!", ["has", "point_count"]],
+      paint: {
+        "circle-color": "#ffffff",
+        "circle-radius": 4,
+      },
+    });
+
+    map.addLayer({
+      id: selectedResourceLayerId,
+      type: "circle",
+      source: resourceSourceId,
+      filter: ["==", ["get", "name"], selectedName],
+      paint: {
+        "circle-color": "rgba(56, 189, 248, 0.22)",
+        "circle-radius": 22,
+        "circle-stroke-color": "#ffffff",
+        "circle-stroke-width": 2,
+      },
+    }, resourceLayerId);
+
+    setMarkerCount(currentResources.length);
   };
 
   useEffect(() => {
@@ -164,14 +229,47 @@ export function ResourceMap() {
       return;
     }
 
+    mapRef.current = map;
     map.addControl(new mapboxgl.AttributionControl({ compact: true }), "bottom-right");
-    map.on("click", () => {
+    map.on("click", (event) => {
+      const resourceLayers = [clusterLayerId, resourceLayerId, resourceInnerLayerId].filter((layerId) => map.getLayer(layerId));
+      const features = resourceLayers.length > 0 ? map.queryRenderedFeatures(event.point, { layers: resourceLayers }) : [];
+      const feature = features[0];
+
+      if (feature?.layer?.id === clusterLayerId) {
+        const source = map.getSource(resourceSourceId) as mapboxgl.GeoJSONSource | undefined;
+        const featureProperties = (feature as unknown as { properties?: { cluster_id?: number } }).properties;
+        const clusterId = featureProperties?.cluster_id;
+        const coordinates = getFeatureCoordinates(feature);
+        if (!source || clusterId === undefined || !coordinates) return;
+        source.getClusterExpansionZoom(clusterId, (error, zoom) => {
+          if (error || zoom == null) return;
+          map.easeTo({ center: coordinates, zoom, duration: 700 });
+        });
+        return;
+      }
+
+      if (feature?.layer?.id === resourceLayerId || feature?.layer?.id === resourceInnerLayerId) {
+        const featureProperties = (feature as unknown as { properties?: { name?: string } }).properties;
+        const name = typeof featureProperties?.name === "string" ? featureProperties.name : "";
+        const resource = filteredRef.current.find((item) => item.name === name);
+        if (!resource) return;
+        setSelectedName(resource.name);
+        setSelectedResource(resource);
+        return;
+      }
+
       setSelectedResource(null);
+    });
+    map.on("mousemove", (event) => {
+      const resourceLayers = [clusterLayerId, resourceLayerId, resourceInnerLayerId].filter((layerId) => map.getLayer(layerId));
+      const features = resourceLayers.length > 0 ? map.queryRenderedFeatures(event.point, { layers: resourceLayers }) : [];
+      map.getCanvas().style.cursor = features.length > 0 ? "pointer" : "";
     });
     map.on("style.load", () => {
       styleFallbackRef.current = false;
       setMapMessage("");
-      syncMarkers();
+      syncResourceLayers();
     });
     map.on("error", (event) => {
       console.error("mapbox runtime error", event.error ?? event);
@@ -182,10 +280,7 @@ export function ResourceMap() {
         map.setStyle(getMapStyle("explore"));
       }
     });
-    mapRef.current = map;
-
     return () => {
-      markerRef.current.forEach((marker) => marker.remove());
       setMarkerCount(0);
       popupRef.current?.remove();
       userMarkerRef.current?.remove();
@@ -217,8 +312,8 @@ export function ResourceMap() {
   }, [filtered]);
 
   useEffect(() => {
-    syncMarkers();
-    // Markers live in HTML overlay state and are intentionally re-synced after filters/style changes.
+    syncResourceLayers();
+    // Resource layers are intentionally re-synced after filters/style changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtered, selectedName]);
 
@@ -606,6 +701,36 @@ function getMapStyle(mode: MapMode) {
   return mode === "satellite"
     ? "mapbox://styles/mapbox/satellite-streets-v12"
     : "mapbox://styles/mapbox/streets-v12";
+}
+
+function resourceFeatureCollection(source: Resource[]) {
+  return {
+    type: "FeatureCollection" as const,
+    features: source.map((resource) => ({
+      type: "Feature" as const,
+      geometry: {
+        type: "Point" as const,
+        coordinates: [resource.coordinates.lng, resource.coordinates.lat],
+      },
+      properties: {
+        name: resource.name,
+        category: resource.resourceType,
+        urgent: isUrgent(resource),
+      },
+    })),
+  };
+}
+
+function updateSelectedResourceLayer(map: MapboxMap, name: string) {
+  if (!map.getLayer(selectedResourceLayerId)) return;
+  map.setFilter(selectedResourceLayerId, ["==", ["get", "name"], name]);
+}
+
+function getFeatureCoordinates(feature: mapboxgl.MapboxGeoJSONFeature) {
+  const geometry = (feature as unknown as { geometry?: { type?: string; coordinates?: unknown } }).geometry;
+  if (geometry?.type !== "Point" || !Array.isArray(geometry.coordinates)) return null;
+  const [lng, lat] = geometry.coordinates;
+  return typeof lng === "number" && typeof lat === "number" ? ([lng, lat] as [number, number]) : null;
 }
 
 function MapButton({ label, onClick, icon: Icon }: { label: string; onClick: () => void; icon: typeof Plus }) {
