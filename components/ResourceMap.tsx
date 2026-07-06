@@ -34,8 +34,15 @@ const center = { lat: 33.7743, lng: -117.9406 };
 const initialZoom = 12;
 const minZoom = 10;
 const maxZoom = 17;
+const coordinateBounds = {
+  minLat: 33.3,
+  maxLat: 34.1,
+  minLng: -118.3,
+  maxLng: -117.4,
+};
 
 type MapMode = "explore" | "satellite";
+type NormalizedCoordinates = { lat: number; lng: number; source: string; swapped: boolean };
 
 export function ResourceMap() {
   const { language, t } = useLanguage();
@@ -106,7 +113,9 @@ export function ResourceMap() {
   );
 
   const selected = filtered.find((resource) => resource.name === selectedName) ?? filtered[0] ?? null;
-  const resourcesWithCoordinates = useMemo(() => resources.filter(hasMappableCoordinates), []);
+  const coordinateAudit = useMemo(() => auditResourceCoordinates(resources), []);
+  const validCoordinateCount = coordinateAudit.valid.length;
+  const invalidCoordinateCount = coordinateAudit.invalid.length;
   const mappableFiltered = useMemo(() => filtered.filter(hasMappableCoordinates), [filtered]);
   const popupResource = selectedResource && hasMappableCoordinates(selectedResource) && filtered.some((resource) => resource.name === selectedResource.name) ? selectedResource : null;
   const localizedSelected = selected ? localizedResource(language, selected) : null;
@@ -116,9 +125,11 @@ export function ResourceMap() {
     const map = mapRef.current;
     if (!map) return;
     const currentResources = filteredRef.current.filter(hasMappableCoordinates);
+    const invalidResources = filteredRef.current.filter((resource) => !hasMappableCoordinates(resource));
 
     markerRef.current.forEach((marker) => marker.remove());
     const nextMarkers: Marker[] = [];
+    const markerExamples: Array<{ name: string; lat: number; lng: number; source: string; swapped: boolean }> = [];
 
     currentResources.forEach((resource) => {
       const lngLat = getResourceLngLat(resource);
@@ -136,16 +147,39 @@ export function ResourceMap() {
         .setLngLat([lngLat.lng, lngLat.lat])
         .addTo(map);
       nextMarkers.push(marker);
+      if (markerExamples.length < 5) {
+        markerExamples.push({
+          name: resource.name,
+          lat: lngLat.lat,
+          lng: lngLat.lng,
+          source: lngLat.source,
+          swapped: lngLat.swapped,
+        });
+      }
     });
 
     markerRef.current = nextMarkers;
     setMarkerCount(nextMarkers.length);
+    if (invalidResources.length > 0) {
+      console.warn(
+        "resource map invalid coordinates skipped",
+        invalidResources.map((resource) => ({
+          name: resource.name,
+          city: resource.city,
+          coordinates: resource.coordinates,
+          latitude: resource.latitude,
+          longitude: resource.longitude,
+        })),
+      );
+    }
     console.info("resource map markers synced", {
       mapExists: Boolean(mapRef.current),
       mapLoaded: map.loaded(),
       styleLoaded: map.isStyleLoaded(),
       attemptedMarkers: currentResources.length,
       markersRendered: nextMarkers.length,
+      invalidCoordinates: invalidResources.length,
+      markerExamples,
     });
   };
 
@@ -328,12 +362,20 @@ export function ResourceMap() {
   useEffect(() => {
     console.info("resource map marker pipeline", {
       totalResourcesLoaded: resources.length,
-      resourcesWithCoordinates: resourcesWithCoordinates.length,
+      validCoordinates: validCoordinateCount,
+      invalidCoordinates: invalidCoordinateCount,
       resourcesFilteredOut: resources.length - filtered.length,
       markersRendered: markerCount,
       selectedMapStyle: mode,
+      finalMarkerCoordinateExamples: coordinateAudit.valid.slice(0, 5).map(({ resource, coordinates }) => ({
+        name: resource.name,
+        lat: coordinates.lat,
+        lng: coordinates.lng,
+        source: coordinates.source,
+        swapped: coordinates.swapped,
+      })),
     });
-  }, [filtered.length, markerCount, mode, resourcesWithCoordinates.length]);
+  }, [coordinateAudit.valid, filtered.length, invalidCoordinateCount, markerCount, mode, validCoordinateCount]);
 
   return (
     <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[340px_minmax(0,1fr)] xl:grid-cols-[360px_minmax(520px,1fr)_320px]">
@@ -342,7 +384,7 @@ export function ResourceMap() {
         className="min-w-0 overflow-y-auto rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition duration-300 lg:max-h-[calc(100vh-8rem)]"
       >
         <p className="mb-4 rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white">
-          Resources loaded: {resources.length} · With coordinates: {resourcesWithCoordinates.length} · Markers rendered: {markerCount}
+          Resources loaded: {resources.length} · Valid coordinates: {validCoordinateCount} · Invalid coordinates: {invalidCoordinateCount} · Markers rendered: {markerCount}
           <span className="block pt-1 font-medium text-slate-300">
             Resources filtered out: {resources.length - filtered.length} · Selected map style: {mode}
           </span>
@@ -692,7 +734,7 @@ function isUrgent(resource: Resource) {
   return resource.resourceType === "988 Suicide & Crisis Lifeline";
 }
 
-function getResourceLngLat(resource: Resource) {
+function getResourceLngLat(resource: Resource): NormalizedCoordinates | null {
   const coordinateRecord = resource as Resource & {
     lat?: number;
     lng?: number;
@@ -700,30 +742,81 @@ function getResourceLngLat(resource: Resource) {
   };
 
   if (Array.isArray(coordinateRecord.coordinates)) {
-    const [lng, lat] = coordinateRecord.coordinates;
-    return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
+    const [first, second] = coordinateRecord.coordinates;
+    return normalizeCoordinatePair(first, second, "coordinates-array");
   }
 
-  const lat = Number.isFinite(coordinateRecord.coordinates?.lat)
-    ? coordinateRecord.coordinates?.lat
-    : Number.isFinite(resource.latitude)
-      ? resource.latitude
-      : Number.isFinite(coordinateRecord.lat)
-        ? coordinateRecord.lat
-        : null;
-  const lng = Number.isFinite(coordinateRecord.coordinates?.lng)
-    ? coordinateRecord.coordinates?.lng
-    : Number.isFinite(resource.longitude)
-      ? resource.longitude
-      : Number.isFinite(coordinateRecord.lng)
-        ? coordinateRecord.lng
-        : null;
+  const objectCoordinates = normalizeLatLng(
+    coordinateRecord.coordinates?.lat,
+    coordinateRecord.coordinates?.lng,
+    "coordinates-object",
+  );
+  if (objectCoordinates) return objectCoordinates;
 
-  return typeof lat === "number" && typeof lng === "number" ? { lat, lng } : null;
+  const latitudeLongitude = normalizeLatLng(resource.latitude, resource.longitude, "latitude-longitude");
+  if (latitudeLongitude) return latitudeLongitude;
+
+  return normalizeLatLng(coordinateRecord.lat, coordinateRecord.lng, "lat-lng");
 }
 
 function hasMappableCoordinates(resource: Resource) {
   return getResourceLngLat(resource) !== null;
+}
+
+function auditResourceCoordinates(resourceList: Resource[]) {
+  return resourceList.reduce(
+    (audit, resource) => {
+      const coordinates = getResourceLngLat(resource);
+      if (coordinates) {
+        audit.valid.push({ resource, coordinates });
+      } else {
+        audit.invalid.push(resource);
+      }
+      return audit;
+    },
+    {
+      valid: [] as Array<{ resource: Resource; coordinates: NormalizedCoordinates }>,
+      invalid: [] as Resource[],
+    },
+  );
+}
+
+function normalizeCoordinatePair(first: number | undefined, second: number | undefined, source: string): NormalizedCoordinates | null {
+  if (!isFiniteCoordinate(first) || !isFiniteCoordinate(second)) return null;
+
+  // GeoJSON-style arrays are [longitude, latitude]. If a future resource is
+  // accidentally entered as [latitude, longitude], the bounds check swaps it.
+  const lngLat = normalizeLatLng(second, first, source);
+  if (lngLat) return lngLat;
+
+  return normalizeLatLng(first, second, source);
+}
+
+function normalizeLatLng(lat: number | undefined, lng: number | undefined, source: string): NormalizedCoordinates | null {
+  if (!isFiniteCoordinate(lat) || !isFiniteCoordinate(lng)) return null;
+
+  if (isInCa45MapBounds(lat, lng)) {
+    return { lat, lng, source, swapped: false };
+  }
+
+  if (isInCa45MapBounds(lng, lat)) {
+    return { lat: lng, lng: lat, source, swapped: true };
+  }
+
+  return null;
+}
+
+function isFiniteCoordinate(value: number | undefined): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function isInCa45MapBounds(lat: number, lng: number) {
+  return (
+    lat >= coordinateBounds.minLat &&
+    lat <= coordinateBounds.maxLat &&
+    lng >= coordinateBounds.minLng &&
+    lng <= coordinateBounds.maxLng
+  );
 }
 
 function createResourceMarkerElement(resource: Resource, selected: boolean) {
