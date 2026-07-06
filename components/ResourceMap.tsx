@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import mapboxgl, { type Map as MapboxMap, type Marker, type Popup } from "mapbox-gl";
 import {
-  Crosshair,
   ExternalLink,
   Filter,
   LocateFixed,
@@ -35,24 +34,8 @@ const center = { lat: 33.7743, lng: -117.9406 };
 const initialZoom = 12;
 const minZoom = 10;
 const maxZoom = 17;
-const citySourceId = "cau-noi-city-labels";
-const terrainSourceId = "mapbox-dem";
-const buildingsLayerId = "cau-noi-3d-buildings";
-const detailsPanelStorageKey = "cau-noi-map-details-open";
 
 type MapMode = "explore" | "satellite";
-type ViewMode = "2d" | "3d";
-
-const cityLabels = [
-  { name: "Fullerton", coordinates: [-117.9243, 33.8704] },
-  { name: "La Mirada", coordinates: [-118.0107, 33.9172] },
-  { name: "Buena Park", coordinates: [-117.9981, 33.8675] },
-  { name: "Anaheim", coordinates: [-117.9145, 33.8366] },
-  { name: "Garden Grove", coordinates: [-117.9414, 33.7739] },
-  { name: "Santa Ana", coordinates: [-117.8677, 33.7455] },
-  { name: "Westminster", coordinates: [-117.9931, 33.7592] },
-  { name: "Fountain Valley", coordinates: [-117.9537, 33.7092] },
-];
 
 export function ResourceMap() {
   const { language, t } = useLanguage();
@@ -66,12 +49,9 @@ export function ResourceMap() {
     city: t("map.city"),
     explore: t("map.explore"),
     satellite: t("map.satellite"),
-    view2d: t("map.view2d"),
-    view3d: t("map.view3d"),
     mapTitle: t("map.mapTitle"),
     fallback: t("map.fallback"),
     satelliteUnavailable: t("map.satelliteUnavailable"),
-    threeDUnavailable: t("map.threeDUnavailable"),
     note: t("map.note"),
     selected: t("map.selected"),
     noMatch: t("map.noMatch"),
@@ -84,10 +64,6 @@ export function ResourceMap() {
     zoomOut: t("map.zoomOut"),
     resetCamera: t("map.resetCamera"),
     useArea: t("map.useArea"),
-    hideFilters: t("map.hideFilters"),
-    showFilters: t("map.showFilters"),
-    hideDetails: t("map.hideDetails"),
-    showDetails: t("map.showDetails"),
     flyToResource: t("map.flyToResource"),
     distance: t("map.distance"),
     cta: t("map.cta"),
@@ -103,9 +79,7 @@ export function ResourceMap() {
   const styleFallbackRef = useRef(false);
   const requestedModeRef = useRef<MapMode>("explore");
   const filteredRef = useRef<Resource[]>(resources);
-  const viewModeRef = useRef<ViewMode>("2d");
   const [mode, setMode] = useState<MapMode>("explore");
-  const [viewMode, setViewMode] = useState<ViewMode>("2d");
   const [mapMessage, setMapMessage] = useState("");
   const [languageFilter, setLanguageFilter] = useState<LanguageFilter>("All languages");
   const [costFilter, setCostFilter] = useState<CostFilter>("All costs");
@@ -115,11 +89,7 @@ export function ResourceMap() {
   const [selectedName, setSelectedName] = useState(resources[0].name);
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [detailsOpen, setDetailsOpen] = useState(() => {
-    const nextFiltersOpen = true;
-    const nextDetailsOpen = getStoredPanelState(detailsPanelStorageKey, true);
-    return isMobileMapLayout() && nextFiltersOpen && nextDetailsOpen ? false : nextDetailsOpen;
-  });
+  const [markerCount, setMarkerCount] = useState(0);
   const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
   const filtered = useMemo(
@@ -150,7 +120,11 @@ export function ResourceMap() {
       const markerEl = document.createElement("button");
       markerEl.type = "button";
       markerEl.className = `group grid size-9 place-items-center rounded-full border-2 text-white shadow-lg shadow-black/25 transition hover:border-white hover:shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40 ${
-        isUrgent(resource) ? "border-rose-100 bg-rose-500" : "border-teal-100 bg-teal-500"
+        resource.name === selectedName
+          ? "border-white bg-sky-500 ring-4 ring-white/45"
+          : isUrgent(resource)
+            ? "border-rose-100 bg-rose-500"
+            : "border-teal-100 bg-teal-500"
       }`;
       markerEl.setAttribute("aria-label", resource.name);
       markerEl.innerHTML = `<span class="size-3 rounded-full bg-white shadow-sm"></span>`;
@@ -159,75 +133,13 @@ export function ResourceMap() {
         event.stopPropagation();
         setSelectedName(resource.name);
         setSelectedResource(resource);
-        openDetailsPanel();
       });
 
       return new mapboxgl.Marker({ element: markerEl, anchor: "center" })
         .setLngLat([resource.coordinates.lng, resource.coordinates.lat])
         .addTo(map);
     });
-  };
-
-  const applyMapView = (nextViewMode: ViewMode, animate = true) => {
-    const map = mapRef.current;
-    if (!map || !map.isStyleLoaded()) return;
-
-    if (nextViewMode === "3d") {
-      try {
-        add3dEnhancements(map);
-        map.easeTo({
-          center: map.getCenter(),
-          zoom: Math.max(map.getZoom(), 12.5),
-          pitch: 60,
-          bearing: -20,
-          duration: animate ? 950 : 0,
-        });
-        syncMarkers();
-      } catch (error) {
-        fallbackTo2d(error);
-      }
-      return;
-    }
-
-    markerRef.current.forEach((marker) => marker.remove());
-    markerRef.current = [];
-    safeRemove3dEnhancements(map);
-    try {
-      map.easeTo({
-        center: map.getCenter(),
-        pitch: 0,
-        bearing: 0,
-        duration: animate ? 800 : 0,
-      });
-    } catch (error) {
-      console.error("map reset camera error", error);
-    }
-    syncMarkers();
-  };
-
-  function fallbackTo2d(error: unknown) {
-    console.error("map 3d mode failed; falling back to 2d", error);
-    const map = mapRef.current;
-    if (map) {
-      safeRemove3dEnhancements(map);
-      try {
-        map.easeTo({ pitch: 0, bearing: 0, duration: 350 });
-      } catch (cameraError) {
-        console.error("map 2d fallback camera error", cameraError);
-      }
-    }
-    viewModeRef.current = "2d";
-    setViewMode("2d");
-    setMapMessage("3d-unavailable");
-  }
-
-  const setRequestedViewMode = (nextViewMode: ViewMode) => {
-    setMapMessage("");
-    setViewMode(nextViewMode);
-  };
-
-  const openDetailsPanel = () => {
-    setDetailsOpen(true);
+    setMarkerCount(markerRef.current.length);
   };
 
   useEffect(() => {
@@ -244,8 +156,6 @@ export function ResourceMap() {
         zoom: initialZoom,
         minZoom,
         maxZoom,
-        pitch: 0,
-        bearing: 0,
         attributionControl: false,
       });
     } catch (error) {
@@ -261,15 +171,10 @@ export function ResourceMap() {
     map.on("style.load", () => {
       styleFallbackRef.current = false;
       setMapMessage("");
-      applyMapView(viewModeRef.current, false);
       syncMarkers();
     });
     map.on("error", (event) => {
       console.error("mapbox runtime error", event.error ?? event);
-      if (viewModeRef.current === "3d") {
-        fallbackTo2d(event.error ?? event);
-        return;
-      }
       if (requestedModeRef.current === "satellite" && !styleFallbackRef.current) {
         styleFallbackRef.current = true;
         setMapMessage("satellite-unavailable");
@@ -281,6 +186,7 @@ export function ResourceMap() {
 
     return () => {
       markerRef.current.forEach((marker) => marker.remove());
+      setMarkerCount(0);
       popupRef.current?.remove();
       userMarkerRef.current?.remove();
       map.remove();
@@ -311,23 +217,10 @@ export function ResourceMap() {
   }, [filtered]);
 
   useEffect(() => {
-    window.localStorage.setItem(detailsPanelStorageKey, String(detailsOpen));
-    const resizeTimer = window.setTimeout(() => mapRef.current?.resize(), 250);
-    return () => window.clearTimeout(resizeTimer);
-  }, [detailsOpen]);
-
-  useEffect(() => {
-    viewModeRef.current = viewMode;
-    applyMapView(viewMode);
-    // View changes are applied directly to the Mapbox instance.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [viewMode]);
-
-  useEffect(() => {
     syncMarkers();
     // Markers live in HTML overlay state and are intentionally re-synced after filters/style changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filtered]);
+  }, [filtered, selectedName]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -377,8 +270,6 @@ export function ResourceMap() {
       mapRef.current?.flyTo({
         center: [center.lng, center.lat],
         zoom: initialZoom,
-        pitch: viewModeRef.current === "3d" ? 60 : 0,
-        bearing: viewModeRef.current === "3d" ? -20 : 0,
         duration: 900,
       });
     } catch (error) {
@@ -391,9 +282,7 @@ export function ResourceMap() {
     try {
       mapRef.current?.flyTo({
         center: [resource.coordinates.lng, resource.coordinates.lat],
-        zoom: viewModeRef.current === "3d" ? 15.2 : 13.8,
-        pitch: viewModeRef.current === "3d" ? 60 : 0,
-        bearing: viewModeRef.current === "3d" ? -20 : 0,
+        zoom: 13.8,
         duration: 950,
       });
     } catch (error) {
@@ -410,8 +299,6 @@ export function ResourceMap() {
         mapRef.current?.flyTo({
           center: [next.lng, next.lat],
           zoom: 12.5,
-          pitch: viewModeRef.current === "3d" ? 60 : 0,
-          bearing: viewModeRef.current === "3d" ? -20 : 0,
           duration: 900,
         });
       } catch (error) {
@@ -428,21 +315,15 @@ export function ResourceMap() {
     });
   };
 
-  const gridClassName =
-    detailsOpen
-      ? "lg:grid-cols-[340px_minmax(0,1fr)] xl:grid-cols-[360px_minmax(520px,1fr)_320px]"
-      : "lg:grid-cols-[340px_minmax(0,1fr)]";
-  const detailsPanelClassName =
-    detailsOpen
-      ? "lg:col-span-2 xl:col-span-1"
-      : "";
-
   return (
-    <div className={`grid grid-cols-1 items-start gap-6 transition-all duration-300 ${gridClassName}`}>
+    <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[340px_minmax(0,1fr)] xl:grid-cols-[360px_minmax(520px,1fr)_320px]">
       <aside
         id="map-filters-panel"
         className="min-w-0 overflow-y-auto rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition duration-300 lg:max-h-[calc(100vh-8rem)]"
       >
+        <p className="mb-4 rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white">
+          Debug: total resources loaded {resources.length} · total markers rendered {markerCount} · selected map style {mode}
+        </p>
         <div className="mb-5 flex items-center justify-between gap-3">
           <p className="flex items-center gap-2 font-semibold text-slate-950">
             <Filter size={18} className="text-teal-700" aria-hidden="true" />
@@ -465,7 +346,7 @@ export function ResourceMap() {
         {!mapboxToken && <p className="mt-5 rounded-md bg-sky-50 p-3 text-sm leading-6 text-sky-950">{text.fallback}</p>}
         {mapMessage && (
           <p className="mt-5 rounded-md bg-rose-50 p-3 text-sm leading-6 text-rose-950">
-            {mapMessage === "3d-unavailable" || mapMessage === "map-unavailable" ? text.threeDUnavailable : text.satelliteUnavailable}
+            {mapMessage === "satellite-unavailable" ? text.satelliteUnavailable : text.fallback}
           </p>
         )}
 
@@ -491,7 +372,6 @@ export function ResourceMap() {
                   onSelect={() => {
                     setSelectedName(resource.name);
                     setSelectedResource(resource);
-                    openDetailsPanel();
                     if (hasMappableCoordinates(resource)) flyToResource(resource);
                   }}
                 />
@@ -527,31 +407,6 @@ export function ResourceMap() {
 
         <div className="absolute right-4 top-4 z-20 grid max-w-[calc(100%-2rem)] gap-2 rounded-xl border border-white/15 bg-black/40 p-2 shadow-2xl shadow-black/20 backdrop-blur md:max-w-none">
           <div className="grid grid-cols-2 gap-1 sm:grid-cols-4">
-            {(["2d", "3d"] as const).map((option) => (
-              <button
-                key={option}
-                type="button"
-                onClick={() => setRequestedViewMode(option)}
-                aria-pressed={viewMode === option}
-                className={`min-h-9 rounded-md px-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-55 ${
-                  viewMode === option ? "bg-white text-teal-950" : "text-white hover:bg-white/10"
-                }`}
-              >
-                {option === "2d" ? text.view2d : text.view3d}
-              </button>
-            ))}
-            <button
-              type="button"
-              onClick={() => (detailsOpen ? setDetailsOpen(false) : openDetailsPanel())}
-              aria-controls="map-details-panel"
-              aria-expanded={detailsOpen}
-              aria-label={detailsOpen ? text.hideDetails : text.showDetails}
-              className="min-h-9 rounded-md px-3 text-sm font-semibold text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
-            >
-              {detailsOpen ? text.hideDetails : text.showDetails}
-            </button>
-          </div>
-          <div className="grid grid-cols-2 gap-1 sm:grid-cols-4">
             {(["explore", "satellite"] as const).map((option) => (
               <button
                 key={option}
@@ -569,7 +424,7 @@ export function ResourceMap() {
               onClick={resetView}
               className="inline-flex min-h-9 items-center justify-center gap-2 rounded-md border border-white/15 px-3 text-sm font-semibold text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
             >
-              <Crosshair size={15} aria-hidden="true" />
+              <RotateCcw size={15} aria-hidden="true" />
               {text.resetCamera}
             </button>
             <button
@@ -582,19 +437,6 @@ export function ResourceMap() {
             </button>
           </div>
         </div>
-
-        {!detailsOpen && (
-          <button
-            type="button"
-            onClick={openDetailsPanel}
-            aria-controls="map-details-panel"
-            aria-expanded={detailsOpen}
-            className="absolute right-4 top-20 z-20 inline-flex min-h-10 items-center gap-2 rounded-md border border-white/15 bg-black/45 px-3 text-sm font-semibold text-white shadow-xl backdrop-blur transition hover:bg-white/15 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
-          >
-            <View size={16} aria-hidden="true" />
-            {text.showDetails}
-          </button>
-        )}
 
         {mapboxToken ? (
           <div ref={mapContainerRef} className="h-[540px] min-h-[560px] w-full rounded-lg lg:h-[650px] lg:min-h-[650px]" />
@@ -613,22 +455,10 @@ export function ResourceMap() {
         </div>
       </div>
 
-      {detailsOpen ? (
       <aside
         id="map-details-panel"
-        className={`fixed inset-x-3 bottom-3 z-50 max-h-[78vh] min-w-0 overflow-y-auto rounded-xl border border-slate-200 bg-white p-5 shadow-2xl shadow-slate-950/20 transition duration-300 lg:static lg:max-h-[calc(100vh-8rem)] lg:rounded-lg lg:shadow-sm ${detailsPanelClassName}`}
+        className="min-w-0 rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto xl:col-span-1"
       >
-          <div className="mb-4 flex justify-end">
-            <button
-              type="button"
-              onClick={() => setDetailsOpen(false)}
-              aria-controls="map-details-panel"
-              aria-expanded={detailsOpen}
-              className="inline-flex min-h-9 items-center rounded-md bg-slate-900 px-2.5 text-xs font-semibold text-white hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-200"
-            >
-              {text.hideDetails}
-            </button>
-          </div>
           {selected ? (
             <>
               <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${isUrgent(selected) ? "text-rose-700" : "text-teal-700"}`}>
@@ -709,7 +539,6 @@ export function ResourceMap() {
             <p className="leading-7 text-slate-600">{text.noMatch}</p>
           )}
         </aside>
-      ) : null}
     </div>
   );
 }
@@ -777,135 +606,6 @@ function getMapStyle(mode: MapMode) {
   return mode === "satellite"
     ? "mapbox://styles/mapbox/satellite-streets-v12"
     : "mapbox://styles/mapbox/streets-v12";
-}
-
-function cityFeatureCollection() {
-  return {
-    type: "FeatureCollection" as const,
-    features: cityLabels.map((city) => ({
-      type: "Feature" as const,
-      geometry: {
-        type: "Point" as const,
-        coordinates: city.coordinates,
-      },
-      properties: {
-        name: city.name,
-      },
-    })),
-  };
-}
-
-function add3dEnhancements(map: MapboxMap) {
-  if (!map.isStyleLoaded()) return;
-
-  if (!map.getSource(terrainSourceId)) {
-    map.addSource(terrainSourceId, {
-      type: "raster-dem",
-      url: "mapbox://mapbox.mapbox-terrain-dem-v1",
-      tileSize: 512,
-      maxzoom: 14,
-    });
-  }
-
-  map.setTerrain({ source: terrainSourceId, exaggeration: 1.15 });
-  map.setFog({
-    color: "rgb(232, 244, 240)",
-    "high-color": "rgb(196, 231, 225)",
-    "horizon-blend": 0.12,
-  });
-
-  const labelLayerId = findFirstSymbolLayer(map);
-  const hasCompositeSource = Boolean(map.getSource("composite"));
-  if (hasCompositeSource && !map.getLayer(buildingsLayerId)) {
-    map.addLayer(
-      {
-        id: buildingsLayerId,
-        source: "composite",
-        "source-layer": "building",
-        filter: ["==", ["get", "extrude"], "true"],
-        type: "fill-extrusion",
-        minzoom: 14,
-        paint: {
-          "fill-extrusion-color": "#8fb7ad",
-          "fill-extrusion-height": ["interpolate", ["linear"], ["zoom"], 14, 0, 15.05, ["get", "height"]],
-          "fill-extrusion-base": ["interpolate", ["linear"], ["zoom"], 14, 0, 15.05, ["get", "min_height"]],
-          "fill-extrusion-opacity": 0.58,
-        },
-      },
-      labelLayerId,
-    );
-  }
-
-  addCityLabels(map);
-}
-
-function remove3dEnhancements(map: MapboxMap) {
-  if (map.getLayer(buildingsLayerId)) map.removeLayer(buildingsLayerId);
-  removeCityLabels(map);
-  map.setTerrain(null);
-  map.setFog(null);
-}
-
-function safeRemove3dEnhancements(map: MapboxMap) {
-  try {
-    remove3dEnhancements(map);
-  } catch (error) {
-    console.error("map 3d cleanup error", error);
-  }
-}
-
-function addCityLabels(map: MapboxMap) {
-  if (!map.isStyleLoaded()) return;
-
-  if (!map.getSource(citySourceId)) {
-    map.addSource(citySourceId, {
-      type: "geojson",
-      data: cityFeatureCollection(),
-    });
-  }
-
-  if (!map.getLayer("ca45-city-labels")) {
-    map.addLayer({
-      id: "ca45-city-labels",
-      type: "symbol",
-      source: citySourceId,
-      minzoom: 9.5,
-      layout: {
-        "text-field": ["get", "name"],
-        "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
-        "text-size": ["interpolate", ["linear"], ["zoom"], 10, 12, 14, 16],
-        "text-offset": [0, 1.25],
-        "text-anchor": "top",
-        "text-allow-overlap": false,
-        "text-padding": 10,
-      },
-      paint: {
-        "text-color": "#083b36",
-        "text-halo-color": "rgba(255,255,255,0.92)",
-        "text-halo-width": 1.5,
-      },
-    });
-  }
-}
-
-function removeCityLabels(map: MapboxMap) {
-  if (map.getLayer("ca45-city-labels")) map.removeLayer("ca45-city-labels");
-  if (map.getSource(citySourceId)) map.removeSource(citySourceId);
-}
-
-function findFirstSymbolLayer(map: MapboxMap) {
-  const layers = map.getStyle().layers ?? [];
-  return layers.find((layer) => layer.type === "symbol")?.id;
-}
-
-function getStoredPanelState(key: string, defaultValue: boolean) {
-  if (typeof window === "undefined") return defaultValue;
-  const storedValue = window.localStorage.getItem(key);
-  return storedValue === null ? defaultValue : storedValue === "true";
-}
-
-function isMobileMapLayout() {
-  return typeof window !== "undefined" && window.matchMedia("(max-width: 1023px)").matches;
 }
 
 function MapButton({ label, onClick, icon: Icon }: { label: string; onClick: () => void; icon: typeof Plus }) {
