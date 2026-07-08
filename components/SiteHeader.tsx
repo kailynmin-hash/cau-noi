@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Globe2, Menu, Waypoints } from "lucide-react";
+import { Globe2, Menu } from "lucide-react";
+import { BotanicalMark } from "@/components/Botanical";
 import { useLanguage } from "@/components/LanguageProvider";
 import { navItems } from "@/lib/content";
 import { supportedLanguages, type LanguageCode } from "@/lib/languages";
@@ -10,11 +11,11 @@ export function SiteHeader() {
   const { language, setLanguage, t } = useLanguage();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-teal-950/10 bg-[#f8fbf8]/92 shadow-sm shadow-teal-950/[0.03] backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-teal-950/10 bg-[#FFFDF7]/90 shadow-sm shadow-teal-950/[0.03] backdrop-blur-xl">
       <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3.5 sm:px-6 lg:px-8">
         <Link href="/" className="flex min-w-0 items-center gap-3" aria-label="Cầu Nối home">
-          <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-teal-700 text-white shadow-sm shadow-teal-900/20">
-            <Waypoints size={22} aria-hidden="true" />
+          <span className="grid size-11 shrink-0 place-items-center rounded-lg bg-[#EAF7EF] text-[#2E5A3E] shadow-sm shadow-teal-900/20 ring-1 ring-[#A7C6A0]/40">
+            <BotanicalMark className="size-7" />
           </span>
           <span className="min-w-0">
             <span className="block text-lg font-semibold text-slate-950">Cầu Nối</span>
@@ -29,7 +30,7 @@ export function SiteHeader() {
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-md px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-white hover:text-teal-800 hover:shadow-sm"
+              className="rounded-md px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-[#EAF7EF] hover:text-teal-800 hover:shadow-sm"
             >
               {t(`nav.${item.key}`)}
             </Link>
@@ -41,7 +42,7 @@ export function SiteHeader() {
         </div>
 
         <details className="relative lg:hidden">
-          <summary className="grid size-10 cursor-pointer list-none place-items-center rounded-md border border-slate-200 bg-white text-slate-800 shadow-sm transition hover:border-teal-200 hover:bg-teal-50 [&::-webkit-details-marker]:hidden">
+          <summary className="grid size-10 cursor-pointer list-none place-items-center rounded-md border border-slate-200 bg-white text-slate-800 shadow-sm transition hover:border-teal-200 hover:bg-[#EAF7EF] [&::-webkit-details-marker]:hidden">
             <Menu size={20} aria-hidden="true" />
             <span className="sr-only">{t("common.openNavigation")}</span>
           </summary>
@@ -50,7 +51,7 @@ export function SiteHeader() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="block rounded-md px-3 py-3 text-sm font-medium text-slate-800 transition hover:bg-teal-50 hover:text-teal-900"
+                className="block rounded-md px-3 py-3 text-sm font-medium text-slate-800 transition hover:bg-[#EAF7EF] hover:text-teal-900"
               >
                 {t(`nav.${item.key}`)}
               </Link>

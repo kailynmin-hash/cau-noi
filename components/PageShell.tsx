@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { BotanicalSprig } from "@/components/Botanical";
 
 export function PageHero({
   eyebrow,
@@ -12,8 +13,10 @@ export function PageHero({
   children: ReactNode;
 }) {
   return (
-    <section className="border-b border-teal-950/10 bg-[#eef7f1] shadow-[inset_0_-1px_0_rgba(15,76,72,0.04)]">
-      <div className="animate-rise-in mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-20">
+    <section className="relative overflow-hidden border-b border-teal-950/10 bg-[#eef7f1] shadow-[inset_0_-1px_0_rgba(46,90,62,0.08)]">
+      <BotanicalSprig className="pointer-events-none absolute -right-10 top-8 hidden h-72 w-56 text-[#2E5A3E]/45 sm:block" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#FFFDF7]/80 to-transparent" />
+      <div className="animate-rise-in relative mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-20">
         <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-teal-800">{eyebrow}</p>
         <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-end">
           <div>
@@ -41,7 +44,7 @@ export function Section({
   tone?: "white" | "mist";
 }) {
   return (
-    <section className={tone === "mist" ? "bg-[#f3f8f5]" : "bg-white"}>
+    <section className={`relative overflow-hidden ${tone === "mist" ? "bg-[#f3f8f5]" : "bg-white"}`}>
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
         {(title || intro) && (
           <div className="mb-8 max-w-3xl">

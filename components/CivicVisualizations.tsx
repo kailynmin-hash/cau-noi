@@ -21,7 +21,7 @@ import { Info, MapPin } from "lucide-react";
 import { useAccessibility } from "@/components/AccessibilityProvider";
 import type { ChartDatum, CityCoverageDatum } from "@/lib/resourceInsights";
 
-const palette = ["#0f766e", "#14b8a6", "#38bdf8", "#f43f5e", "#f59e0b", "#8b5cf6", "#22c55e", "#64748b"];
+const palette = ["#2E5A3E", "#A7C6A0", "#D9F1E6", "#F5EDE1", "#6F9771", "#8AAE87", "#C7DEC4", "#1F2937"];
 
 export function AnimatedCounter({ value }: { value: number }) {
   const [display, setDisplay] = useState(0);
@@ -43,7 +43,7 @@ export function AnimatedCounter({ value }: { value: number }) {
 
 export function StatCard({ label, value, helper, icon }: { label: string; value: number | string; helper: string; icon?: ReactNode }) {
   return (
-    <article className="group rounded-lg border border-teal-100 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-[0_18px_50px_rgba(15,118,110,0.16)]">
+    <article className="group rounded-lg border border-teal-100 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-[0_18px_50px_rgba(46,90,62,0.16)]">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-sm font-semibold text-slate-600">{label}</p>
@@ -90,7 +90,7 @@ export function MiniBarChart({ data, ariaLabel, framed = true }: { data: ChartDa
           <XAxis type="number" hide />
           <YAxis type="category" dataKey="name" width={112} tick={{ fontSize: 12, fill: "#334155" }} />
           <Tooltip cursor={{ fill: "#f0fdfa" }} contentStyle={{ borderRadius: 8, borderColor: "#99f6e4" }} />
-          <Bar dataKey="value" radius={[0, 8, 8, 0]} fill="#0f766e" isAnimationActive={!settings.reduceMotion} />
+          <Bar dataKey="value" radius={[0, 8, 8, 0]} fill="#2E5A3E" isAnimationActive={!settings.reduceMotion} />
         </BarChart>
       </ResponsiveContainer>
     </ChartFrame>
@@ -106,15 +106,15 @@ export function LanguageAccessChart({ data, ariaLabel, framed = true }: { data: 
         <AreaChart data={chartData} margin={{ left: 4, right: 16, top: 8, bottom: 8 }}>
           <defs>
             <linearGradient id="languageAccess" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="5%" stopColor="#14b8a6" stopOpacity={0.45} />
-              <stop offset="95%" stopColor="#14b8a6" stopOpacity={0.02} />
+              <stop offset="5%" stopColor="#A7C6A0" stopOpacity={0.55} />
+              <stop offset="95%" stopColor="#D9F1E6" stopOpacity={0.08} />
             </linearGradient>
           </defs>
           <CartesianGrid stroke="#e2e8f0" vertical={false} />
           <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#334155" }} />
           <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "#334155" }} />
           <Tooltip contentStyle={{ borderRadius: 8, borderColor: "#99f6e4" }} />
-          <Area type="monotone" dataKey="value" stroke="#0f766e" strokeWidth={3} fill="url(#languageAccess)" isAnimationActive={!settings.reduceMotion} />
+          <Area type="monotone" dataKey="value" stroke="#2E5A3E" strokeWidth={3} fill="url(#languageAccess)" isAnimationActive={!settings.reduceMotion} />
         </AreaChart>
       </ResponsiveContainer>
     </ChartFrame>
@@ -150,7 +150,7 @@ export function TrendLineChart({ data, ariaLabel, framed = true }: { data: Chart
           <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#334155" }} />
           <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "#334155" }} />
           <Tooltip contentStyle={{ borderRadius: 8, borderColor: "#99f6e4" }} />
-          <Line type="monotone" dataKey="value" stroke="#0f766e" strokeWidth={3} dot={{ r: 4, fill: "#0f766e" }} activeDot={{ r: 7 }} isAnimationActive={!settings.reduceMotion} />
+          <Line type="monotone" dataKey="value" stroke="#2E5A3E" strokeWidth={3} dot={{ r: 4, fill: "#2E5A3E" }} activeDot={{ r: 7 }} isAnimationActive={!settings.reduceMotion} />
         </LineChart>
       </ResponsiveContainer>
     </ChartFrame>
