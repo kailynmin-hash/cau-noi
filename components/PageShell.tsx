@@ -1,16 +1,18 @@
 import type { ReactNode } from "react";
 import { BotanicalSprig } from "@/components/Botanical";
-import { BotanicalCorner, SectionTextureBackground, YouthHeroGraphic } from "@/components/VisualStorytelling";
+import { BotanicalCorner, ReflectiveMessage, SectionTextureBackground, YouthHeroGraphic } from "@/components/VisualStorytelling";
 
 export function PageHero({
   eyebrow,
   title,
   vietnamese,
+  reflection,
   children,
 }: {
   eyebrow: string;
   title: string;
   vietnamese: string;
+  reflection?: string;
   children: ReactNode;
 }) {
   return (
@@ -27,6 +29,7 @@ export function PageHero({
               {title}
             </h1>
             <p className="mt-3 text-lg font-medium text-teal-800">{vietnamese}</p>
+            {reflection ? <ReflectiveMessage className="mt-6 max-w-xl text-[#2E5A3E]/90">{reflection}</ReflectiveMessage> : null}
           </div>
           <div className="max-w-2xl rounded-lg border border-[#A7C6A0]/30 bg-[#FFFDF7]/94 p-5 text-base leading-8 text-slate-700 shadow-sm backdrop-blur-md lg:justify-self-end">
             {children}

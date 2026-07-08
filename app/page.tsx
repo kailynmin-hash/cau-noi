@@ -35,7 +35,7 @@ export default function Home() {
 
   return (
     <>
-      <PageHero eyebrow={t("home.eyebrow")} title={t("home.title")} vietnamese={t("home.subtitle")}>
+      <PageHero eyebrow={t("home.eyebrow")} title={t("home.title")} vietnamese={t("home.subtitle")} reflection={t("reflections.home")}>
         <p>{t("home.intro")}</p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <Link

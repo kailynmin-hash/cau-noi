@@ -720,5 +720,15 @@
     "bilingualSignal": "sẽ dùng công cụ song ngữ",
     "bilingualSignalBody": "Tín hiệu khảo sát ẩn danh này giúp so sánh nhu cầu cộng đồng với mức bao phủ ngôn ngữ trong danh bạ.",
     "loadedStatus": "Đã tải {count} phản hồi khảo sát · Cập nhật lần cuối"
+  },
+  "reflections": {
+    "home": "Bạn không đơn độc.",
+    "resources": "Luôn có sự giúp đỡ. Luôn có hy vọng.",
+    "quiz": "Những bước nhỏ vẫn đáng quý.",
+    "dashboard": "Câu chuyện của bạn có ý nghĩa.",
+    "map": "Một nhịp cầu bắt đầu từ sự kết nối.",
+    "conversation": "Sự hỗ trợ có thể bắt đầu từ một cuộc trò chuyện.",
+    "accessibility": "Chữa lành không phải lúc nào cũng đi theo đường thẳng.",
+    "footer": "Hy vọng là ánh sáng dẫn đường cho chúng ta."
   }
 }

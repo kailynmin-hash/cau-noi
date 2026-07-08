@@ -14,7 +14,7 @@ export function DashboardPageContent() {
 
   return (
     <>
-      <PageHero eyebrow={t("pages.dashboard.eyebrow")} title={t("pages.dashboard.title")} vietnamese={t("pages.dashboard.subtitle")}>
+      <PageHero eyebrow={t("pages.dashboard.eyebrow")} title={t("pages.dashboard.title")} vietnamese={t("pages.dashboard.subtitle")} reflection={t("reflections.dashboard")}>
         <p>{t("pages.dashboard.body")}</p>
       </PageHero>
       <Section title={t("pages.dashboard.indicatorsTitle")} intro={t("pages.dashboard.indicatorsIntro")}>

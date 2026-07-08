@@ -4,6 +4,7 @@ import Link from "next/link";
 import { PhoneCall, ShieldCheck } from "lucide-react";
 import { BotanicalSprig } from "@/components/Botanical";
 import { useLanguage } from "@/components/LanguageProvider";
+import { ReflectiveMessage } from "@/components/VisualStorytelling";
 
 export function CrisisBanner({ compact = false }: { compact?: boolean }) {
   const { t } = useLanguage();
@@ -40,7 +41,7 @@ export function SiteFooter() {
     <footer className="relative mt-auto overflow-hidden border-t border-teal-950/10 bg-[#FFFDF7]">
       <CrisisBanner />
       <BotanicalSprig className="pointer-events-none absolute -right-8 bottom-8 h-56 w-44 text-[#2E5A3E]/35" />
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-9 text-sm text-slate-600 sm:px-6 md:grid-cols-[1.2fr_0.8fr] lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-9 text-sm text-slate-600 sm:px-6 md:grid-cols-[1.2fr_0.8fr_0.75fr] lg:px-8">
         <div>
           <div className="mb-3 flex items-center gap-2 font-semibold text-slate-950">
             <ShieldCheck size={18} className="text-teal-700" aria-hidden="true" />
@@ -62,6 +63,9 @@ export function SiteFooter() {
             {t("footer.accessibility")}
           </Link>
         </div>
+        <ReflectiveMessage className="max-w-xs text-2xl md:justify-self-end md:text-right">
+          {t("reflections.footer")}
+        </ReflectiveMessage>
       </div>
     </footer>
   );

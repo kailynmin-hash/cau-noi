@@ -720,5 +720,15 @@
     "bilingualSignal": "usaría una herramienta bilingüe",
     "bilingualSignalBody": "Esta señal anónima ayuda a comparar el interés comunitario con la cobertura de idiomas disponible.",
     "loadedStatus": "Se cargaron {count} respuestas · Última actualización"
+  },
+  "reflections": {
+    "home": "No estás solo/a.",
+    "resources": "Hay ayuda. Hay esperanza.",
+    "quiz": "Los pasos pequeños también cuentan.",
+    "dashboard": "Tu historia importa.",
+    "map": "Un puente empieza con conexión.",
+    "conversation": "El apoyo puede empezar con una conversación.",
+    "accessibility": "Sanar no siempre es lineal.",
+    "footer": "La esperanza es la luz que nos guía."
   }
 }

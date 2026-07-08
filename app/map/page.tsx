@@ -10,7 +10,7 @@ export default function MapPage() {
 
   return (
     <>
-      <PageHero eyebrow={t("map.eyebrow")} title={t("map.title")} vietnamese={t("map.subtitle")}>
+      <PageHero eyebrow={t("map.eyebrow")} title={t("map.title")} vietnamese={t("map.subtitle")} reflection={t("reflections.map")}>
         <p>{t("map.body")}</p>
       </PageHero>
       <Section>

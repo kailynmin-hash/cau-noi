@@ -720,5 +720,15 @@
     "bilingualSignal": "会使用双语工具",
     "bilingualSignalBody": "此匿名调查信号有助于比较社区兴趣与目录中的语言覆盖。",
     "loadedStatus": "已加载 {count} 份调查回应 · 上次更新"
+  },
+  "reflections": {
+    "home": "你并不孤单。",
+    "resources": "有帮助，也有希望。",
+    "quiz": "小小的一步也很重要。",
+    "dashboard": "你的故事很重要。",
+    "map": "桥梁始于连接。",
+    "conversation": "支持可以从一次谈话开始。",
+    "accessibility": "疗愈并不总是直线前进。",
+    "footer": "希望是引导我们的光。"
   }
 }

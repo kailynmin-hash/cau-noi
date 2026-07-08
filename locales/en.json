@@ -720,5 +720,15 @@
     "bilingualSignal": "would use a bilingual tool",
     "bilingualSignalBody": "This anonymous survey signal helps compare community interest with the language coverage available in the directory.",
     "loadedStatus": "Loaded {count} survey responses · Last updated"
+  },
+  "reflections": {
+    "home": "You are not alone.",
+    "resources": "There is help. There is hope.",
+    "quiz": "Small steps still count.",
+    "dashboard": "Your story matters.",
+    "map": "A bridge begins with connection.",
+    "conversation": "Support can start with one conversation.",
+    "accessibility": "Healing is not linear.",
+    "footer": "Hope is the light that guides us."
   }
 }

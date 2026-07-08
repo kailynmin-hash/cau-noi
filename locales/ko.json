@@ -720,5 +720,15 @@
     "bilingualSignal": "이중언어 도구 사용 의향",
     "bilingualSignalBody": "이 익명 설문 신호는 커뮤니티 관심과 디렉터리 언어 커버리지를 비교하는 데 도움이 됩니다.",
     "loadedStatus": "설문 응답 {count}개 로드됨 · 마지막 업데이트"
+  },
+  "reflections": {
+    "home": "당신은 혼자가 아니에요.",
+    "resources": "도움이 있습니다. 희망이 있습니다.",
+    "quiz": "작은 걸음도 충분히 의미 있어요.",
+    "dashboard": "당신의 이야기는 소중합니다.",
+    "map": "연결에서 다리가 시작됩니다.",
+    "conversation": "도움은 한 번의 대화에서 시작될 수 있어요.",
+    "accessibility": "회복은 늘 직선으로만 가지 않습니다.",
+    "footer": "희망은 우리를 이끄는 빛입니다."
   }
 }

@@ -12,7 +12,7 @@ export default function StigmaQuizPage() {
   return (
     <>
       <CrisisBanner compact />
-      <PageHero eyebrow={t("pages.quiz.eyebrow")} title={t("pages.quiz.title")} vietnamese={t("pages.quiz.subtitle")}>
+      <PageHero eyebrow={t("pages.quiz.eyebrow")} title={t("pages.quiz.title")} vietnamese={t("pages.quiz.subtitle")} reflection={t("reflections.quiz")}>
         <p>{t("pages.quiz.body")}</p>
       </PageHero>
       <Section>

@@ -15,7 +15,7 @@ export default function AccessibilityPage() {
 
   return (
     <>
-      <PageHero eyebrow={t("accessibility.eyebrow")} title={t("accessibility.title")} vietnamese={t("accessibility.subtitle")}>
+      <PageHero eyebrow={t("accessibility.eyebrow")} title={t("accessibility.title")} vietnamese={t("accessibility.subtitle")} reflection={t("reflections.accessibility")}>
         <p>{t("accessibility.body")}</p>
       </PageHero>
 

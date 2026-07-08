@@ -1,6 +1,14 @@
 import Image from "next/image";
 import { BrainBloom, BotanicalSprig } from "@/components/Botanical";
 
+export function ReflectiveMessage({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <p className={`font-accent text-3xl leading-snug text-[#2E5A3E] sm:text-4xl ${className}`}>
+      {children}
+    </p>
+  );
+}
+
 export function YouthHeroGraphic({ className = "" }: { className?: string }) {
   return (
     <div className={`pointer-events-none absolute inset-y-0 right-0 overflow-hidden ${className}`} aria-hidden="true">
