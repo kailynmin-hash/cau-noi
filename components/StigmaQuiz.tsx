@@ -4,6 +4,7 @@ import { FormEvent, useMemo, useState } from "react";
 import Link from "next/link";
 import { AlertCircle, BookOpen, CheckCircle2, HelpCircle, Languages, LockKeyhole, MessageCircleHeart, RotateCcw, Save } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
+import { LoadingSpinner } from "@/components/LoadingStates";
 import { incrementImpact } from "@/lib/impact";
 import { quizPreferredLanguageOptions } from "@/lib/languages";
 import { type SurveyResponse } from "@/lib/supabase";
@@ -173,7 +174,7 @@ export function StigmaQuiz() {
   };
 
   return (
-    <form onSubmit={submitQuiz} className="grid gap-5">
+    <form onSubmit={submitQuiz} className="grid gap-5" aria-busy={status === "saving"}>
       <div className="rounded-lg border border-teal-200 bg-teal-50 p-5 text-teal-950">
         <p className="flex items-center gap-2 font-semibold">
           <LockKeyhole size={18} aria-hidden="true" />
@@ -227,7 +228,8 @@ export function StigmaQuiz() {
             <button
               type="button"
               onClick={resetQuiz}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-slate-200 px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              disabled={status === "saving"}
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-slate-200 px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <RotateCcw size={16} aria-hidden="true" />
               {copy.reset}
@@ -237,8 +239,14 @@ export function StigmaQuiz() {
               disabled={!complete || status === "saving"}
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-teal-700 px-4 text-sm font-semibold text-white transition hover:bg-teal-800 disabled:cursor-not-allowed disabled:bg-slate-300"
             >
-              <Save size={16} aria-hidden="true" />
-              {status === "saving" ? copy.submitting : copy.submit}
+              {status === "saving" ? (
+                <LoadingSpinner label={copy.submitting} />
+              ) : (
+                <>
+                  <Save size={16} aria-hidden="true" />
+                  {copy.submit}
+                </>
+              )}
             </button>
           </div>
         </div>

@@ -13,6 +13,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
+import { SkeletonMap } from "@/components/LoadingStates";
 import { localizedOption, localizedResource, type LanguageCode } from "@/lib/i18n";
 import {
   type AgeGroupFilter,
@@ -74,6 +75,7 @@ export function ResourceMap() {
   const styleFallbackRef = useRef(false);
   const requestedModeRef = useRef<MapMode>("explore");
   const [mode, setMode] = useState<MapMode>("explore");
+  const [mapLoaded, setMapLoaded] = useState(false);
   const [mapMessage, setMapMessage] = useState("");
   const [languageFilter, setLanguageFilter] = useState<LanguageFilter>("All languages");
   const [costFilter, setCostFilter] = useState<CostFilter>("All costs");
@@ -150,6 +152,7 @@ export function ResourceMap() {
     map.on("style.load", () => {
       styleFallbackRef.current = false;
       setMapMessage("");
+      setMapLoaded(true);
       syncMarkers();
     });
     map.on("error", () => {
@@ -176,6 +179,7 @@ export function ResourceMap() {
   useEffect(() => {
     if (!mapRef.current || !mapboxToken) return;
     requestedModeRef.current = mode;
+    setMapLoaded(false);
     mapRef.current.setStyle(getMapStyle(mode));
   }, [mapboxToken, mode]);
 
@@ -249,7 +253,7 @@ export function ResourceMap() {
 
   return (
     <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[280px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(520px,1fr)_320px]">
-      <aside className="min-w-0 rounded-lg border border-slate-200 bg-white p-4 shadow-sm lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto">
+      <aside className="min-w-0 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition duration-200 ease-out lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto">
         <div className="mb-5 flex items-center justify-between gap-3">
           <p className="flex items-center gap-2 font-semibold text-slate-950">
             <Filter size={18} className="text-teal-700" aria-hidden="true" />
@@ -307,7 +311,14 @@ export function ResourceMap() {
         </div>
 
         {mapboxToken ? (
-          <div ref={mapContainerRef} className="h-[540px] min-h-[560px] w-full rounded-lg lg:h-[650px] lg:min-h-[650px]" />
+          <div className="relative">
+            {!mapLoaded && (
+              <div className="absolute inset-0 z-10">
+                <SkeletonMap />
+              </div>
+            )}
+            <div ref={mapContainerRef} className={`h-[540px] min-h-[560px] w-full rounded-lg transition-opacity duration-200 ease-out lg:h-[650px] lg:min-h-[650px] ${mapLoaded ? "opacity-100" : "opacity-0"}`} />
+          </div>
         ) : (
           <div className="grid h-[540px] min-h-[560px] w-full place-items-center rounded-lg border border-white/10 bg-teal-950/70 p-8 text-center lg:h-[650px] lg:min-h-[650px]">
             <div className="max-w-md">
@@ -332,7 +343,7 @@ export function ResourceMap() {
         </div>
       </div>
 
-      <aside className="min-w-0 rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto xl:col-span-1">
+      <aside className="min-w-0 rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition duration-200 ease-out lg:col-span-2 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto xl:col-span-1">
           {selected ? (
             <>
               <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${isUrgent(selected) ? "text-rose-700" : "text-teal-700"}`}>

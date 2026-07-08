@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { HeartHandshake, HomeIcon, Languages, Quote, Sparkles, TrendingUp } from "lucide-react";
 import {
   InsightCard,
@@ -9,17 +10,44 @@ import {
   StatCard,
 } from "@/components/CivicVisualizations";
 import { useLanguage } from "@/components/LanguageProvider";
+import { SkeletonCard, SkeletonChart, SkeletonStatGrid } from "@/components/LoadingStates";
 import { communityContextSources } from "@/data/communityStats";
 import { getResourceInsightData } from "@/lib/resourceInsights";
 
 export function HomeShowcase() {
   const { t, tv } = useLanguage();
+  const [ready, setReady] = useState(false);
   const stats = tv<[string, string][]>("homeShowcase.stats", []);
   const testimonials = tv<string[]>("homeShowcase.testimonials", []);
   const insights = getResourceInsightData();
 
+  useEffect(() => {
+    const id = window.setTimeout(() => setReady(true), 120);
+    return () => window.clearTimeout(id);
+  }, []);
+
+  if (!ready) {
+    return (
+      <div className="grid gap-6" aria-busy="true">
+        <SkeletonStatGrid />
+        <div className="grid gap-4 lg:grid-cols-2">
+          <SkeletonChart />
+          <SkeletonChart />
+        </div>
+        <div className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+          <SkeletonChart />
+          <div className="grid gap-4">
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="grid gap-6">
+    <div className="content-fade-in grid gap-6">
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" aria-label={t("visuals.homeSnapshotTitle")}>
         <StatCard label={t("visuals.totalResources")} value={insights.totalResources} helper={t("visuals.totalResourcesHelp")} icon={<HeartHandshake size={20} aria-hidden="true" />} />
         <StatCard label={t("visuals.citiesCovered")} value={insights.citiesCovered} helper={t("visuals.citiesCoveredHelp")} icon={<HomeIcon size={20} aria-hidden="true" />} />

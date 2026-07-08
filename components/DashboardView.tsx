@@ -8,7 +8,6 @@ import {
   Clock3,
   HeartHandshake,
   Languages,
-  Loader2,
   MessageCircleHeart,
   Sparkles,
   Users,
@@ -24,6 +23,7 @@ import {
   TrendLineChart,
 } from "@/components/CivicVisualizations";
 import { useLanguage } from "@/components/LanguageProvider";
+import { SkeletonCard, SkeletonChart, SkeletonStatGrid } from "@/components/LoadingStates";
 import { getResourceInsightData, type ChartDatum } from "@/lib/resourceInsights";
 import { supabase, type SurveyResponse } from "@/lib/supabase";
 
@@ -163,9 +163,33 @@ export function DashboardView() {
 
   if (status === "loading") {
     return (
-      <div className="rounded-lg border border-slate-200 bg-white p-8 text-center shadow-sm">
-        <Loader2 className="mx-auto animate-spin text-teal-700" size={30} aria-hidden="true" />
-        <p className="mt-3 font-semibold text-slate-950">{text.loading}</p>
+      <div className="grid gap-6" aria-busy="true" aria-live="polite">
+        <div className="rounded-lg border border-teal-900/20 bg-[#061d1b] p-5 text-white shadow-[0_24px_80px_rgba(6,29,27,0.22)]">
+          <div className="grid gap-4">
+            <div className="skeleton-shimmer h-4 w-40 rounded-md bg-teal-100/30" />
+            <div className="skeleton-shimmer h-10 max-w-xl rounded-lg bg-teal-100/20" />
+            <div className="skeleton-shimmer h-4 max-w-2xl rounded-md bg-teal-100/20" />
+          </div>
+          <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <div key={index} className="rounded-lg border border-white/15 bg-white/10 p-4">
+                <div className="skeleton-shimmer h-4 w-24 rounded-md bg-white/20" />
+                <div className="skeleton-shimmer mt-4 h-8 w-16 rounded-md bg-white/20" />
+              </div>
+            ))}
+          </div>
+        </div>
+        <SkeletonStatGrid />
+        <div className="grid gap-4 xl:grid-cols-3">
+          <SkeletonChart />
+          <SkeletonChart />
+          <SkeletonChart />
+        </div>
+        <div className="grid gap-4 md:grid-cols-2">
+          <SkeletonCard />
+          <SkeletonChart />
+        </div>
+        <p className="sr-only">{text.loading}</p>
       </div>
     );
   }
@@ -210,7 +234,7 @@ export function DashboardView() {
   const keyFindings = getKeyFindings(resourceInsights, aggregates, text);
 
   return (
-    <div className="grid gap-6">
+    <div className="content-fade-in grid gap-6">
       <section className="relative overflow-hidden rounded-lg border border-teal-900/20 bg-[#061d1b] p-5 text-white shadow-[0_24px_80px_rgba(6,29,27,0.22)]">
         <div className="absolute inset-0 opacity-25 [background-image:linear-gradient(rgba(255,255,255,.12)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.12)_1px,transparent_1px)] [background-size:36px_36px]" />
         <div className="relative z-10 grid gap-6">

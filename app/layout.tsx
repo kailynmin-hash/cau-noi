@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AccessibilityProvider } from "@/components/AccessibilityProvider";
 import { LanguageProvider } from "@/components/LanguageProvider";
+import { PageTransitionWrapper } from "@/components/LoadingStates";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SkipLink } from "@/components/SkipLink";
@@ -60,7 +61,7 @@ export default function RootLayout({
             <div className="flex min-h-screen flex-col">
               <SiteHeader />
               <main id="main-content" className="flex-1" tabIndex={-1}>
-                {children}
+                <PageTransitionWrapper>{children}</PageTransitionWrapper>
               </main>
               <SiteFooter />
             </div>

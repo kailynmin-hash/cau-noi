@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
   Accessibility,
@@ -15,6 +15,7 @@ import {
   Tags,
 } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
+import { SkeletonResourceGrid } from "@/components/LoadingStates";
 import { incrementImpact } from "@/lib/impact";
 import { localizedOption, localizedResource } from "@/lib/i18n";
 import {
@@ -40,6 +41,8 @@ export function ResourceFinder() {
   const [resourceType, setResourceType] = useState<ResourceTypeFilter>("All resource types");
   const [mode, setMode] = useState<ModeFilter>("Any format");
   const [city, setCity] = useState<CityFilter>("All cities");
+  const [isFiltering, setIsFiltering] = useState(false);
+  const didMount = useRef(false);
 
   const filteredResources = useMemo(
     () => {
@@ -79,6 +82,17 @@ export function ResourceFinder() {
     },
     [city, cost, language, languageMatch, mode, query, resourceType],
   );
+
+  useEffect(() => {
+    if (!didMount.current) {
+      didMount.current = true;
+      return;
+    }
+
+    setIsFiltering(true);
+    const id = window.setTimeout(() => setIsFiltering(false), 180);
+    return () => window.clearTimeout(id);
+  }, [city, cost, language, languageMatch, mode, query, resourceType]);
 
   const resetFilters = () => {
     setQuery("");
@@ -156,8 +170,10 @@ export function ResourceFinder() {
           </span>
         </div>
 
-        {filteredResources.length > 0 ? (
-          <div className="grid min-w-0 gap-4 md:grid-cols-2">
+        {isFiltering ? (
+          <SkeletonResourceGrid count={Math.min(Math.max(filteredResources.length, 2), 6)} />
+        ) : filteredResources.length > 0 ? (
+          <div className="content-fade-in grid min-w-0 gap-4 md:grid-cols-2" aria-live="polite">
             {filteredResources.map((resource) => (
               <ResourceCard key={resource.name} resource={resource} language={appLanguage} />
             ))}
