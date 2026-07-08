@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Manrope, Space_Grotesk } from "next/font/google";
+import { Geist_Mono, Manrope, Space_Grotesk, Style_Script } from "next/font/google";
 import { AccessibilityProvider } from "@/components/AccessibilityProvider";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import { PageTransitionWrapper } from "@/components/LoadingStates";
@@ -18,6 +18,13 @@ const manrope = Manrope({
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const styleScript = Style_Script({
+  variable: "--font-style-script",
+  subsets: ["latin"],
+  weight: "400",
   display: "swap",
 });
 
@@ -61,7 +68,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${manrope.variable} ${spaceGrotesk.variable} ${geistMono.variable} h-full antialiased`}>
+    <html lang="en" className={`${manrope.variable} ${spaceGrotesk.variable} ${styleScript.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full bg-[#f8fbf8] text-slate-900">
         <LanguageProvider>
           <AccessibilityProvider>

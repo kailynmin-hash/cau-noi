@@ -730,5 +730,15 @@
     "conversation": "Sự hỗ trợ có thể bắt đầu từ một cuộc trò chuyện.",
     "accessibility": "Chữa lành không phải lúc nào cũng đi theo đường thẳng.",
     "footer": "Hy vọng là ánh sáng dẫn đường cho chúng ta."
+  },
+  "quoteMoments": {
+    "homeAbout": "Cùng nhau, chúng ta có thể tạo nên tương lai sáng hơn cho mọi tâm hồn.",
+    "homeTrust": "Sự hỗ trợ có thể bắt đầu thật nhẹ nhàng, nhưng vẫn tạo nên thay đổi lớn.",
+    "resources": "Luôn có sự giúp đỡ. Luôn có hy vọng.",
+    "quiz": "Dừng lại. Hít thở. Sự chân thật của bạn rất quan trọng.",
+    "dashboard": "Mỗi tiếng nói ẩn danh giúp cộng đồng nhìn rõ nhu cầu hơn.",
+    "map": "Sự hỗ trợ có thể gần hơn bạn tưởng.",
+    "conversation": "Một câu nói dịu dàng có thể mở ra một nhịp cầu.",
+    "accessibility": "Sự chăm sóc nên dễ tiếp cận với mọi tâm hồn."
   }
 }

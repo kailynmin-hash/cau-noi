@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { useAccessibility, type TextSize } from "@/components/AccessibilityProvider";
 import { useLanguage } from "@/components/LanguageProvider";
 import { PageHero, Section } from "@/components/PageShell";
-import { BrainLeafIllustration, DataGlowAccent } from "@/components/VisualStorytelling";
+import { BrainLeafIllustration, DataGlowAccent, QuoteMoment } from "@/components/VisualStorytelling";
 
 const textSizes: TextSize[] = ["small", "default", "large", "extra-large"];
 
@@ -106,6 +106,9 @@ export default function AccessibilityPage() {
       </Section>
 
       <Section title={t("accessibility.previewTitle")} intro={t("accessibility.previewIntro")} tone="mist">
+        <QuoteMoment className="mb-6">
+          {t("quoteMoments.accessibility")}
+        </QuoteMoment>
         <div className="grid gap-5 lg:grid-cols-[1fr_0.45fr]">
           <article className="rounded-lg border border-teal-100 bg-white p-6 shadow-sm">
             <p className="text-sm font-semibold uppercase tracking-[0.16em] text-teal-700">{t("accessibility.previewLabel")}</p>

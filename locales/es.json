@@ -730,5 +730,15 @@
     "conversation": "El apoyo puede empezar con una conversación.",
     "accessibility": "Sanar no siempre es lineal.",
     "footer": "La esperanza es la luz que nos guía."
+  },
+  "quoteMoments": {
+    "homeAbout": "Juntos, podemos crear un futuro más brillante para cada mente.",
+    "homeTrust": "El apoyo puede empezar suavemente y aun así cambiarlo todo.",
+    "resources": "Hay ayuda. Hay esperanza.",
+    "quiz": "Pausa. Respira. Tu honestidad importa aquí.",
+    "dashboard": "Cada voz anónima ayuda a la comunidad a ver con más claridad.",
+    "map": "El apoyo está más cerca de lo que a veces se siente.",
+    "conversation": "Una frase amable puede abrir un puente.",
+    "accessibility": "El cuidado debe sentirse accesible para cada mente."
   }
 }

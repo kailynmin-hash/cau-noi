@@ -16,9 +16,20 @@ export type HeroVisual = keyof typeof heroVisuals;
 
 export function ReflectiveMessage({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <p className={`font-brittany-signature text-5xl text-[#2E5A3E] sm:text-6xl lg:text-7xl ${className}`}>
+    <p className={`font-style-script py-2 text-6xl text-[#2E5A3E] sm:text-7xl lg:text-8xl ${className}`}>
       {children}
     </p>
+  );
+}
+
+export function QuoteMoment({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <aside
+      className={`relative overflow-hidden rounded-lg border border-[#A7C6A0]/30 bg-[#FFFDF7]/88 p-6 shadow-[0_18px_48px_rgba(46,90,62,0.09)] backdrop-blur-sm ${className}`}
+    >
+      <BotanicalSprig className="pointer-events-none absolute -right-10 -top-6 h-44 w-32 text-[#2E5A3E]/12" />
+      <ReflectiveMessage className="relative max-w-3xl text-[#2E5A3E]">{children}</ReflectiveMessage>
+    </aside>
   );
 }
 

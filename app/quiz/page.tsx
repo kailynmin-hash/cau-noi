@@ -4,7 +4,7 @@ import { useLanguage } from "@/components/LanguageProvider";
 import { CrisisBanner } from "@/components/SiteFooter";
 import { PageHero, Section } from "@/components/PageShell";
 import { StigmaQuiz } from "@/components/StigmaQuiz";
-import { BrainLeafIllustration } from "@/components/VisualStorytelling";
+import { BrainLeafIllustration, QuoteMoment } from "@/components/VisualStorytelling";
 
 export default function StigmaQuizPage() {
   const { t } = useLanguage();
@@ -17,7 +17,10 @@ export default function StigmaQuizPage() {
       </PageHero>
       <Section>
         <div className="grid gap-6 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
-          <BrainLeafIllustration className="hidden min-h-72 items-center justify-center p-8 lg:flex" />
+          <div className="hidden gap-5 lg:grid">
+            <BrainLeafIllustration className="min-h-72 items-center justify-center p-8 lg:flex" />
+            <QuoteMoment>{t("quoteMoments.quiz")}</QuoteMoment>
+          </div>
           <StigmaQuiz />
         </div>
       </Section>

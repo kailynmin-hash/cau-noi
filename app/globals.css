@@ -42,22 +42,6 @@ html[data-text-size="extra-large"] {
   --font-mono: var(--font-geist-mono);
 }
 
-@font-face {
-  font-family: "Brittany Signature";
-  src:
-    local("Brittany Signature"),
-    local("BrittanySignature"),
-    local("Brittany Signature Regular"),
-    local("BrittanySignature-Regular"),
-    url("/fonts/BrittanySignature.woff2") format("woff2"),
-    url("/fonts/BrittanySignature.woff") format("woff"),
-    url("/fonts/BrittanySignature.ttf") format("truetype"),
-    url("/fonts/BrittanySignature.otf") format("opentype");
-  font-display: swap;
-  font-style: normal;
-  font-weight: 400;
-}
-
 html body {
   background:
     radial-gradient(circle at 8% 6%, rgba(217, 241, 230, 0.76), transparent 26rem),
@@ -124,29 +108,40 @@ html body .font-display {
 
 html body .font-accent {
   font-family:
-    "Brittany Signature",
+    var(--font-style-script),
+    "Style Script",
     "Snell Roundhand",
-    "SignPainter",
-    "Segoe Script",
-    cursive;
+    cursive !important;
   font-feature-settings: normal;
   font-weight: 400 !important;
   letter-spacing: 0;
-  line-height: 0.98;
+  line-height: 0.92;
   text-wrap: balance;
 }
 
 html body .font-brittany-signature {
   font-family:
-    "Brittany Signature",
+    var(--font-style-script),
+    "Style Script",
     "Snell Roundhand",
-    "SignPainter",
-    "Segoe Script",
-    cursive;
+    cursive !important;
   font-feature-settings: normal;
   font-weight: 400 !important;
   letter-spacing: 0;
-  line-height: 0.98;
+  line-height: 0.92;
+  text-wrap: balance;
+}
+
+html body .font-style-script {
+  font-family:
+    var(--font-style-script),
+    "Style Script",
+    "Snell Roundhand",
+    cursive !important;
+  font-feature-settings: normal;
+  font-weight: 400 !important;
+  letter-spacing: 0;
+  line-height: 0.92;
   text-wrap: balance;
 }
 

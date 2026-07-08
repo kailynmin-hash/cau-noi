@@ -730,5 +730,15 @@
     "conversation": "Support can start with one conversation.",
     "accessibility": "Healing is not linear.",
     "footer": "Hope is the light that guides us."
+  },
+  "quoteMoments": {
+    "homeAbout": "Together, we can create a brighter future for every mind.",
+    "homeTrust": "Support can begin softly, and still change everything.",
+    "resources": "There is help. There is hope.",
+    "quiz": "Pause. Breathe. Your honesty matters here.",
+    "dashboard": "Every anonymous voice helps the community see more clearly.",
+    "map": "Support is closer than it can feel.",
+    "conversation": "One gentle sentence can open a bridge.",
+    "accessibility": "Care should feel reachable for every mind."
   }
 }

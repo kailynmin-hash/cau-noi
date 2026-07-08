@@ -4,7 +4,7 @@ import { Languages, ShieldCheck, Users } from "lucide-react";
 import { DashboardView } from "@/components/DashboardView";
 import { useLanguage } from "@/components/LanguageProvider";
 import { PageHero, Section } from "@/components/PageShell";
-import { DataGlowAccent } from "@/components/VisualStorytelling";
+import { DataGlowAccent, QuoteMoment } from "@/components/VisualStorytelling";
 
 const icons = [Users, Languages, ShieldCheck];
 
@@ -24,6 +24,9 @@ export function DashboardPageContent() {
         </div>
       </Section>
       <Section title={t("pages.dashboard.impactTitle")} intro={t("pages.dashboard.impactIntro")} tone="mist">
+        <QuoteMoment className="mb-6">
+          {t("quoteMoments.dashboard")}
+        </QuoteMoment>
         <div className="grid gap-4 lg:grid-cols-3">
           {cards.map(([title, body], index) => {
             const Icon = icons[index];

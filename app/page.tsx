@@ -21,7 +21,7 @@ import { ImpactMetrics } from "@/components/ImpactMetrics";
 import { useLanguage } from "@/components/LanguageProvider";
 import { PageHero, Section } from "@/components/PageShell";
 import { BrainBloom } from "@/components/Botanical";
-import { BrainLeafIllustration, CompassLeafIllustration, DataGlowAccent } from "@/components/VisualStorytelling";
+import { BrainLeafIllustration, CompassLeafIllustration, DataGlowAccent, QuoteMoment } from "@/components/VisualStorytelling";
 
 const pathIcons = [Brain, Users, HomeIcon];
 const featureIcons = [HeartHandshake, MessageCircleHeart, BookOpen, Sparkles, HandHeart];
@@ -90,6 +90,9 @@ export default function Home() {
             </div>
           </div>
         </div>
+        <QuoteMoment className="mt-6">
+          {t("quoteMoments.homeAbout")}
+        </QuoteMoment>
       </Section>
 
       <Section title={t("home.pathTitle")} intro={t("home.pathIntro")}>
@@ -133,6 +136,9 @@ export default function Home() {
           <LockKeyhole className="mt-0.5 shrink-0" size={20} aria-hidden="true" />
           <p className="text-sm leading-6 text-[#FFFDF7]">{t("home.privacy")}</p>
         </div>
+        <QuoteMoment className="mt-6">
+          {t("quoteMoments.homeTrust")}
+        </QuoteMoment>
       </Section>
 
       <Section title={t("home.bilingualTitle")}>

@@ -3,7 +3,7 @@
 import { useLanguage } from "@/components/LanguageProvider";
 import { PageHero, Section } from "@/components/PageShell";
 import { ResourceMap } from "@/components/ResourceMap";
-import { DataGlowAccent } from "@/components/VisualStorytelling";
+import { DataGlowAccent, QuoteMoment } from "@/components/VisualStorytelling";
 
 export default function MapPage() {
   const { t } = useLanguage();
@@ -16,6 +16,9 @@ export default function MapPage() {
       <Section>
         <div className="relative">
           <DataGlowAccent className="opacity-85" />
+          <QuoteMoment className="mb-6">
+            {t("quoteMoments.map")}
+          </QuoteMoment>
           <ResourceMap />
         </div>
       </Section>

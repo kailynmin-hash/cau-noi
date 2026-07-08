@@ -12,7 +12,7 @@ import { useLanguage } from "@/components/LanguageProvider";
 import { SkeletonChart, SkeletonStatGrid } from "@/components/LoadingStates";
 import { ResourceFinder } from "@/components/ResourceFinder";
 import { PageHero, Section } from "@/components/PageShell";
-import { CompassLeafIllustration, DataGlowAccent } from "@/components/VisualStorytelling";
+import { CompassLeafIllustration, DataGlowAccent, QuoteMoment } from "@/components/VisualStorytelling";
 import { getResourceInsightData } from "@/lib/resourceInsights";
 
 export default function ResourceFinderPage() {
@@ -91,6 +91,9 @@ export default function ResourceFinderPage() {
       <Section intro={t("resourcesPage.intro")}>
         <div className="relative">
           <DataGlowAccent className="opacity-70" />
+          <QuoteMoment className="mb-6">
+            {t("quoteMoments.resources")}
+          </QuoteMoment>
           <ResourceFinder />
         </div>
       </Section>

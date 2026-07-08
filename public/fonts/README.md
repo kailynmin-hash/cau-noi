@@ -1,15 +1,7 @@
-Brittany Signature font placeholder
-===================================
+Decorative quote font
+=====================
 
-The site defines `.font-accent` and `.font-brittany-signature` classes for short decorative phrases.
+The site uses the free Google Font `Style Script` for short decorative phrases.
+It is loaded through `next/font/google` in `app/layout.tsx`.
 
-If you have a licensed copy of Brittany Signature, place one of these files in this folder:
-
-- `BrittanySignature.woff2`
-- `BrittanySignature.woff`
-- `BrittanySignature.ttf`
-- `BrittanySignature.otf`
-
-The CSS in `app/globals.css` already checks for those filenames and will use Brittany Signature automatically.
-
-Do not add an unlicensed font file to the project.
+Do not add an unlicensed Brittany Signature font file to the project.
