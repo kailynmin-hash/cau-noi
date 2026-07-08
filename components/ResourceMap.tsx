@@ -253,7 +253,8 @@ export function ResourceMap() {
 
   return (
     <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[280px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(520px,1fr)_320px]">
-      <aside className="min-w-0 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition duration-200 ease-out lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto">
+      <aside className="relative min-w-0 overflow-hidden rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition duration-200 ease-out lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto">
+        <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-[#F5EDE1]/80 blur-2xl" aria-hidden="true" />
         <div className="mb-5 flex items-center justify-between gap-3">
           <p className="flex items-center gap-2 font-semibold text-slate-950">
             <Filter size={18} className="text-teal-700" aria-hidden="true" />
@@ -275,7 +276,8 @@ export function ResourceMap() {
         {mapMessage && <p className="mt-5 rounded-md bg-rose-50 p-3 text-sm leading-6 text-rose-950">{text.satelliteUnavailable}</p>}
       </aside>
 
-      <div className="relative min-h-[560px] min-w-0 overflow-hidden rounded-lg border border-teal-900/30 bg-[#061d1b] p-3 text-white shadow-sm lg:min-h-[650px]">
+      <div className="relative min-h-[560px] min-w-0 overflow-hidden rounded-lg border border-teal-900/30 bg-[#2E5A3E] p-3 text-white shadow-sm lg:min-h-[650px]">
+        <div className="pointer-events-none absolute inset-0 opacity-25 [background-image:linear-gradient(rgba(255,253,247,.15)_1px,transparent_1px),linear-gradient(90deg,rgba(255,253,247,.12)_1px,transparent_1px)] [background-size:34px_34px]" aria-hidden="true" />
         <div className="absolute left-4 top-4 z-20 flex items-center gap-2 rounded-lg border border-white/15 bg-black/35 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-teal-50 backdrop-blur">
           <span>{text.mapTitle}</span>
           <span className="group relative inline-flex">
@@ -343,7 +345,8 @@ export function ResourceMap() {
         </div>
       </div>
 
-      <aside className="min-w-0 rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition duration-200 ease-out lg:col-span-2 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto xl:col-span-1">
+      <aside className="relative min-w-0 overflow-hidden rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition duration-200 ease-out lg:col-span-2 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto xl:col-span-1">
+          <div className="pointer-events-none absolute -right-12 bottom-0 h-32 w-32 rounded-full bg-[#D9F1E6]/70 blur-2xl" aria-hidden="true" />
           {selected ? (
             <>
               <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${isUrgent(selected) ? "text-rose-700" : "text-teal-700"}`}>

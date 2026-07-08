@@ -12,6 +12,7 @@ import { useLanguage } from "@/components/LanguageProvider";
 import { SkeletonChart, SkeletonStatGrid } from "@/components/LoadingStates";
 import { ResourceFinder } from "@/components/ResourceFinder";
 import { PageHero, Section } from "@/components/PageShell";
+import { CompassLeafIllustration, DataGlowAccent } from "@/components/VisualStorytelling";
 import { getResourceInsightData } from "@/lib/resourceInsights";
 
 export default function ResourceFinderPage() {
@@ -30,6 +31,9 @@ export default function ResourceFinderPage() {
         <p>{t("resourcesPage.body")}</p>
       </PageHero>
       <Section title={t("visuals.resourcesSnapshotTitle")} intro={t("visuals.resourcesSnapshotIntro")} tone="mist">
+        <div className="pointer-events-none absolute right-8 top-12 hidden opacity-70 xl:block" aria-hidden="true">
+          <CompassLeafIllustration className="h-44 w-60 drop-shadow-[0_18px_32px_rgba(46,90,62,0.12)]" />
+        </div>
         {!ready ? (
           <div className="grid gap-6" aria-busy="true">
             <SkeletonStatGrid />
@@ -85,7 +89,10 @@ export default function ResourceFinderPage() {
         )}
       </Section>
       <Section intro={t("resourcesPage.intro")}>
-        <ResourceFinder />
+        <div className="relative">
+          <DataGlowAccent className="opacity-70" />
+          <ResourceFinder />
+        </div>
       </Section>
     </>
   );

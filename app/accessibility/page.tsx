@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { useAccessibility, type TextSize } from "@/components/AccessibilityProvider";
 import { useLanguage } from "@/components/LanguageProvider";
 import { PageHero, Section } from "@/components/PageShell";
+import { BrainLeafIllustration, DataGlowAccent } from "@/components/VisualStorytelling";
 
 const textSizes: TextSize[] = ["small", "default", "large", "extra-large"];
 
@@ -19,76 +20,80 @@ export default function AccessibilityPage() {
       </PageHero>
 
       <Section title={t("accessibility.settingsTitle")} intro={t("accessibility.settingsIntro")} tone="mist">
-        <div className="grid gap-4 lg:grid-cols-2">
-          <SettingCard
-            icon={<ScanText size={22} aria-hidden="true" />}
-            title={t("accessibility.dyslexiaTitle")}
-            body={t("accessibility.dyslexiaBody")}
-            control={
-              <SwitchButton
-                pressed={settings.dyslexiaFont}
-                onClick={toggleDyslexiaFont}
-                label={t("accessibility.dyslexiaLabel")}
-                onText={t("accessibility.on")}
-                offText={t("accessibility.off")}
-              />
-            }
-          />
-          <SettingCard
-            icon={<Eye size={22} aria-hidden="true" />}
-            title={t("accessibility.contrastTitle")}
-            body={t("accessibility.contrastBody")}
-            control={
-              <SwitchButton
-                pressed={settings.highContrast}
-                onClick={toggleHighContrast}
-                label={t("accessibility.contrastLabel")}
-                onText={t("accessibility.on")}
-                offText={t("accessibility.off")}
-              />
-            }
-          />
-          <SettingCard
-            icon={<Type size={22} aria-hidden="true" />}
-            title={t("accessibility.textSizeTitle")}
-            body={t("accessibility.textSizeBody")}
-            control={
-              <fieldset className="min-w-0">
-                <legend className="sr-only">{t("accessibility.textSizeLabel")}</legend>
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                  {textSizes.map((size) => (
-                    <button
-                      key={size}
-                      type="button"
-                      onClick={() => setTextSize(size)}
-                      aria-pressed={settings.textSize === size}
-                      className={`min-h-11 rounded-md border px-3 text-sm font-semibold transition ${
-                        settings.textSize === size
-                          ? "border-teal-800 bg-teal-800 text-white"
-                          : "border-slate-200 bg-white text-slate-700 hover:border-teal-300 hover:bg-teal-50"
-                      }`}
-                    >
-                      {t(`accessibility.textSize.${size}`)}
-                    </button>
-                  ))}
-                </div>
-              </fieldset>
-            }
-          />
-          <SettingCard
-            icon={<ZapOff size={22} aria-hidden="true" />}
-            title={t("accessibility.motionTitle")}
-            body={t("accessibility.motionBody")}
-            control={
-              <SwitchButton
-                pressed={settings.reduceMotion}
-                onClick={toggleReduceMotion}
-                label={t("accessibility.motionLabel")}
-                onText={t("accessibility.on")}
-                offText={t("accessibility.off")}
-              />
-            }
-          />
+        <div className="relative grid gap-5 xl:grid-cols-[0.36fr_0.64fr]">
+          <DataGlowAccent className="opacity-55" />
+          <BrainLeafIllustration className="hidden min-h-80 items-center justify-center p-8 xl:flex" />
+          <div className="grid gap-4 lg:grid-cols-2">
+            <SettingCard
+              icon={<ScanText size={22} aria-hidden="true" />}
+              title={t("accessibility.dyslexiaTitle")}
+              body={t("accessibility.dyslexiaBody")}
+              control={
+                <SwitchButton
+                  pressed={settings.dyslexiaFont}
+                  onClick={toggleDyslexiaFont}
+                  label={t("accessibility.dyslexiaLabel")}
+                  onText={t("accessibility.on")}
+                  offText={t("accessibility.off")}
+                />
+              }
+            />
+            <SettingCard
+              icon={<Eye size={22} aria-hidden="true" />}
+              title={t("accessibility.contrastTitle")}
+              body={t("accessibility.contrastBody")}
+              control={
+                <SwitchButton
+                  pressed={settings.highContrast}
+                  onClick={toggleHighContrast}
+                  label={t("accessibility.contrastLabel")}
+                  onText={t("accessibility.on")}
+                  offText={t("accessibility.off")}
+                />
+              }
+            />
+            <SettingCard
+              icon={<Type size={22} aria-hidden="true" />}
+              title={t("accessibility.textSizeTitle")}
+              body={t("accessibility.textSizeBody")}
+              control={
+                <fieldset className="min-w-0">
+                  <legend className="sr-only">{t("accessibility.textSizeLabel")}</legend>
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                    {textSizes.map((size) => (
+                      <button
+                        key={size}
+                        type="button"
+                        onClick={() => setTextSize(size)}
+                        aria-pressed={settings.textSize === size}
+                        className={`min-h-11 rounded-md border px-3 text-sm font-semibold transition ${
+                          settings.textSize === size
+                            ? "border-teal-800 bg-teal-800 text-white"
+                            : "border-slate-200 bg-white text-slate-700 hover:border-teal-300 hover:bg-teal-50"
+                        }`}
+                      >
+                        {t(`accessibility.textSize.${size}`)}
+                      </button>
+                    ))}
+                  </div>
+                </fieldset>
+              }
+            />
+            <SettingCard
+              icon={<ZapOff size={22} aria-hidden="true" />}
+              title={t("accessibility.motionTitle")}
+              body={t("accessibility.motionBody")}
+              control={
+                <SwitchButton
+                  pressed={settings.reduceMotion}
+                  onClick={toggleReduceMotion}
+                  label={t("accessibility.motionLabel")}
+                  onText={t("accessibility.on")}
+                  offText={t("accessibility.off")}
+                />
+              }
+            />
+          </div>
         </div>
       </Section>
 

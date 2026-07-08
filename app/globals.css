@@ -7,6 +7,11 @@
   --soft-leaf: #eaf7ef;
   --warm-ivory: #fffdf7;
   --sand: #f5ede1;
+  --warm-beige: #efe1cf;
+  --light-taupe: #d9c8b6;
+  --soft-clay: #c58f72;
+  --warm-linen: #fbf6ec;
+  --natural-brown: #6e5a48;
   --deep-sage: #2e5a3e;
   --charcoal: #1f2937;
   --background: var(--warm-ivory);
@@ -41,6 +46,7 @@ body {
   background:
     radial-gradient(circle at 8% 6%, rgba(217, 241, 230, 0.76), transparent 26rem),
     radial-gradient(circle at 92% 12%, rgba(245, 237, 225, 0.72), transparent 24rem),
+    radial-gradient(circle at 50% 92%, rgba(197, 143, 114, 0.12), transparent 22rem),
     linear-gradient(180deg, var(--warm-ivory), var(--soft-leaf));
   color: var(--foreground);
   font-family:
@@ -340,6 +346,11 @@ article.rounded-lg::after {
   background-color: var(--sand) !important;
 }
 
+.bg-orange-50,
+.bg-yellow-50 {
+  background-color: var(--warm-linen) !important;
+}
+
 .bg-teal-700,
 .bg-teal-800,
 .bg-teal-900,
@@ -392,13 +403,21 @@ article.rounded-lg::after {
   color: var(--charcoal) !important;
 }
 
+.text-amber-800,
+.text-orange-800,
+.text-yellow-800 {
+  color: var(--natural-brown) !important;
+}
+
 .border-slate-100,
 .border-slate-200,
 .border-teal-100,
 .border-teal-200,
 .border-teal-900\/20,
 .border-teal-900\/30,
-.border-teal-950\/10 {
+.border-teal-950\/10,
+.border-amber-200,
+.border-orange-200 {
   border-color: rgba(46, 90, 62, 0.16) !important;
 }
 

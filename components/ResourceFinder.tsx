@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { SkeletonResourceGrid } from "@/components/LoadingStates";
+import { BotanicalCorner, CompassLeafIllustration } from "@/components/VisualStorytelling";
 import { incrementImpact } from "@/lib/impact";
 import { localizedOption, localizedResource } from "@/lib/i18n";
 import {
@@ -106,7 +107,8 @@ export function ResourceFinder() {
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
-      <aside className="h-fit min-w-0 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <aside className="relative h-fit min-w-0 overflow-hidden rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+        <BotanicalCorner className="opacity-55" />
         <div className="mb-5 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 font-semibold text-slate-950">
             <Filter size={18} className="text-teal-700" aria-hidden="true" />
@@ -149,9 +151,10 @@ export function ResourceFinder() {
           <FilterSelect label={t("resourceFinder.city")} value={city} options={cityOptions} onChange={setCity} language={appLanguage} />
         </div>
 
-        <p className="mt-5 rounded-md bg-[#f6faf7] p-3 text-sm leading-6 text-slate-600">
-          {t("resourceFinder.privateNote")}
-        </p>
+        <div className="mt-5 grid gap-3 rounded-lg border border-[#A7C6A0]/25 bg-[#F5EDE1]/70 p-3">
+          <CompassLeafIllustration className="mx-auto h-24 w-full max-w-40" />
+          <p className="text-sm leading-6 text-slate-700">{t("resourceFinder.privateNote")}</p>
+        </div>
         <p className="mt-3 rounded-md bg-amber-50 p-3 text-sm leading-6 text-amber-950">
           {t("resourceFinder.verifyNote")}
         </p>

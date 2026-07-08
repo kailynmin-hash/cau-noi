@@ -4,6 +4,7 @@ import { Languages, ShieldCheck, Users } from "lucide-react";
 import { DashboardView } from "@/components/DashboardView";
 import { useLanguage } from "@/components/LanguageProvider";
 import { PageHero, Section } from "@/components/PageShell";
+import { DataGlowAccent } from "@/components/VisualStorytelling";
 
 const icons = [Users, Languages, ShieldCheck];
 
@@ -17,7 +18,10 @@ export function DashboardPageContent() {
         <p>{t("pages.dashboard.body")}</p>
       </PageHero>
       <Section title={t("pages.dashboard.indicatorsTitle")} intro={t("pages.dashboard.indicatorsIntro")}>
-        <DashboardView />
+        <div className="relative">
+          <DataGlowAccent className="opacity-80" />
+          <DashboardView />
+        </div>
       </Section>
       <Section title={t("pages.dashboard.impactTitle")} intro={t("pages.dashboard.impactIntro")} tone="mist">
         <div className="grid gap-4 lg:grid-cols-3">

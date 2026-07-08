@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { BotanicalSprig, HeroLandscape } from "@/components/Botanical";
+import { BotanicalSprig } from "@/components/Botanical";
+import { BotanicalCorner, SectionTextureBackground, YouthHeroGraphic } from "@/components/VisualStorytelling";
 
 export function PageHero({
   eyebrow,
@@ -14,9 +15,9 @@ export function PageHero({
 }) {
   return (
     <section className="relative overflow-hidden border-b border-teal-950/10 bg-[#eef7f1] shadow-[inset_0_-1px_0_rgba(46,90,62,0.08)]">
-      <HeroLandscape className="pointer-events-none absolute bottom-0 right-0 hidden w-[58rem] max-w-[62vw] opacity-80 lg:block" />
+      <YouthHeroGraphic className="hidden w-[68rem] max-w-[72vw] lg:block" />
       <BotanicalSprig className="pointer-events-none absolute -right-10 top-8 hidden h-72 w-56 text-[#2E5A3E]/45 sm:block" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(255,253,247,0.92),transparent_28rem),linear-gradient(90deg,rgba(255,253,247,0.96),rgba(255,253,247,0.74)_46%,rgba(255,253,247,0.2))]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(255,253,247,0.94),transparent_28rem),linear-gradient(90deg,rgba(255,253,247,0.97),rgba(255,253,247,0.82)_44%,rgba(255,253,247,0.34)_76%)]" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#FFFDF7]/90 to-transparent" />
       <div className="animate-rise-in relative mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-24">
         <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-teal-800">{eyebrow}</p>
@@ -49,7 +50,9 @@ export function Section({
 }) {
   return (
     <section className={`relative overflow-hidden ${tone === "mist" ? "bg-[#f3f8f5]" : "bg-white"}`}>
+      <SectionTextureBackground className="opacity-60" />
       <BotanicalSprig className="pointer-events-none absolute -right-16 top-10 h-64 w-48 text-[#2E5A3E]/[0.07]" />
+      <BotanicalCorner side="left" className="hidden opacity-50 lg:block" />
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
         {(title || intro) && (
           <div className="mb-8 max-w-3xl">

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -20,6 +21,7 @@ import { ImpactMetrics } from "@/components/ImpactMetrics";
 import { useLanguage } from "@/components/LanguageProvider";
 import { PageHero, Section } from "@/components/PageShell";
 import { BrainBloom } from "@/components/Botanical";
+import { BrainLeafIllustration, CompassLeafIllustration, DataGlowAccent } from "@/components/VisualStorytelling";
 
 const pathIcons = [Brain, Users, HomeIcon];
 const featureIcons = [HeartHandshake, MessageCircleHeart, BookOpen, Sparkles, HandHeart];
@@ -53,6 +55,21 @@ export default function Home() {
         </div>
       </PageHero>
 
+      <section className="relative overflow-hidden border-y border-[#A7C6A0]/25 bg-[#FFFDF7] px-4 py-6 sm:px-6 lg:px-8" aria-hidden="true">
+        <div className="mx-auto max-w-7xl overflow-hidden rounded-lg border border-[#A7C6A0]/30 bg-[#F5EDE1] shadow-[0_22px_60px_rgba(46,90,62,0.16)]">
+          <div className="relative aspect-[16/7] min-h-56">
+            <Image
+              src="/visuals/youth-nature-hero.jpg"
+              alt=""
+              fill
+              sizes="(min-width: 1280px) 1216px, calc(100vw - 2rem)"
+              className="object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,253,247,0.22),transparent_30%,rgba(255,253,247,0.08))]" />
+          </div>
+        </div>
+      </section>
+
       <Section title={t("pages.about.eyebrow")} intro={t("pages.about.body")} tone="mist">
         <div id="about-cau-noi" className="scroll-mt-28">
           <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
@@ -79,17 +96,22 @@ export default function Home() {
       </Section>
 
       <Section title={t("home.pathTitle")} intro={t("home.pathIntro")}>
-        <div className="grid gap-4 md:grid-cols-3">
-          {pathways.map(([title, body], index) => {
-            const Icon = pathIcons[index];
-            return (
-              <article key={title} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-                <Icon size={24} className="text-teal-700" aria-hidden="true" />
-                <h2 className="mt-4 text-xl font-semibold text-slate-950">{title}</h2>
-                <p className="mt-3 leading-7 text-slate-600">{body}</p>
-              </article>
-            );
-          })}
+        <div className="grid gap-5 lg:grid-cols-[0.32fr_0.68fr] lg:items-stretch">
+          <div className="relative hidden overflow-hidden rounded-lg border border-[#A7C6A0]/25 bg-[#F5EDE1]/80 p-5 shadow-sm lg:block">
+            <CompassLeafIllustration className="h-full min-h-64 w-full" />
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            {pathways.map(([title, body], index) => {
+              const Icon = pathIcons[index];
+              return (
+                <article key={title} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+                  <Icon size={24} className="text-teal-700" aria-hidden="true" />
+                  <h2 className="mt-4 text-xl font-semibold text-slate-950">{title}</h2>
+                  <p className="mt-3 leading-7 text-slate-600">{body}</p>
+                </article>
+              );
+            })}
+          </div>
         </div>
       </Section>
 
@@ -134,7 +156,10 @@ export default function Home() {
       </Section>
 
       <Section>
-        <ImpactMetrics />
+        <div className="relative">
+          <DataGlowAccent className="opacity-70" />
+          <ImpactMetrics />
+        </div>
       </Section>
 
       <Section title={t("home.focusTitle")}>
@@ -147,7 +172,10 @@ export default function Home() {
               <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-teal-800">{t("home.focusLabel")}</p>
             </div>
           </div>
-          <p className="leading-7 text-slate-700">{t("home.focusBody")}</p>
+          <div className="grid gap-4">
+            <p className="leading-7 text-slate-700">{t("home.focusBody")}</p>
+            <BrainLeafIllustration className="min-h-48 p-6" />
+          </div>
         </div>
       </Section>
     </>
