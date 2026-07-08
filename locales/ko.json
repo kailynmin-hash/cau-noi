@@ -647,8 +647,6 @@
     "homeSnapshotIntro": "Cầu Nối에 포함된 리소스, 도시, 언어, 범주를 보여주는 시민기술형 보기입니다.",
     "resourcesSnapshotTitle": "리소스 커버리지 스냅샷",
     "resourcesSnapshotIntro": "지원이 어디에 등록되어 있고 어떤 접근 경로가 보이는지 보여주는 디렉터리 기반 지표입니다.",
-    "dashboardContextTitle": "커뮤니티 접근성 맥락",
-    "dashboardContextIntro": "익명 설문 결과 옆에 리소스 디렉터리 지표를 배치해 커뮤니티 대시보드가 설문 차트에만 머물지 않게 합니다.",
     "totalResources": "등록된 리소스",
     "totalResourcesHelp": "공유 디렉터리의 확인된 링크입니다.",
     "citiesCovered": "포함된 도시",

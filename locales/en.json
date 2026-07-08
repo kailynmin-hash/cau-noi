@@ -647,8 +647,6 @@
     "homeSnapshotIntro": "A civic-tech view of the resources, cities, languages, and categories currently represented in Cầu Nối.",
     "resourcesSnapshotTitle": "Resource Coverage Snapshot",
     "resourcesSnapshotIntro": "Directory-derived metrics showing where support is listed and which access paths are easiest to find.",
-    "dashboardContextTitle": "Community Access Context",
-    "dashboardContextIntro": "Resource-directory metrics sit beside anonymous survey results so the Community Dashboard is not only a quiz chart.",
     "totalResources": "Resources listed",
     "totalResourcesHelp": "Verified links in the shared directory.",
     "citiesCovered": "Cities covered",

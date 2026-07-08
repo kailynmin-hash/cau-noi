@@ -647,8 +647,6 @@
     "homeSnapshotIntro": "以 civic-tech 方式呈现 Cầu Nối 当前涵盖的资源、城市、语言和类别。",
     "resourcesSnapshotTitle": "资源覆盖快照",
     "resourcesSnapshotIntro": "基于目录的指标，显示支持资源分布在哪里，以及哪些获取路径更容易找到。",
-    "dashboardContextTitle": "社区可及性背景",
-    "dashboardContextIntro": "资源目录指标与匿名调查结果并列，让社区仪表板不只是问卷图表。",
     "totalResources": "已列资源",
     "totalResourcesHelp": "共享目录中的已核实链接。",
     "citiesCovered": "覆盖城市",

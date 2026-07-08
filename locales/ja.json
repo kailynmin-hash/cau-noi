@@ -647,8 +647,6 @@
     "homeSnapshotIntro": "Cầu Nối に掲載されているリソース、都市、言語、カテゴリを示すシビックテック型の表示です。",
     "resourcesSnapshotTitle": "リソースカバレッジのスナップショット",
     "resourcesSnapshotIntro": "支援がどこに掲載され、どのアクセス経路が見つけやすいかを示すディレクトリ由来の指標です。",
-    "dashboardContextTitle": "コミュニティアクセスの背景",
-    "dashboardContextIntro": "匿名調査結果にリソースディレクトリの指標を並べ、コミュニティダッシュボードを調査チャートだけにしません。",
     "totalResources": "掲載リソース",
     "totalResourcesHelp": "共有ディレクトリ内の確認済みリンクです。",
     "citiesCovered": "対象都市",
