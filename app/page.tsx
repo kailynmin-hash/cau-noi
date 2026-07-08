@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -54,21 +53,6 @@ export default function Home() {
           </Link>
         </div>
       </PageHero>
-
-      <section className="relative overflow-hidden border-y border-[#A7C6A0]/25 bg-[#FFFDF7] px-4 py-6 sm:px-6 lg:px-8" aria-hidden="true">
-        <div className="mx-auto max-w-7xl overflow-hidden rounded-lg border border-[#A7C6A0]/30 bg-[#F5EDE1] shadow-[0_22px_60px_rgba(46,90,62,0.16)]">
-          <div className="relative aspect-[16/7] min-h-56">
-            <Image
-              src="/visuals/youth-nature-hero.jpg"
-              alt=""
-              fill
-              sizes="(min-width: 1280px) 1216px, calc(100vw - 2rem)"
-              className="object-cover object-center"
-            />
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,253,247,0.22),transparent_30%,rgba(255,253,247,0.08))]" />
-          </div>
-        </div>
-      </section>
 
       <Section title={t("pages.about.eyebrow")} intro={t("pages.about.body")} tone="mist">
         <div id="about-cau-noi" className="scroll-mt-28">

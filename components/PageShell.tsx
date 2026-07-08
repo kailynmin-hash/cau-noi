@@ -15,9 +15,9 @@ export function PageHero({
 }) {
   return (
     <section className="relative overflow-hidden border-b border-teal-950/10 bg-[#eef7f1] shadow-[inset_0_-1px_0_rgba(46,90,62,0.08)]">
-      <YouthHeroGraphic className="hidden w-[68rem] max-w-[72vw] lg:block" />
+      <YouthHeroGraphic className="hidden w-[74rem] max-w-[76vw] lg:block" />
       <BotanicalSprig className="pointer-events-none absolute -right-10 top-8 hidden h-72 w-56 text-[#2E5A3E]/45 sm:block" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(255,253,247,0.94),transparent_28rem),linear-gradient(90deg,rgba(255,253,247,0.97),rgba(255,253,247,0.82)_44%,rgba(255,253,247,0.34)_76%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(255,253,247,0.98),transparent_28rem),linear-gradient(90deg,rgba(255,253,247,0.98)_0%,rgba(255,253,247,0.9)_42%,rgba(255,253,247,0.28)_61%,rgba(255,253,247,0.03)_82%)]" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#FFFDF7]/90 to-transparent" />
       <div className="animate-rise-in relative mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-24">
         <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-teal-800">{eyebrow}</p>
@@ -28,7 +28,7 @@ export function PageHero({
             </h1>
             <p className="mt-3 text-lg font-medium text-teal-800">{vietnamese}</p>
           </div>
-          <div className="max-w-2xl rounded-lg border border-[#A7C6A0]/25 bg-[#FFFDF7]/82 p-5 text-base leading-8 text-slate-700 shadow-sm backdrop-blur-md lg:justify-self-end">
+          <div className="max-w-2xl rounded-lg border border-[#A7C6A0]/30 bg-[#FFFDF7]/94 p-5 text-base leading-8 text-slate-700 shadow-sm backdrop-blur-md lg:justify-self-end">
             {children}
           </div>
         </div>

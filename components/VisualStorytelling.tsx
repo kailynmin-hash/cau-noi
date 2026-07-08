@@ -12,8 +12,8 @@ export function YouthHeroGraphic({ className = "" }: { className?: string }) {
         sizes="(min-width: 1024px) 62vw, 100vw"
         className="object-cover object-right"
       />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,253,247,0.98)_0%,rgba(255,253,247,0.82)_34%,rgba(255,253,247,0.24)_70%,rgba(255,253,247,0.04)_100%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,253,247,0.26),transparent_18rem),linear-gradient(180deg,rgba(255,253,247,0.08),rgba(234,247,239,0.48))]" />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,253,247,1)_0%,rgba(255,253,247,0.9)_26%,rgba(255,253,247,0.42)_48%,rgba(255,253,247,0.08)_72%,rgba(255,253,247,0)_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_20%,rgba(255,253,247,0.1),transparent_18rem),linear-gradient(180deg,rgba(255,253,247,0.02),rgba(234,247,239,0.18))]" />
     </div>
   );
 }
@@ -58,6 +58,9 @@ export function SectionTextureBackground({ className = "" }: { className?: strin
       <SoftGradientOrb className="-left-20 top-10 h-72 w-72" />
       <SoftGradientOrb className="-right-24 bottom-0 h-80 w-80" />
       <BotanicalCorner side="right" className="opacity-80" />
+      <VineLineArt className="absolute left-4 top-16 hidden h-80 w-64 text-[#2E5A3E]/12 md:block" />
+      <NeuralLineArt className="absolute bottom-12 left-[22%] h-48 w-56 text-[#A7C6A0]/22" />
+      <CommunityLineArt className="absolute right-[9%] top-20 hidden h-52 w-64 text-[#6E5A48]/12 lg:block" />
     </div>
   );
 }
@@ -93,6 +96,46 @@ export function CompassLeafIllustration({ className = "" }: { className?: string
       <path d="M159 88C181 77 200 79 212 91C201 106 181 112 162 102C158 97 157 92 159 88Z" fill="#A7C6A0" opacity="0.68" />
       <path d="M180 128C160 117 141 118 128 129C138 145 158 152 178 143C181 138 182 132 180 128Z" fill="#D9F1E6" stroke="#A7C6A0" strokeWidth="2" />
       <path d="M176 142C186 112 192 82 195 42" stroke="#2E5A3E" strokeWidth="4" strokeLinecap="round" opacity="0.36" />
+    </svg>
+  );
+}
+
+export function VineLineArt({ className = "" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 180 260" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+      <path d="M31 246C54 188 75 135 65 74C60 45 71 24 96 11" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+      <path d="M65 76C34 62 18 42 18 20C43 19 67 39 72 69C70 72 68 74 65 76Z" fill="currentColor" opacity="0.52" />
+      <path d="M71 113C107 102 134 108 150 130C128 151 94 152 69 128C67 122 68 117 71 113Z" fill="currentColor" opacity="0.38" />
+      <path d="M55 158C25 151 5 160 0 184C24 198 50 190 62 166C61 162 59 160 55 158Z" fill="currentColor" opacity="0.32" />
+      <path d="M48 198C81 194 103 207 112 232C83 247 55 236 44 207C44 203 46 200 48 198Z" fill="currentColor" opacity="0.28" />
+    </svg>
+  );
+}
+
+export function NeuralLineArt({ className = "" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 240 190" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+      <path d="M50 116C28 112 17 96 21 77C25 58 43 52 57 59C65 39 91 35 104 52C121 44 144 54 146 74C165 80 169 101 155 116C142 131 120 128 110 114C98 132 65 134 50 116Z" stroke="currentColor" strokeWidth="4" />
+      <path d="M56 115C59 90 75 78 99 82M109 114C113 89 104 72 82 64M73 125C86 109 103 103 126 108M60 60C73 65 80 74 81 90" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity="0.75" />
+      <circle cx="184" cy="44" r="11" fill="currentColor" opacity="0.22" />
+      <circle cx="206" cy="98" r="8" fill="currentColor" opacity="0.2" />
+      <circle cx="176" cy="143" r="10" fill="currentColor" opacity="0.18" />
+      <path d="M146 78L184 44M153 112L206 98M132 123L176 143" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity="0.36" />
+    </svg>
+  );
+}
+
+export function CommunityLineArt({ className = "" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 260 210" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+      <circle cx="130" cy="92" r="42" stroke="currentColor" strokeWidth="4" opacity="0.55" />
+      <circle cx="130" cy="78" r="15" fill="currentColor" opacity="0.3" />
+      <path d="M101 128C108 109 121 101 130 101C139 101 153 109 160 128" stroke="currentColor" strokeWidth="5" strokeLinecap="round" opacity="0.42" />
+      <circle cx="61" cy="77" r="18" stroke="currentColor" strokeWidth="4" opacity="0.36" />
+      <circle cx="203" cy="79" r="18" stroke="currentColor" strokeWidth="4" opacity="0.36" />
+      <circle cx="87" cy="159" r="18" stroke="currentColor" strokeWidth="4" opacity="0.28" />
+      <circle cx="174" cy="160" r="18" stroke="currentColor" strokeWidth="4" opacity="0.28" />
+      <path d="M78 83L91 86M169 86L185 82M105 125L96 145M153 125L164 145" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.24" />
     </svg>
   );
 }
