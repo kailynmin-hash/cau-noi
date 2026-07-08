@@ -19,6 +19,7 @@ import { HomeShowcase } from "@/components/HomeShowcase";
 import { ImpactMetrics } from "@/components/ImpactMetrics";
 import { useLanguage } from "@/components/LanguageProvider";
 import { PageHero, Section } from "@/components/PageShell";
+import { BrainBloom } from "@/components/Botanical";
 
 const pathIcons = [Brain, Users, HomeIcon];
 const featureIcons = [HeartHandshake, MessageCircleHeart, BookOpen, Sparkles, HandHeart];
@@ -138,11 +139,12 @@ export default function Home() {
 
       <Section title={t("home.focusTitle")}>
         <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
-          <div className="flex min-h-64 items-center justify-center rounded-lg bg-[#dcefe6] p-8">
-            <div className="text-center">
-              <Sparkles size={42} className="mx-auto text-teal-800" aria-hidden="true" />
-              <p className="mt-4 text-3xl font-semibold text-slate-950">CA-45</p>
-              <p className="mt-2 text-sm font-medium uppercase tracking-[0.18em] text-teal-800">{t("home.focusLabel")}</p>
+          <div className="relative flex min-h-72 items-center justify-center overflow-hidden rounded-lg border border-[#A7C6A0]/35 bg-[#F5EDE1] p-8 shadow-sm">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,253,247,0.9),transparent_18rem),radial-gradient(circle_at_80%_80%,rgba(217,241,230,0.92),transparent_16rem)]" />
+            <BrainBloom className="relative h-44 w-56 text-[#2E5A3E] drop-shadow-[0_18px_30px_rgba(46,90,62,0.18)]" />
+            <div className="absolute bottom-6 left-6 rounded-lg border border-[#A7C6A0]/35 bg-[#FFFDF7]/86 px-4 py-3 shadow-sm backdrop-blur-md">
+              <p className="text-3xl font-semibold text-slate-950">CA-45</p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-teal-800">{t("home.focusLabel")}</p>
             </div>
           </div>
           <p className="leading-7 text-slate-700">{t("home.focusBody")}</p>

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { BotanicalSprig } from "@/components/Botanical";
+import { BotanicalSprig, HeroLandscape } from "@/components/Botanical";
 
 export function PageHero({
   eyebrow,
@@ -14,18 +14,22 @@ export function PageHero({
 }) {
   return (
     <section className="relative overflow-hidden border-b border-teal-950/10 bg-[#eef7f1] shadow-[inset_0_-1px_0_rgba(46,90,62,0.08)]">
+      <HeroLandscape className="pointer-events-none absolute bottom-0 right-0 hidden w-[58rem] max-w-[62vw] opacity-80 lg:block" />
       <BotanicalSprig className="pointer-events-none absolute -right-10 top-8 hidden h-72 w-56 text-[#2E5A3E]/45 sm:block" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#FFFDF7]/80 to-transparent" />
-      <div className="animate-rise-in relative mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-20">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(255,253,247,0.92),transparent_28rem),linear-gradient(90deg,rgba(255,253,247,0.96),rgba(255,253,247,0.74)_46%,rgba(255,253,247,0.2))]" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#FFFDF7]/90 to-transparent" />
+      <div className="animate-rise-in relative mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-24">
         <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-teal-800">{eyebrow}</p>
         <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-end">
           <div>
-            <h1 className="max-w-3xl text-4xl font-semibold leading-tight tracking-normal text-slate-950 sm:text-5xl">
+            <h1 className="max-w-3xl text-4xl font-semibold leading-tight tracking-normal text-slate-950 drop-shadow-[0_1px_0_rgba(255,253,247,0.72)] sm:text-5xl">
               {title}
             </h1>
             <p className="mt-3 text-lg font-medium text-teal-800">{vietnamese}</p>
           </div>
-          <div className="max-w-2xl text-base leading-8 text-slate-700 lg:justify-self-end">{children}</div>
+          <div className="max-w-2xl rounded-lg border border-[#A7C6A0]/25 bg-[#FFFDF7]/82 p-5 text-base leading-8 text-slate-700 shadow-sm backdrop-blur-md lg:justify-self-end">
+            {children}
+          </div>
         </div>
       </div>
     </section>
@@ -45,6 +49,7 @@ export function Section({
 }) {
   return (
     <section className={`relative overflow-hidden ${tone === "mist" ? "bg-[#f3f8f5]" : "bg-white"}`}>
+      <BotanicalSprig className="pointer-events-none absolute -right-16 top-10 h-64 w-48 text-[#2E5A3E]/[0.07]" />
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
         {(title || intro) && (
           <div className="mb-8 max-w-3xl">

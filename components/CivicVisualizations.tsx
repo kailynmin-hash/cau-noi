@@ -86,10 +86,10 @@ export function MiniBarChart({ data, ariaLabel, framed = true }: { data: ChartDa
     <ChartFrame ariaLabel={ariaLabel} framed={framed}>
       <ResponsiveContainer width="100%" height={260}>
         <BarChart data={chartData} layout="vertical" margin={{ left: 8, right: 16, top: 8, bottom: 8 }}>
-          <CartesianGrid stroke="#e2e8f0" horizontal={false} />
+          <CartesianGrid stroke="#d7e7d8" horizontal={false} />
           <XAxis type="number" hide />
-          <YAxis type="category" dataKey="name" width={112} tick={{ fontSize: 12, fill: "#334155" }} />
-          <Tooltip cursor={{ fill: "#f0fdfa" }} contentStyle={{ borderRadius: 8, borderColor: "#99f6e4" }} />
+          <YAxis type="category" dataKey="name" width={112} tick={{ fontSize: 12, fill: "#1F2937" }} />
+          <Tooltip cursor={{ fill: "#EAF7EF" }} contentStyle={{ borderRadius: 8, borderColor: "#A7C6A0" }} />
           <Bar dataKey="value" radius={[0, 8, 8, 0]} fill="#2E5A3E" isAnimationActive={!settings.reduceMotion} />
         </BarChart>
       </ResponsiveContainer>
@@ -110,10 +110,10 @@ export function LanguageAccessChart({ data, ariaLabel, framed = true }: { data: 
               <stop offset="95%" stopColor="#D9F1E6" stopOpacity={0.08} />
             </linearGradient>
           </defs>
-          <CartesianGrid stroke="#e2e8f0" vertical={false} />
-          <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#334155" }} />
-          <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "#334155" }} />
-          <Tooltip contentStyle={{ borderRadius: 8, borderColor: "#99f6e4" }} />
+          <CartesianGrid stroke="#d7e7d8" vertical={false} />
+          <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#1F2937" }} />
+          <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "#1F2937" }} />
+          <Tooltip contentStyle={{ borderRadius: 8, borderColor: "#A7C6A0" }} />
           <Area type="monotone" dataKey="value" stroke="#2E5A3E" strokeWidth={3} fill="url(#languageAccess)" isAnimationActive={!settings.reduceMotion} />
         </AreaChart>
       </ResponsiveContainer>
@@ -128,7 +128,7 @@ export function ResourceCategoryChart({ data, ariaLabel, framed = true }: { data
     <ChartFrame ariaLabel={ariaLabel} framed={framed}>
       <ResponsiveContainer width="100%" height={260}>
         <PieChart>
-          <Tooltip contentStyle={{ borderRadius: 8, borderColor: "#99f6e4" }} />
+          <Tooltip contentStyle={{ borderRadius: 8, borderColor: "#A7C6A0" }} />
           <Pie data={chartData} dataKey="value" nameKey="name" innerRadius={54} outerRadius={92} paddingAngle={3} isAnimationActive={!settings.reduceMotion}>
             {chartData.map((entry, index) => (
               <Cell key={entry.name} fill={palette[index % palette.length]} />
@@ -146,10 +146,10 @@ export function TrendLineChart({ data, ariaLabel, framed = true }: { data: Chart
     <ChartFrame ariaLabel={ariaLabel} framed={framed}>
       <ResponsiveContainer width="100%" height={260}>
         <LineChart data={data} margin={{ left: 4, right: 16, top: 8, bottom: 8 }}>
-          <CartesianGrid stroke="#e2e8f0" vertical={false} />
-          <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#334155" }} />
-          <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "#334155" }} />
-          <Tooltip contentStyle={{ borderRadius: 8, borderColor: "#99f6e4" }} />
+          <CartesianGrid stroke="#d7e7d8" vertical={false} />
+          <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#1F2937" }} />
+          <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "#1F2937" }} />
+          <Tooltip contentStyle={{ borderRadius: 8, borderColor: "#A7C6A0" }} />
           <Line type="monotone" dataKey="value" stroke="#2E5A3E" strokeWidth={3} dot={{ r: 4, fill: "#2E5A3E" }} activeDot={{ r: 7 }} isAnimationActive={!settings.reduceMotion} />
         </LineChart>
       </ResponsiveContainer>
@@ -230,7 +230,7 @@ export function ResourceCoverageMap({
     <div
       role="group"
       aria-label={ariaLabel}
-      className="relative overflow-hidden rounded-lg border border-teal-900/20 bg-[#062522] p-4 text-white shadow-sm sm:p-5"
+      className="relative overflow-hidden rounded-lg border border-teal-900/20 bg-[#2E5A3E] p-4 text-white shadow-sm sm:p-5"
     >
       <div className="absolute inset-0 opacity-25 [background-image:linear-gradient(rgba(255,255,255,.12)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.12)_1px,transparent_1px)] [background-size:32px_32px]" />
       <div className="relative z-10 rounded-lg border border-white/10 bg-white/10 p-4 shadow-[0_18px_60px_rgba(0,0,0,0.18)] backdrop-blur">
@@ -266,12 +266,12 @@ export function ResourceCoverageMap({
               aria-label={`${item.city}, ${item.count} ${text.resources}`}
               onClick={() => setSelectedCity(item.city)}
               onFocus={() => setSelectedCity(item.city)}
-              className="group absolute z-20 -translate-x-1/2 -translate-y-1/2 rounded-full outline-none transition duration-300 hover:scale-110 focus-visible:scale-110 focus-visible:ring-2 focus-visible:ring-rose-200 focus-visible:ring-offset-4 focus-visible:ring-offset-[#062522]"
+              className="group absolute z-20 -translate-x-1/2 -translate-y-1/2 rounded-full outline-none transition duration-300 hover:scale-110 focus-visible:scale-110 focus-visible:ring-2 focus-visible:ring-[#F5EDE1] focus-visible:ring-offset-4 focus-visible:ring-offset-[#2E5A3E]"
               style={{ left: `${item.left}%`, top: `${item.top}%`, width: size, height: size }}
             >
               <span
                 className={`absolute inset-0 rounded-full border-2 border-white shadow-[0_0_28px_rgba(45,212,191,0.55)] transition duration-300 ${
-                  isSelected ? "bg-rose-400 shadow-[0_0_36px_rgba(251,113,133,0.72)]" : "bg-teal-400 group-hover:bg-rose-400 group-focus-visible:bg-rose-400"
+                  isSelected ? "bg-[#F5EDE1] shadow-[0_0_36px_rgba(245,237,225,0.72)]" : "bg-[#A7C6A0] group-hover:bg-[#F5EDE1] group-focus-visible:bg-[#F5EDE1]"
                 }`}
               />
               <span className="absolute inset-[-10px] rounded-full bg-teal-300/10 opacity-0 blur-md transition duration-300 group-hover:opacity-100 group-focus-visible:opacity-100" />

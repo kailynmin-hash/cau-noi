@@ -74,6 +74,19 @@ body::before {
   z-index: -1;
 }
 
+body::after {
+  background-image:
+    linear-gradient(115deg, rgba(46, 90, 62, 0.028), transparent 32%),
+    radial-gradient(circle at 12% 84%, rgba(245, 237, 225, 0.42), transparent 18rem);
+  content: "";
+  inset: 0;
+  mix-blend-mode: multiply;
+  opacity: 0.8;
+  pointer-events: none;
+  position: fixed;
+  z-index: -1;
+}
+
 html.a11y-dyslexia-font,
 html.a11y-dyslexia-font body,
 html.a11y-dyslexia-font :where(p, a, button, input, select, textarea, label, summary, span, h1, h2, h3, h4, h5, h6, li, dt, dd) {
@@ -257,7 +270,9 @@ html.a11y-reduce-motion *::after {
 }
 
 article.rounded-lg {
-  background: linear-gradient(145deg, rgba(255, 253, 247, 0.96), rgba(234, 247, 239, 0.72));
+  background:
+    linear-gradient(145deg, rgba(255, 253, 247, 0.98), rgba(234, 247, 239, 0.78)),
+    radial-gradient(circle at 100% 0%, rgba(167, 198, 160, 0.2), transparent 12rem);
   border-color: rgba(46, 90, 62, 0.14) !important;
   box-shadow:
     0 1px 2px rgba(31, 41, 55, 0.035),
@@ -293,14 +308,16 @@ article.rounded-lg::after {
 .bg-white\/90,
 .bg-white\/95,
 .bg-white\/98 {
-  background-color: rgba(255, 253, 247, 0.94) !important;
+  background-color: rgba(255, 253, 247, 0.96) !important;
 }
 
 .bg-\[\#f8fbf8\],
 .bg-\[\#eef7f1\],
 .bg-\[\#f3f8f5\],
 .bg-\[\#f6faf7\] {
-  background-color: var(--soft-leaf) !important;
+  background:
+    radial-gradient(circle at 92% 8%, rgba(167, 198, 160, 0.18), transparent 16rem),
+    linear-gradient(180deg, var(--soft-leaf), rgba(255, 253, 247, 0.86)) !important;
 }
 
 .bg-\[\#dcefe6\],
@@ -370,6 +387,11 @@ article.rounded-lg::after {
   color: var(--mint-green) !important;
 }
 
+.text-amber-950,
+.text-rose-950 {
+  color: var(--charcoal) !important;
+}
+
 .border-slate-100,
 .border-slate-200,
 .border-teal-100,
@@ -397,11 +419,27 @@ a {
   border-radius: 0.5rem;
 }
 
+button:not(:disabled),
+a[href] {
+  transition:
+    background-color 180ms ease-out,
+    border-color 180ms ease-out,
+    box-shadow 180ms ease-out,
+    color 180ms ease-out,
+    transform 180ms ease-out;
+}
+
+button:not(:disabled):hover,
+a[href]:hover {
+  transform: translateY(-1px);
+}
+
 a.bg-teal-700,
 button.bg-teal-700,
 a.bg-teal-800,
 button.bg-teal-800 {
-  box-shadow: 0 12px 28px rgba(46, 90, 62, 0.18);
+  border: 1px solid color-mix(in srgb, var(--deep-sage) 82%, white) !important;
+  box-shadow: 0 14px 30px rgba(46, 90, 62, 0.22);
 }
 
 a.bg-teal-700:hover,
@@ -409,6 +447,24 @@ button.bg-teal-700:hover,
 a.bg-teal-800:hover,
 button.bg-teal-800:hover {
   background-color: color-mix(in srgb, var(--deep-sage) 88%, black) !important;
+}
+
+section > div > :where(.grid, article, form, aside) {
+  isolation: isolate;
+}
+
+.rounded-lg {
+  border-radius: 1rem !important;
+}
+
+.rounded-md {
+  border-radius: 0.75rem !important;
+}
+
+.backdrop-blur,
+.backdrop-blur-md,
+.backdrop-blur-xl {
+  backdrop-filter: blur(18px) saturate(1.08);
 }
 
 html.a11y-high-contrast :where(body, header, footer, section, article, aside, form, label, details, .bg-white, .bg-\[\#f8fbf8\], .bg-\[\#eef7f1\], .bg-\[\#f3f8f5\], .bg-\[\#f6faf7\]) {
