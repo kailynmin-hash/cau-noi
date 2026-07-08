@@ -63,7 +63,7 @@ export function SiteFooter() {
             {t("footer.accessibility")}
           </Link>
         </div>
-        <ReflectiveMessage className="max-w-xs text-2xl md:justify-self-end md:text-right">
+        <ReflectiveMessage className="max-w-sm md:justify-self-end md:text-right">
           {t("reflections.footer")}
         </ReflectiveMessage>
       </div>

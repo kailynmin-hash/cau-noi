@@ -43,12 +43,19 @@ html[data-text-size="extra-large"] {
 }
 
 @font-face {
-  font-family: "Brittany Signature Placeholder";
+  font-family: "Brittany Signature";
   src:
     local("Brittany Signature"),
     local("BrittanySignature"),
-    local("Brittany");
+    local("Brittany Signature Regular"),
+    local("BrittanySignature-Regular"),
+    url("/fonts/BrittanySignature.woff2") format("woff2"),
+    url("/fonts/BrittanySignature.woff") format("woff"),
+    url("/fonts/BrittanySignature.ttf") format("truetype"),
+    url("/fonts/BrittanySignature.otf") format("opentype");
   font-display: swap;
+  font-style: normal;
+  font-weight: 400;
 }
 
 html body {
@@ -118,13 +125,29 @@ html body .font-display {
 html body .font-accent {
   font-family:
     "Brittany Signature",
-    "Brittany Signature Placeholder",
-    "Segoe Script",
-    "Bradley Hand",
     "Snell Roundhand",
+    "SignPainter",
+    "Segoe Script",
     cursive;
+  font-feature-settings: normal;
   font-weight: 400 !important;
   letter-spacing: 0;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+
+html body .font-brittany-signature {
+  font-family:
+    "Brittany Signature",
+    "Snell Roundhand",
+    "SignPainter",
+    "Segoe Script",
+    cursive;
+  font-feature-settings: normal;
+  font-weight: 400 !important;
+  letter-spacing: 0;
+  line-height: 0.98;
+  text-wrap: balance;
 }
 
 body::before {

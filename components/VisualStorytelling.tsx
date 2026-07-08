@@ -3,7 +3,7 @@ import { BrainBloom, BotanicalSprig } from "@/components/Botanical";
 
 export function ReflectiveMessage({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <p className={`font-accent text-3xl leading-snug text-[#2E5A3E] sm:text-4xl ${className}`}>
+    <p className={`font-brittany-signature text-5xl text-[#2E5A3E] sm:text-6xl lg:text-7xl ${className}`}>
       {children}
     </p>
   );

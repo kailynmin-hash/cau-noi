@@ -1,8 +1,15 @@
 Brittany Signature font placeholder
 ===================================
 
-The site defines a `.font-accent` class for short decorative phrases.
+The site defines `.font-accent` and `.font-brittany-signature` classes for short decorative phrases.
 
-If you have a licensed copy of Brittany Signature, place the font file in this folder and update `app/globals.css` to add a `url("/fonts/<file-name>")` source in the `@font-face` block.
+If you have a licensed copy of Brittany Signature, place one of these files in this folder:
+
+- `BrittanySignature.woff2`
+- `BrittanySignature.woff`
+- `BrittanySignature.ttf`
+- `BrittanySignature.otf`
+
+The CSS in `app/globals.css` already checks for those filenames and will use Brittany Signature automatically.
 
 Do not add an unlicensed font file to the project.
