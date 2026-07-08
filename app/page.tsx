@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -40,14 +41,14 @@ export default function Home() {
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <Link
             href="/resources"
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-teal-700 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-800"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[#2E5A3E] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#244832]"
           >
             {t("home.primary")}
             <ArrowRight size={17} aria-hidden="true" />
           </Link>
           <Link
             href="/conversation"
-            className="inline-flex min-h-11 items-center justify-center rounded-md border border-teal-700 px-4 text-sm font-semibold text-teal-800 transition hover:bg-teal-50"
+            className="inline-flex min-h-11 items-center justify-center rounded-md border border-[#2E5A3E] px-4 text-sm font-semibold text-[#2E5A3E] transition hover:bg-[#EAF7EF]"
           >
             {t("home.secondary")}
           </Link>
@@ -56,19 +57,31 @@ export default function Home() {
 
       <Section title={t("pages.about.eyebrow")} intro={t("pages.about.body")} tone="mist">
         <div id="about-cau-noi" className="scroll-mt-28">
-          <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-            <article className="rounded-lg border border-teal-200 bg-white p-6 shadow-sm">
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-teal-700">{t("pages.about.subtitle")}</p>
-              <h2 className="mt-4 text-2xl font-semibold leading-tight text-slate-950 sm:text-3xl">{t("pages.about.title")}</h2>
-              <p className="mt-4 leading-7 text-slate-600">{t("pages.about.boundaryBody")}</p>
+          <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-stretch">
+            <article className="relative overflow-hidden rounded-lg border border-[#A7C6A0]/35 bg-[#FFFDF7] shadow-sm">
+              <div className="relative min-h-72">
+                <Image
+                  src="/visuals/about-hero.png"
+                  alt=""
+                  fill
+                  sizes="(min-width: 1024px) 42vw, 100vw"
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,253,247,0.08),rgba(255,253,247,0.86)),linear-gradient(90deg,rgba(255,253,247,0.78),transparent_70%)]" />
+              </div>
+              <div className="relative -mt-28 p-6">
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#2E5A3E]">{t("pages.about.subtitle")}</p>
+                <h2 className="mt-4 text-2xl font-semibold leading-tight text-slate-950 sm:text-3xl">{t("pages.about.title")}</h2>
+                <p className="mt-4 leading-7 text-slate-700">{t("pages.about.boundaryBody")}</p>
+              </div>
             </article>
 
             <div className="grid gap-4 sm:grid-cols-3">
               {aboutCards.map(([title, body], index) => {
                 const Icon = aboutIcons[index] ?? Sparkles;
                 return (
-                  <article key={title} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-                    <Icon size={22} className="text-teal-700" aria-hidden="true" />
+                  <article key={title} className="rounded-lg border border-[#A7C6A0]/30 bg-[#FFFDF7] p-5 shadow-sm">
+                    <Icon size={22} className="text-[#2E5A3E]" aria-hidden="true" />
                     <h3 className="mt-4 text-lg font-semibold text-slate-950">{title}</h3>
                     <p className="mt-3 text-sm leading-6 text-slate-600">{body}</p>
                   </article>
@@ -88,8 +101,8 @@ export default function Home() {
             {pathways.map(([title, body], index) => {
               const Icon = pathIcons[index];
               return (
-                <article key={title} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-                  <Icon size={24} className="text-teal-700" aria-hidden="true" />
+                <article key={title} className="rounded-lg border border-[#A7C6A0]/30 bg-[#FFFDF7] p-5 shadow-sm">
+                  <Icon size={24} className="text-[#2E5A3E]" aria-hidden="true" />
                   <h2 className="mt-4 text-xl font-semibold text-slate-950">{title}</h2>
                   <p className="mt-3 leading-7 text-slate-600">{body}</p>
                 </article>
@@ -108,22 +121,22 @@ export default function Home() {
           {features.map(([title, body], index) => {
             const Icon = featureIcons[index];
             return (
-              <article key={title} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-                <Icon size={22} className="text-teal-700" aria-hidden="true" />
+              <article key={title} className="rounded-lg border border-[#A7C6A0]/30 bg-[#FFFDF7] p-5 shadow-sm">
+                <Icon size={22} className="text-[#2E5A3E]" aria-hidden="true" />
                 <h2 className="mt-4 font-semibold text-slate-950">{title}</h2>
                 <p className="mt-2 text-sm leading-6 text-slate-600">{body}</p>
               </article>
             );
           })}
         </div>
-        <div className="mt-6 flex items-start gap-3 rounded-lg bg-teal-800 p-5 text-white">
+        <div className="mt-6 flex items-start gap-3 rounded-lg bg-[#2E5A3E] p-5 text-white">
           <LockKeyhole className="mt-0.5 shrink-0" size={20} aria-hidden="true" />
-          <p className="text-sm leading-6 text-teal-50">{t("home.privacy")}</p>
+          <p className="text-sm leading-6 text-[#FFFDF7]">{t("home.privacy")}</p>
         </div>
       </Section>
 
       <Section title={t("home.bilingualTitle")}>
-        <p className="max-w-4xl rounded-lg border border-slate-200 bg-white p-5 leading-7 text-slate-700 shadow-sm">
+        <p className="max-w-4xl rounded-lg border border-[#A7C6A0]/30 bg-[#FFFDF7] p-5 leading-7 text-slate-700 shadow-sm">
           {t("home.bilingualBody")}
         </p>
       </Section>
@@ -131,7 +144,7 @@ export default function Home() {
       <Section title={t("home.ca45Title")} intro={t("home.ca45Intro")} tone="mist">
         <div className="grid gap-4 md:grid-cols-2">
           {ca45Cards.map(([title, body]) => (
-            <article key={title} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <article key={title} className="rounded-lg border border-[#A7C6A0]/30 bg-[#FFFDF7] p-5 shadow-sm">
               <h2 className="text-xl font-semibold text-slate-950">{title}</h2>
               <p className="mt-3 leading-7 text-slate-600">{body}</p>
             </article>
@@ -153,7 +166,7 @@ export default function Home() {
             <BrainBloom className="relative h-44 w-56 text-[#2E5A3E] drop-shadow-[0_18px_30px_rgba(46,90,62,0.18)]" />
             <div className="absolute bottom-6 left-6 rounded-lg border border-[#A7C6A0]/35 bg-[#FFFDF7]/86 px-4 py-3 shadow-sm backdrop-blur-md">
               <p className="text-3xl font-semibold text-slate-950">CA-45</p>
-              <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-teal-800">{t("home.focusLabel")}</p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#2E5A3E]">{t("home.focusLabel")}</p>
             </div>
           </div>
           <div className="grid gap-4">

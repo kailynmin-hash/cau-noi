@@ -10,7 +10,7 @@ export default function FamilyHelperPage() {
 
   return (
     <>
-      <PageHero eyebrow={t("pages.conversation.eyebrow")} title={t("pages.conversation.title")} vietnamese={t("pages.conversation.subtitle")} reflection={t("reflections.conversation")}>
+      <PageHero eyebrow={t("pages.conversation.eyebrow")} title={t("pages.conversation.title")} vietnamese={t("pages.conversation.subtitle")} reflection={t("reflections.conversation")} visual="conversation">
         <p>{t("pages.conversation.body")}</p>
       </PageHero>
       <Section>

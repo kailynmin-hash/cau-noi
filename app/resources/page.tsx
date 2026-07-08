@@ -27,7 +27,7 @@ export default function ResourceFinderPage() {
 
   return (
     <>
-      <PageHero eyebrow={t("resourcesPage.eyebrow")} title={t("resourcesPage.title")} vietnamese={t("resourcesPage.subtitle")} reflection={t("reflections.resources")}>
+      <PageHero eyebrow={t("resourcesPage.eyebrow")} title={t("resourcesPage.title")} vietnamese={t("resourcesPage.subtitle")} reflection={t("reflections.resources")} visual="resources">
         <p>{t("resourcesPage.body")}</p>
       </PageHero>
       <Section title={t("visuals.resourcesSnapshotTitle")} intro={t("visuals.resourcesSnapshotIntro")} tone="mist">

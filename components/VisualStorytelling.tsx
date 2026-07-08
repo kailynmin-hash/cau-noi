@@ -1,6 +1,19 @@
 import Image from "next/image";
 import { BrainBloom, BotanicalSprig } from "@/components/Botanical";
 
+export const heroVisuals = {
+  home: "/visuals/youth-nature-hero.jpg",
+  resources: "/visuals/resources-hero.png",
+  quiz: "/visuals/quiz-hero.png",
+  dashboard: "/visuals/dashboard-hero.png",
+  map: "/visuals/map-hero.png",
+  conversation: "/visuals/conversation-hero.png",
+  about: "/visuals/about-hero.png",
+  accessibility: "/visuals/accessibility-hero.png",
+} as const;
+
+export type HeroVisual = keyof typeof heroVisuals;
+
 export function ReflectiveMessage({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <p className={`font-brittany-signature text-5xl text-[#2E5A3E] sm:text-6xl lg:text-7xl ${className}`}>
@@ -9,19 +22,19 @@ export function ReflectiveMessage({ children, className = "" }: { children: Reac
   );
 }
 
-export function YouthHeroGraphic({ className = "" }: { className?: string }) {
+export function YouthHeroGraphic({ className = "", visual = "home" }: { className?: string; visual?: HeroVisual }) {
   return (
     <div className={`pointer-events-none absolute inset-y-0 right-0 overflow-hidden ${className}`} aria-hidden="true">
       <Image
-        src="/visuals/youth-nature-hero.jpg"
+        src={heroVisuals[visual]}
         alt=""
         fill
         priority
         sizes="(min-width: 1024px) 62vw, 100vw"
         className="object-cover object-right"
       />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,253,247,1)_0%,rgba(255,253,247,0.9)_26%,rgba(255,253,247,0.42)_48%,rgba(255,253,247,0.08)_72%,rgba(255,253,247,0)_100%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_20%,rgba(255,253,247,0.1),transparent_18rem),linear-gradient(180deg,rgba(255,253,247,0.02),rgba(234,247,239,0.18))]" />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,253,247,1)_0%,rgba(255,253,247,0.9)_24%,rgba(255,253,247,0.42)_48%,rgba(255,253,247,0.08)_74%,rgba(255,253,247,0)_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_20%,rgba(245,237,225,0.1),transparent_18rem),linear-gradient(180deg,rgba(255,253,247,0.02),rgba(245,237,225,0.18))]" />
     </div>
   );
 }
