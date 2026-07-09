@@ -1,8 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Globe2, Menu } from "lucide-react";
-import { BotanicalMark } from "@/components/Botanical";
 import { useLanguage } from "@/components/LanguageProvider";
 import { navItems } from "@/lib/content";
 import { supportedLanguages, type LanguageCode } from "@/lib/languages";
@@ -13,16 +13,16 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-teal-950/10 bg-[#FFFDF7]/90 shadow-sm shadow-teal-950/[0.03] backdrop-blur-xl">
       <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3.5 sm:px-6 lg:px-8">
-        <Link href="/" className="flex min-w-0 items-center gap-3" aria-label="Cầu Nối home">
-          <span className="grid size-11 shrink-0 place-items-center rounded-lg bg-[#EAF7EF] text-[#2E5A3E] shadow-sm shadow-teal-900/20 ring-1 ring-[#A7C6A0]/40">
-            <BotanicalMark className="size-7" />
-          </span>
-          <span className="min-w-0">
-            <span className="block text-lg font-semibold text-slate-950">Cầu Nối</span>
-            <span className="block text-xs font-medium uppercase tracking-[0.18em] text-teal-700">
-              {t("common.navSubtitle")}
-            </span>
-          </span>
+        <Link href="/" className="flex min-w-0 items-center" aria-label="Cầu Nối home">
+          <Image
+            src="/brand/neural-bridge-logo.png"
+            alt="Cầu Nối - Minds connect. Communities heal."
+            width={1840}
+            height={494}
+            priority
+            className="h-12 w-auto max-w-[11.5rem] object-contain sm:h-14 sm:max-w-[15rem] lg:max-w-[16.5rem]"
+            sizes="(min-width: 1024px) 264px, (min-width: 640px) 240px, 184px"
+          />
         </Link>
 
         <div className="hidden items-center gap-1 lg:flex">

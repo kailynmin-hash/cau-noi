@@ -21,24 +21,6 @@ export function BotanicalSprig({ className = "" }: { className?: string }) {
   );
 }
 
-export function BotanicalMark({ className = "" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 80 80"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path d="M40 8V72M8 40H72M17 17L63 63M63 17L17 63" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity="0.36" />
-      <circle cx="40" cy="40" r="14" stroke="currentColor" strokeWidth="3" opacity="0.65" />
-      <path d="M41 24C54 16 64 17 70 23C64 32 52 36 41 31V24Z" fill="currentColor" opacity="0.32" />
-      <path d="M39 56C26 64 16 63 10 57C16 48 28 44 39 49V56Z" fill="currentColor" opacity="0.26" />
-    </svg>
-  );
-}
-
 export function HeroLandscape({ className = "" }: { className?: string }) {
   return (
     <svg

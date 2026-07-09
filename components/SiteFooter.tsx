@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { PhoneCall, ShieldCheck } from "lucide-react";
 import { BotanicalSprig } from "@/components/Botanical";
@@ -43,6 +44,16 @@ export function SiteFooter() {
       <BotanicalSprig className="pointer-events-none absolute -right-8 bottom-8 h-56 w-44 text-[#2E5A3E]/35" />
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-9 text-sm text-slate-600 sm:px-6 md:grid-cols-[1.2fr_0.8fr_0.75fr] lg:px-8">
         <div>
+          <Link href="/" className="mb-5 inline-flex" aria-label="Cầu Nối home">
+            <Image
+              src="/brand/neural-bridge-logo.png"
+              alt="Cầu Nối - Minds connect. Communities heal."
+              width={1840}
+              height={494}
+              className="h-14 w-auto max-w-[16rem] object-contain"
+              sizes="256px"
+            />
+          </Link>
           <div className="mb-3 flex items-center gap-2 font-semibold text-slate-950">
             <ShieldCheck size={18} className="text-teal-700" aria-hidden="true" />
             {t("footer.privacyTitle")}
