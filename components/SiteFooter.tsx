@@ -46,12 +46,12 @@ export function SiteFooter() {
         <div>
           <Link href="/" className="mb-5 inline-flex" aria-label="Cầu Nối home">
             <Image
-              src="/brand/neural-bridge-logo.png"
-              alt="Cầu Nối - Minds connect. Communities heal."
-              width={1840}
-              height={494}
+              src="/brand/neural-bridge-wordmark.svg"
+              alt="Cầu Nối"
+              width={560}
+              height={150}
+              unoptimized
               className="h-14 w-auto max-w-[16rem] object-contain"
-              sizes="256px"
             />
           </Link>
           <div className="mb-3 flex items-center gap-2 font-semibold text-slate-950">

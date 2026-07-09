@@ -1,0 +1,25 @@
+<svg width="560" height="150" viewBox="0 0 560 150" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Cầu Nối</title>
+  <desc id="desc">Neural bridge icon with the Cầu Nối wordmark.</desc>
+  <g stroke="#5F7F63" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M31 107C42 72 65 54 96 54C129 54 151 75 159 107" stroke-width="8"/>
+    <path d="M96 26C69 26 52 39 43 58C25 61 15 75 15 92C15 105 23 113 34 116" stroke-width="6"/>
+    <path d="M96 26C123 26 140 39 149 58C167 61 177 75 177 92C177 105 169 113 158 116" stroke-width="6"/>
+    <path d="M96 28V95" stroke-width="6"/>
+    <path d="M18 108H174" stroke-width="7"/>
+    <path d="M39 108C50 88 68 78 96 78C124 78 142 88 153 108" stroke-width="7"/>
+  </g>
+  <g fill="#86A982">
+    <circle cx="50" cy="82" r="6"/>
+    <circle cx="72" cy="66" r="6"/>
+    <circle cx="94" cy="77" r="6"/>
+    <circle cx="120" cy="66" r="6"/>
+    <circle cx="143" cy="82" r="6"/>
+    <path d="M56 80L68 69M78 68L89 75M100 75L115 68M126 69L138 80" stroke="#86A982" stroke-width="4" stroke-linecap="round"/>
+    <path d="M72 66V48M120 66V48M94 77V58" stroke="#86A982" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="72" cy="48" r="7"/>
+    <circle cx="94" cy="58" r="7"/>
+    <circle cx="120" cy="48" r="7"/>
+  </g>
+  <text x="214" y="94" fill="#2E4636" font-family="Space Grotesk, Manrope, Arial, sans-serif" font-size="72" font-weight="600" letter-spacing="8">CẦU NỐI</text>
+</svg>

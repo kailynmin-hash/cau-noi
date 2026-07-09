@@ -11,17 +11,17 @@ export function SiteHeader() {
   const { language, setLanguage, t } = useLanguage();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-teal-950/10 bg-[#FFFDF7]/90 shadow-sm shadow-teal-950/[0.03] backdrop-blur-xl">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3.5 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-40 border-b border-[#A7C6A0]/45 bg-[#EAF7EF]/92 shadow-sm shadow-[#2E5A3E]/[0.04] backdrop-blur-xl">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
         <Link href="/" className="flex min-w-0 items-center" aria-label="Cầu Nối home">
           <Image
-            src="/brand/neural-bridge-logo.png"
-            alt="Cầu Nối - Minds connect. Communities heal."
-            width={1840}
-            height={494}
+            src="/brand/neural-bridge-wordmark.svg"
+            alt="Cầu Nối"
+            width={560}
+            height={150}
             priority
-            className="h-12 w-auto max-w-[11.5rem] object-contain sm:h-14 sm:max-w-[15rem] lg:max-w-[16.5rem]"
-            sizes="(min-width: 1024px) 264px, (min-width: 640px) 240px, 184px"
+            unoptimized
+            className="h-10 w-auto max-w-[10.5rem] object-contain sm:h-11 sm:max-w-[13rem] lg:h-12 lg:max-w-[14.5rem]"
           />
         </Link>
 
@@ -30,7 +30,7 @@ export function SiteHeader() {
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-md px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-[#EAF7EF] hover:text-teal-800 hover:shadow-sm"
+              className="rounded-md px-3 py-2 text-sm font-medium text-[#1F2937] transition hover:bg-[#FFFDF7]/85 hover:text-[#2E5A3E] hover:shadow-sm"
             >
               {t(`nav.${item.key}`)}
             </Link>
@@ -42,7 +42,7 @@ export function SiteHeader() {
         </div>
 
         <details className="relative lg:hidden">
-          <summary className="grid size-10 cursor-pointer list-none place-items-center rounded-md border border-slate-200 bg-white text-slate-800 shadow-sm transition hover:border-teal-200 hover:bg-[#EAF7EF] [&::-webkit-details-marker]:hidden">
+          <summary className="grid size-10 cursor-pointer list-none place-items-center rounded-md border border-[#A7C6A0]/55 bg-[#FFFDF7] text-slate-800 shadow-sm transition hover:border-[#2E5A3E]/30 hover:bg-[#F5EDE1] [&::-webkit-details-marker]:hidden">
             <Menu size={20} aria-hidden="true" />
             <span className="sr-only">{t("common.openNavigation")}</span>
           </summary>
